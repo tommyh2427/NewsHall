@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Usage: GET /api/markets?tickers=AAPL,MSFT,^GSPC,BTC-USD
 export async function GET(req: NextRequest) {
   const tickersParam = req.nextUrl.searchParams.get("tickers");
   if (!tickersParam) {
@@ -13,35 +12,40 @@ export async function GET(req: NextRequest) {
   await Promise.all(
     tickers.map(async (sym) => {
       try {
-        // Try Yahoo Finance v8 — free, no key needed
-        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2d`;
-        const res = await fetch(url, { next: { revalidate: 300 } }); // cache 5 min
+        const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(sym)}`;
+        const res = await fetch(url, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://finance.yahoo.com/",
+            "Origin": "https://finance.yahoo.com",
+          },
+          next: { revalidate: 300 },
+        });
         const data = await res.json();
-        const meta = data?.chart?.result?.[0]?.meta;
-
-        if (meta) {
+        const quote = data?.quoteResponse?.result?.[0];
+        if (quote) {
           results[sym] = {
             sym,
-            price: meta.regularMarketPrice,
-            prev: meta.chartPreviousClose || meta.previousClose,
-            high: meta.regularMarketDayHigh,
-            low: meta.regularMarketDayLow,
-            open: meta.regularMarketOpen,
-            volume: meta.regularMarketVolume,
-            name: meta.shortName || sym,
-            currency: meta.currency || "USD",
-            marketState: meta.marketState,
+            price: quote.regularMarketPrice,
+            prev: quote.regularMarketPreviousClose,
+            high: quote.regularMarketDayHigh,
+            low: quote.regularMarketDayLow,
+            name: quote.shortName || quote.longName || sym,
+            currency: quote.currency || "USD",
+            marketState: quote.marketState,
           };
+        } else {
+          results[sym] = { sym, error: true };
         }
-      } catch {
+      } catch (e) {
         results[sym] = { sym, error: true };
       }
     })
   );
 
   return NextResponse.json(results, {
-    headers: {
-      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
-    },
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60" },
   });
 }
