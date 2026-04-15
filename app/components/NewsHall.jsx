@@ -60,53 +60,6 @@ const SUGGESTIONS=[
 ];
 
 // Team colors and abbreviations for logo badges
-const TEAM_COLORS={"Green Bay Packers":{abbr:"GB",bg:"#203731",fg:"#FFB612"},"Chicago Bears":{abbr:"CHI",bg:"#0B162A",fg:"#C83803"},"Kansas City Chiefs":{abbr:"KC",bg:"#E31837",fg:"#FFB81C"},"Dallas Cowboys":{abbr:"DAL",bg:"#003594",fg:"#869397"},"New England Patriots":{abbr:"NE",bg:"#002244",fg:"#C60C30"},"San Francisco 49ers":{abbr:"SF",bg:"#AA0000",fg:"#B3995D"},"Buffalo Bills":{abbr:"BUF",bg:"#00338D",fg:"#C60C30"},"Philadelphia Eagles":{abbr:"PHI",bg:"#004C54",fg:"#A5ACAF"},"Los Angeles Rams":{abbr:"LAR",bg:"#003594",fg:"#FFA300"},"Seattle Seahawks":{abbr:"SEA",bg:"#002244",fg:"#69BE28"},"Pittsburgh Steelers":{abbr:"PIT",bg:"#101820",fg:"#FFB612"},"Minnesota Vikings":{abbr:"MIN",bg:"#4F2683",fg:"#FFC62F"},"Baltimore Ravens":{abbr:"BAL",bg:"#241773",fg:"#9E7C0C"},"Denver Broncos":{abbr:"DEN",bg:"#FB4F14",fg:"#002244"},"Tampa Bay Buccaneers":{abbr:"TB",bg:"#D50A0A",fg:"#FF7900"},"New York Jets":{abbr:"NYJ",bg:"#125740",fg:"#FFFFFF"},"New York Giants":{abbr:"NYG",bg:"#0B2265",fg:"#A71930"},"Las Vegas Raiders":{abbr:"LV",bg:"#000000",fg:"#A5ACAF"},"Indianapolis Colts":{abbr:"IND",bg:"#002C5F",fg:"#A2AAAD"},"Detroit Lions":{abbr:"DET",bg:"#0076B6",fg:"#B0B7BC"},
-"Boston Celtics":{abbr:"BOS",bg:"#007A33",fg:"#BA9653"},"Los Angeles Lakers":{abbr:"LAL",bg:"#552583",fg:"#FDB927"},"Golden State Warriors":{abbr:"GSW",bg:"#1D428A",fg:"#FFC72C"},"Chicago Bulls":{abbr:"CHI",bg:"#CE1141",fg:"#000000"},"Miami Heat":{abbr:"MIA",bg:"#98002E",fg:"#F9A01B"},"New York Knicks":{abbr:"NYK",bg:"#006BB6",fg:"#F58426"},"Brooklyn Nets":{abbr:"BKN",bg:"#000000",fg:"#FFFFFF"},"Milwaukee Bucks":{abbr:"MIL",bg:"#00471B",fg:"#EEE1C6"},"Philadelphia 76ers":{abbr:"PHI",bg:"#006BB6",fg:"#ED174C"},"Dallas Mavericks":{abbr:"DAL",bg:"#00538C",fg:"#002B5E"},"Denver Nuggets":{abbr:"DEN",bg:"#0E2240",fg:"#FEC524"},"Phoenix Suns":{abbr:"PHX",bg:"#1D1160",fg:"#E56020"},"Cleveland Cavaliers":{abbr:"CLE",bg:"#860038",fg:"#FDBB30"},"Minnesota Timberwolves":{abbr:"MIN",bg:"#0C2340",fg:"#236192"},"San Antonio Spurs":{abbr:"SAS",bg:"#C4CED4",fg:"#000000"},"Atlanta Hawks":{abbr:"ATL",bg:"#E03A3E",fg:"#C1D32F"},"Toronto Raptors":{abbr:"TOR",bg:"#CE1141",fg:"#000000"},"Utah Jazz":{abbr:"UTA",bg:"#002B5C",fg:"#00471B"},"Washington Wizards":{abbr:"WAS",bg:"#002B5C",fg:"#E31837"},"Houston Rockets":{abbr:"HOU",bg:"#CE1141",fg:"#000000"},
-"Boston Bruins":{abbr:"BOS",bg:"#FCB514",fg:"#000000"},"Toronto Maple Leafs":{abbr:"TOR",bg:"#00205B",fg:"#FFFFFF"},"New York Rangers":{abbr:"NYR",bg:"#0038A8",fg:"#CE1126"},"Chicago Blackhawks":{abbr:"CHI",bg:"#CF0A2C",fg:"#000000"},"Pittsburgh Penguins":{abbr:"PIT",bg:"#000000",fg:"#FCB514"},"Detroit Red Wings":{abbr:"DET",bg:"#CE1126",fg:"#FFFFFF"},"Montreal Canadiens":{abbr:"MTL",bg:"#AF1E2D",fg:"#192168"},"Colorado Avalanche":{abbr:"COL",bg:"#6F263D",fg:"#236192"},"Vegas Golden Knights":{abbr:"VGK",bg:"#B4975A",fg:"#333F42"},"Tampa Bay Lightning":{abbr:"TBL",bg:"#002868",fg:"#FFFFFF"},"Edmonton Oilers":{abbr:"EDM",bg:"#041E42",fg:"#FF4C00"},"Dallas Stars":{abbr:"DAL",bg:"#006847",fg:"#8F8F8C"},"Washington Capitals":{abbr:"WSH",bg:"#041E42",fg:"#C8102E"},"Philadelphia Flyers":{abbr:"PHI",bg:"#F74902",fg:"#000000"},"Seattle Kraken":{abbr:"SEA",bg:"#001628",fg:"#99D9D9"},"Nashville Predators":{abbr:"NSH",bg:"#041E42",fg:"#FFB81C"},
-"New York Yankees":{abbr:"NYY",bg:"#003087",fg:"#E4002C"},"Los Angeles Dodgers":{abbr:"LAD",bg:"#005A9C",fg:"#EF3E42"},"Boston Red Sox":{abbr:"BOS",bg:"#BD3039",fg:"#0C2340"},"Chicago Cubs":{abbr:"CHC",bg:"#0E3386",fg:"#CC3433"},"Houston Astros":{abbr:"HOU",bg:"#002D62",fg:"#EB6E1F"},"Atlanta Braves":{abbr:"ATL",bg:"#CE1141",fg:"#13274F"},"San Francisco Giants":{abbr:"SF",bg:"#FD5A1E",fg:"#27251F"},"Chicago White Sox":{abbr:"CWS",bg:"#27251F",fg:"#C4CED4"},"New York Mets":{abbr:"NYM",bg:"#002D72",fg:"#FF5910"},"Philadelphia Phillies":{abbr:"PHI",bg:"#E81828",fg:"#002D72"},"St. Louis Cardinals":{abbr:"STL",bg:"#C41E3A",fg:"#0C2340"},"Texas Rangers":{abbr:"TEX",bg:"#003278",fg:"#C0111F"},"Seattle Mariners":{abbr:"SEA",bg:"#0C2C56",fg:"#005C5C"},"Toronto Blue Jays":{abbr:"TOR",bg:"#134A8E",fg:"#1D2D5C"},"Milwaukee Brewers":{abbr:"MIL",bg:"#FFC52F",fg:"#12284B"},"Minnesota Twins":{abbr:"MIN",bg:"#002B5C",fg:"#D31145"}};
-
-function TeamBadge({name,size=32}){
- const t=TEAM_COLORS[name]||TEAM_COLORS[Object.keys(TEAM_COLORS).find(k=>name&&name.toLowerCase().includes(k.split(" ").pop().toLowerCase()))||""];
- const abbr=t?.abbr||(name?name.split(" ").map(w=>w[0]).join("").slice(0,3).toUpperCase():"?");
- const bg=t?.bg||"#1a1f2e";
- const fg=t?.fg||"#ffffff";
- return(
- <div style={{width:size,height:size,borderRadius:6,background:bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
- <span style={{color:fg,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:800,fontSize:size*0.3,letterSpacing:"-0.02em",lineHeight:1}}>{abbr}</span>
- </div>
- );
-}
-
-const SPORT_GROUPS=[
- {group:"Football",sports:[
- {id:"nfl",label:"NFL"},{id:"ncaafb",label:"College FB"},
- ]},
- {group:"Basketball",sports:[
- {id:"nba",label:"NBA"},{id:"wnba",label:"WNBA"},
- {id:"ncaabk",label:"NCAA Men's BB"},{id:"ncaawbk",label:"NCAA Women's BB"},
- ]},
- {group:"Baseball",sports:[
- {id:"mlb",label:"MLB"},
- ]},
- {group:"Hockey",sports:[
- {id:"nhl",label:"NHL"},{id:"nwhl",label:"PWHL (Women's)"},
- ]},
- {group:"Soccer",sports:[
- {id:"mls",label:"MLS"},{id:"nwsl",label:"NWSL (Women's)"},
- {id:"epl",label:"Premier League"},{id:"ucl",label:"Champions League"},
- {id:"laliga",label:"La Liga"},{id:"bundesliga",label:"Bundesliga"},
- ]},
- {group:"Individual Sports",sports:[
- {id:"tennis",label:"Tennis (ATP)"},{id:"wta",label:"Tennis (WTA)"},
- {id:"golf",label:"PGA Tour"},{id:"lpga",label:"LPGA"},
- {id:"f1",label:"Formula 1"},{id:"indycar",label:"IndyCar"},
- ]},
- {group:"Combat Sports",sports:[
- {id:"mma",label:"MMA / UFC"},{id:"boxing",label:"Boxing"},
- ]},
-];
-const SPORTS=SPORT_GROUPS.flatMap(g=>g.sports);
-
 const TICKERS=[
  {sym:"^GSPC",label:"S&P 500",type:"index"},{sym:"^DJI",label:"Dow Jones",type:"index"},
  {sym:"^IXIC",label:"Nasdaq",type:"index"},{sym:"^RUT",label:"Russell 2000",type:"index"},
@@ -469,103 +422,59 @@ export default function NewsHall() {
  }, [tab]);
 
  // Scores
- const [activeSports, setActiveSports] = useState(["nfl","nba","mlb"]);
- const [customSports, setCustomSports] = useState([]);
- const [customSportIn, setCustomSportIn] = useState("");
- const [scores, setScores] = useState({});
- const [scoresLoaded, setScoresLoaded] = useState(false);
- const toggleSport = id => setActiveSports(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
- const addCustomSport = () => {
- const v=customSportIn.trim(); if(!v)return;
- const id="custom_"+v.toLowerCase().replace(/\s+/g,"_");
- if(!customSports.find(c=>c.id===id))setCustomSports(p=>[...p,{id,label:v,custom:true}]);
- setActiveSports(p=>p.includes(id)?p:[...p,id]);
- setCustomSportIn("");
+ // Inline scores for brief — auto-fetch when sport topics in brief
+ const [briefScores, setBriefScores] = useState({});
+ const SPORT_MAP = {
+   "nfl":"football/nfl","nba":"basketball/nba","nhl":"hockey/nhl","mlb":"baseball/mlb",
+   "wnba":"basketball/wnba","nfl football":"football/nfl","nba basketball":"basketball/nba",
+   "college football":"football/college-football","ncaa football":"football/college-football",
+   "college basketball":"basketball/mens-college-basketball","ncaa basketball":"basketball/mens-college-basketball",
+   "mls":"soccer/usa.1","epl":"soccer/eng.1","premier league":"soccer/eng.1",
+   "champions league":"soccer/uefa.champions","la liga":"soccer/esp.1",
+   "bundesliga":"soccer/ger.1","formula 1":"racing/f1","f1":"racing/f1",
+   "pga":"golf/pga","golf":"golf/pga","lpga":"golf/lpga",
+   "ufc":"mma/ufc","mma":"mma/ufc",
  };
- // Sports scores API uses web_search tool with correct server-side loop
- const fetchSport = async (prompt) => {
- const makeReq = (messages) => fetch("/api/scores-ai", {
-   method: "POST",
-   headers: { "Content-Type": "application/json" },
-   body: JSON.stringify({ messages })
- }).then(r => r.json());
-
- let messages = [{ role: "user", content: prompt }];
- let data = await makeReq(messages);
- let iter = 0;
-
- while (data.stop_reason === "tool_use" && iter < 15) {
- iter++;
- // Append assistant message with tool_use blocks
- messages = [...messages, { role: "assistant", content: data.content }];
- // For web_search (server-side tool), send back empty string tool_results
- const results = (data.content || [])
- .filter(b => b.type === "tool_use")
- .map(b => ({ type: "tool_result", tool_use_id: b.id, content: "" }));
- if (!results.length) break;
- messages = [...messages, { role: "user", content: results }];
- data = await makeReq(messages);
- }
-
- if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
- const txt = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("").trim();
- if (!txt) throw new Error("Empty response from API");
- const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
- const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
- if (s === -1 || e === -1) throw new Error("No JSON found in: " + txt.slice(0, 150));
- return JSON.parse(clean.slice(s, e + 1));
+ const detectSports = (topicList) => {
+   const found = [];
+   topicList.forEach(t => {
+     const key = t.toLowerCase().trim();
+     if (SPORT_MAP[key] && !found.find(f=>f.path===SPORT_MAP[key])) {
+       found.push({label:t, path:SPORT_MAP[key]});
+     } else {
+       Object.entries(SPORT_MAP).forEach(([k,v]) => {
+         if (key.includes(k) && !found.find(f=>f.path===v)) found.push({label:t,path:v});
+       });
+     }
+   });
+   return found;
  };
-
- const fetchScores = async ids => {
- const toFetch = ids || activeSports;
- setScores(p=>{const n={...p};toFetch.forEach(id=>{n[id]={loading:true,games:[],error:null};});return n;});
- setScoresLoaded(true);
- const allSportDefs = [...SPORTS, ...customSports];
- const now = new Date();
- const yesterday = new Date(now-86400000).toLocaleDateString("en-US",{month:"short",day:"numeric"});
- const tomorrow = new Date(now+86400000).toLocaleDateString("en-US",{month:"short",day:"numeric"});
- const todayShort = new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"});
- const ESPN_ENDPOINTS = {
-   nfl:"football/nfl",nba:"basketball/nba",nhl:"hockey/nhl",mlb:"baseball/mlb",
-   wnba:"basketball/wnba",ncaafb:"football/college-football",
-   ncaabk:"basketball/mens-college-basketball",ncaawbk:"basketball/womens-college-basketball",
-   mls:"soccer/usa.1",nwsl:"soccer/usa.nwsl",epl:"soccer/eng.1",
-   ucl:"soccer/uefa.champions",laliga:"soccer/esp.1",bundesliga:"soccer/ger.1",
- };
- const parseESPN = (data) => (data?.events||[]).slice(0,12).map(ev=>{
-   const comps=ev.competitions?.[0];const teams=comps?.competitors||[];
-   const home=teams.find(t=>t.homeAway==="home")||teams[0];
-   const away=teams.find(t=>t.homeAway==="away")||teams[1];
-   const stype=comps?.status?.type?.name||"";
-   return {
-     home:home?.team?.displayName||"Home",away:away?.team?.displayName||"Away",
-     homeScore:home?.score??null,awayScore:away?.score??null,
-     status:stype==="STATUS_IN_PROGRESS"?"LIVE":stype==="STATUS_FINAL"?"FINAL":"UPCOMING",
-     detail:comps?.status?.type?.shortDetail||"",venue:ev.venue?.fullName||""
-   };
- });
- for (const id of toFetch) {
-   const espnPath = ESPN_ENDPOINTS[id];
-   if (espnPath) {
+ const fetchBriefScores = async (topicList) => {
+   const sports = detectSports(topicList);
+   if (!sports.length) { setBriefScores({}); return; }
+   const results = {};
+   await Promise.all(sports.map(async s => {
      try {
-       const r = await fetch("/api/scores?sport="+encodeURIComponent(espnPath));
+       const r = await fetch("/api/scores?sport="+encodeURIComponent(s.path));
        const d = await r.json();
-       setScores(p=>({...p,[id]:{loading:false,games:parseESPN(d),error:null}}));
-       continue;
+       const games = (d?.events||[]).slice(0,6).map(ev => {
+         const comps=ev.competitions?.[0]; const teams=comps?.competitors||[];
+         const home=teams.find(t=>t.homeAway==="home")||teams[0];
+         const away=teams.find(t=>t.homeAway==="away")||teams[1];
+         const stype=comps?.status?.type?.name||"";
+         return {
+           home:home?.team?.shortDisplayName||home?.team?.name||"Home",
+           away:away?.team?.shortDisplayName||away?.team?.name||"Away",
+           homeScore:home?.score??null, awayScore:away?.score??null,
+           status:stype==="STATUS_IN_PROGRESS"?"LIVE":stype==="STATUS_FINAL"?"FINAL":"UPCOMING",
+           detail:comps?.status?.type?.shortDetail||"",
+         };
+       });
+       if (games.length) results[s.label] = games;
      } catch(e) {}
-   }
-   const label = allSportDefs.find(s=>s.id===id)?.label||id;
-   try {
-     const r = await fetch("/api/scores-ai",{method:"POST",headers:{"Content-Type":"application/json"},
-       body:JSON.stringify({sport:label,today:todayShort,yesterday,tomorrow})});
-     const d = await r.json();
-     setScores(p=>({...p,[id]:{loading:false,games:d.games||[],error:d.error||null}}));
-   } catch(e) {
-     setScores(p=>({...p,[id]:{loading:false,games:[],error:"Could not load"}}));
-   }
- }
+   }));
+   setBriefScores(results);
  };
- useEffect(()=>{if(tab==="scores"&&!scoresLoaded)fetchScores();},[tab]);
 
  // Markets
  const [mktData, setMktData] = useState({});
@@ -615,7 +524,7 @@ export default function NewsHall() {
       const parsed=await res.json();
       if(parsed.error)throw new Error(parsed.error);
       if(!Array.isArray(parsed.topics)||!parsed.topics.length)throw new Error("No topics in response");
-      setBrief(parsed);setPhase("done");setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
+      setBrief(parsed);setPhase("done");fetchBriefScores(topics);setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
     }catch(err){setBrief({error:true,raw:String(err.message||err)});setPhase("done");}
  };
 
@@ -638,9 +547,9 @@ export default function NewsHall() {
   };
   useEffect(()=>{ if(tab==="daily"&&!boost&&!boostLoading)fetchBoost(); },[tab]);
 
-  const NAVS=[{id:"home",icon:"news",label:"Morning Brief"},{id:"weather",label:"Weather"},{id:"scores",label:"Scores"},{id:"markets",label:"Markets"},{id:"daily",label:"Daily Boost"}];
- const PTITLES={home:"NewsHall",weather:"Weather",scores:"Scores",markets:"Markets",daily:"Daily Boost"};
- const PSUBS={home:"Your personalized news digest",weather:"Local forecast & hourly",scores:"Live & recent sports scores",markets:"Stocks, indices & crypto",daily:"Your daily quote, tip & habit"};
+  const NAVS=[{id:"home",icon:"news",label:"Morning Brief"},{id:"weather",label:"Weather"},{id:"markets",label:"Markets"},{id:"daily",label:"Daily Boost"}];
+ const PTITLES={home:"NewsHall",weather:"Weather",markets:"Markets",daily:"Daily Boost"};
+ const PSUBS={home:"Your personalized news digest",weather:"Local forecast & hourly",markets:"Stocks, indices & crypto",daily:"Your daily quote, tip & habit"};
 
  return (<>
  <style>{CSS}</style>
@@ -749,6 +658,33 @@ export default function NewsHall() {
  <div className="brief-wrap" ref={briefRef}>
  {brief.error?(<div className="err-box"><div className="err-msg"> Could not generate brief please try again.</div>{brief.raw&&<pre className="err-pre">{brief.raw}</pre>}</div>):(
  <><div className="bmast"><div><div className="bkicker">NewsHall - {today}</div><div className="bhl">{brief.headline||"Your Morning Brief"}</div>{brief.summary&&<p className="bsummary">{brief.summary}</p>}<div className="bmeta">{topics.length} topics - {new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})} - <span style={{color:"#3b6fd4"}}> Fact-first</span></div></div><button className="brefresh" onClick={generate}>Refresh</button></div>
+{Object.keys(briefScores).length>0&&(
+<div style={{marginBottom:20}}>
+{Object.entries(briefScores).map(([league,games])=>(
+<div key={league} className="brief-scores">
+<div className="brief-scores-hd">
+<span className="brief-scores-title">Live Scores</span>
+<span className="brief-scores-league">{league}</span>
+</div>
+<div className="brief-scores-games">
+{games.map((g,i)=>{
+const isFinal=g.status==="FINAL";const isLive=g.status==="LIVE";
+const hScore=g.homeScore!=null?String(g.homeScore):null;
+const aScore=g.awayScore!=null?String(g.awayScore):null;
+const homeWin=isFinal&&hScore!=null&&aScore!=null&&Number(hScore)>Number(aScore);
+const awayWin=isFinal&&hScore!=null&&aScore!=null&&Number(aScore)>Number(hScore);
+return(<div key={i} className="bs-game">
+<div className={`bs-status ${isLive?"live":isFinal?"final":"upcoming"}`}>{isLive?"LIVE":isFinal?"FINAL":g.detail||"UPCOMING"}</div>
+<div className={`bs-team${awayWin?" winner":isFinal&&!awayWin?" loser":""}`}><span className="bs-name">{g.away}</span>{aScore&&<span className="bs-score">{aScore}</span>}</div>
+<hr className="bs-divider"/>
+<div className={`bs-team${homeWin?" winner":isFinal&&!homeWin?" loser":""}`}><span className="bs-name">{g.home}</span>{hScore&&<span className="bs-score">{hScore}</span>}</div>
+</div>);
+})}
+</div>
+</div>
+))}
+</div>
+)}
  <div>{(brief.topics||[]).map((tg,ti)=>{const stories=Array.isArray(tg.stories)?tg.stories:[];return(<div key={ti} className="topic-group"><div className="tg-header"><span className="tg-name">{tg.topic}</span><span className="tg-count">{stories.length} {stories.length===1?"story":"stories"}</span></div><div className="story-list">{stories.map((st,si)=>{const hasUrl=st.url&&st.url.startsWith("http");const url=hasUrl?st.url:"https://news.google.com/search?q="+encodeURIComponent(clean(st.headline)+" "+(st.source||""));return(<a key={si} className="story-row" href={url} target="_blank" rel="noopener noreferrer"><div className="story-row-main"><div className="story-row-hl">{clean(st.headline)}</div>{st.summary&&<div className="story-row-sum">{clean(st.summary)}</div>}</div><div className="story-row-meta">{st.source&&<span className="story-row-src">{st.source}</span>}<span className="story-row-arrow">Read</span></div></a>);})}</div></div>);})}</div>
  {brief.watchToday&&(<div className="watch"><div><div className="watch-lbl">Watch today</div><div className="watch-txt">{clean(brief.watchToday)}</div></div></div>)}
  {brief.topics?.some(tg=>tg.stories?.some(s=>s.source))&&(<div className="srcfooter"><strong>Sources </strong>{[...new Set(brief.topics.flatMap(tg=>(tg.stories||[]).map(s=>s.source)).filter(Boolean))].join(" - ")}</div>)}</>
@@ -835,105 +771,6 @@ export default function NewsHall() {
  )}
  </div>
  )}
- </div>
- </div>
-
- {/* SCORES */}
- <div className={`page${tab==="scores"?" active":""}`}>
- <div className="scores-page">
- <div style={{marginBottom:24}}>
- <div className="sugg-lbl" style={{marginBottom:14}}>Choose your sports</div>
- {SPORT_GROUPS.map(group=>(
- <div key={group.group} style={{marginBottom:14}}>
- <div style={{fontFamily:"'DM Mono',monospace",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase",color:"#9ca3af",marginBottom:7}}>{group.group}</div>
- <div className="sport-toggles" style={{marginBottom:0}}>
- {group.sports.map(s=>(
- <div key={s.id} className={`sport-pill${activeSports.includes(s.id)?" on":""}`} onClick={()=>toggleSport(s.id)}>
- {s.label}
- </div>
- ))}
- </div>
- </div>
- ))}
- {customSports.length>0&&(
- <div style={{marginBottom:14}}>
- <div style={{fontFamily:"'DM Mono',monospace",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase",color:"#9ca3af",marginBottom:7}}> Custom</div>
- <div className="sport-toggles" style={{marginBottom:0}}>
- {customSports.map(s=>(
- <div key={s.id} className={`sport-pill${activeSports.includes(s.id)?" on":""}`} onClick={()=>toggleSport(s.id)}>
- {s.label} <span style={{marginLeft:4,opacity:0.5,cursor:"pointer"}} onClick={e=>{e.stopPropagation();setCustomSports(p=>p.filter(x=>x.id!==s.id));setActiveSports(p=>p.filter(x=>x!==s.id));}}></span>
- </div>
- ))}
- </div>
- </div>
- )}
- <div style={{display:"flex",gap:8,alignItems:"center",marginTop:4,marginBottom:20}}>
- <div style={{position:"relative",flex:1,maxWidth:340}}>
- <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:"0.85rem",pointerEvents:"none"}}></span>
- <input
- style={{width:"100%",background:"#fff",border:"1.5px solid rgba(15,23,41,0.1)",borderRadius:9,padding:"9px 12px 9px 36px",fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:"0.82rem",color:"#1a1f2e",outline:"none"}}
- placeholder="Add any sport (e.g. Lacrosse, Volleyball, Rugby)..."
- value={customSportIn}
- onChange={e=>setCustomSportIn(e.target.value)}
- onKeyDown={e=>e.key==="Enter"&&addCustomSport()}
- />
- </div>
- <button className="load-btn" style={{margin:0}} onClick={addCustomSport}>+ Add</button>
- <button className="load-btn" style={{margin:0,background:"#5585e8"}} onClick={()=>fetchScores(activeSports)}>{scoresLoaded?" Refresh":"Load Scores"}</button>
- </div>
- </div>
- {!scoresLoaded&&(<div style={{textAlign:"center",padding:"44px 0",color:"#9ca3af"}}><div style={{fontSize:"2.8rem",marginBottom:"12px"}}></div><p style={{fontFamily:"'Fraunces',serif",fontSize:"1.05rem",fontWeight:700,color:"#6b7280",marginBottom:"5px"}}>Select sports and load scores</p><p style={{fontSize:"0.78rem"}}>Toggle which leagues you follow, then hit Load Scores</p></div>)}
- {scoresLoaded&&activeSports.map(sportId=>{
- const sport=[...SPORTS,...customSports].find(s=>s.id===sportId);
- const sd=scores[sportId];
- if(!sport)return null;
- const games=sd?.games||[];
- return(
- <div key={sportId} className="scores-sec">
- <div className="scores-hd">
- 
- <span className="scores-sport-n">{sport.label}</span>
- {sd?.loading&&<div className="spin" style={{width:15,height:15,borderWidth:2,margin:"0 0 0 8px"}}/>}
- </div>
- {sd?.error&&<p className="no-games" style={{color:"#e8654a"}}>{sd.error}</p>}
- {!sd?.loading&&!sd?.error&&games.length===0&&<p className="no-games">No recent or upcoming games found in the last/next 48 hours.</p>}
- {games.length>0&&(
- <div className="games-grid">
- {games.slice(0,12).map((g,gi)=>{
- const isFinal=g.status==="FINAL";
- const isLive=g.status==="LIVE";
- const hScore=g.homeScore!=null?String(g.homeScore):null;
- const aScore=g.awayScore!=null?String(g.awayScore):null;
- const homeWin=isFinal&&hScore!=null&&aScore!=null&&Number(hScore)>Number(aScore);
- const awayWin=isFinal&&hScore!=null&&aScore!=null&&Number(aScore)>Number(hScore);
- return(
- <div key={gi} className="game-card">
- <div className={`game-status ${isLive?"live":isFinal?"final":"upcoming"}`}>
- {isLive?" LIVE":isFinal?"FINAL":g.detail||"UPCOMING"}
- </div>
- <div className="game-teams">
- <div className={`game-team${awayWin?" winner":isFinal&&!awayWin?" loser":""}`}>
- <TeamBadge name={g.away||""} size={28}/>
- <span className="game-team-n">{g.away||"Away"}</span>
- {aScore!=null&&<span className="game-score">{aScore}</span>}
- </div>
- <hr className="game-div"/>
- <div className={`game-team${homeWin?" winner":isFinal&&!homeWin?" loser":""}`}>
- <TeamBadge name={g.home||""} size={28}/>
- <span className="game-team-n">{g.home||"Home"}</span>
- {hScore!=null&&<span className="game-score">{hScore}</span>}
- </div>
- </div>
- {g.detail&&!isFinal&&<div className="game-time">{g.detail}</div>}
- {g.venue&&<div className="game-time">{g.venue}</div>}
- </div>
- );
- })}
- </div>
- )}
- </div>
- );
- })}
  </div>
  </div>
 
