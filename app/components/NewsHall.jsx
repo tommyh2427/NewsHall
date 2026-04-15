@@ -421,11 +421,7 @@ export default function NewsHall() {
  const fetchWxByCoords = async (lat, lon, label) => {
  setWx("loading");
  try {
- const r = await fetch(
- `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
- `&current=temperature_2m,apparent_temperature,weathercode,windspeed_10m,relativehumidity_2m` +
- `&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=1`
- );
+ const r = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
  const d = await r.json();
  const cur = d.current;
  const nowH = new Date().getHours();
@@ -488,16 +484,10 @@ export default function NewsHall() {
  };
  // Sports scores API uses web_search tool with correct server-side loop
  const fetchSport = async (prompt) => {
- const makeReq = (messages) => fetch("https://api.anthropic.com/v1/messages", {
- method: "POST",
- headers: { "Content-Type": "application/json" },
- body: JSON.stringify({
- model: "claude-sonnet-4-6",
- max_tokens: 3000,
- tools: [{ type: "web_search_20250305", name: "web_search" }],
- system: "You are a sports scores assistant. Search the web for live and recent scores. Return ONLY raw JSON with no markdown, no backticks, no explanation.",
- messages
- })
+ const makeReq = (messages) => fetch("/api/scores-ai", {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({ messages })
  }).then(r => r.json());
 
  let messages = [{ role: "user", content: prompt }];
@@ -581,21 +571,21 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
  const fetchMarkets = async () => {
  setMktLoading(true);
  const results={};
- await Promise.all(watchlist.map(async sym=>{
- try{
- const r=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2d`);
- const d=await r.json();const meta=d?.chart?.result?.[0]?.meta;if(!meta)return;
- results[sym]={price:meta.regularMarketPrice,prev:meta.chartPreviousClose||meta.previousClose,name:TICKERS.find(t=>t.sym===sym)?.label||sym,type:TICKERS.find(t=>t.sym===sym)?.type||"stock",sym};
- }catch(e){results[sym]={error:true,sym,name:TICKERS.find(t=>t.sym===sym)?.label||sym,type:TICKERS.find(t=>t.sym===sym)?.type||"stock"};}
- }));
- setMktData(results);setMktLoading(false);setMktLoaded(true);
+ try {
+   const res=await fetch("/api/markets?tickers="+watchlist.map(encodeURIComponent).join(","));
+   const data=await res.json();
+   const enriched={};
+   Object.entries(data).forEach(([sym,d])=>{const meta=TICKERS.find(t=>t.sym===sym);enriched[sym]={...d,name:meta?.label||sym,type:meta?.type||"stock",sym};});
+   setMktData(enriched);
+ } catch(e){console.error(e);}
+ setMktLoading(false);setMktLoaded(true);
  };
  useEffect(()=>{if(tab==="markets"&&!mktLoaded)fetchMarkets();},[tab]);
 
  const addTicker = () => {
  const s=customTicker.trim().toUpperCase();if(!s||watchlist.includes(s))return;
  setWatchlist(p=>[...p,s]);setCustomTicker("");
- fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s)}?interval=1d&range=2d`).then(r=>r.json()).then(d=>{const meta=d?.chart?.result?.[0]?.meta;if(!meta)return;setMktData(p=>({...p,[s]:{price:meta.regularMarketPrice,prev:meta.chartPreviousClose||meta.previousClose,name:s,type:"stock",sym:s}}));}).catch(()=>{});
+ fetch("/api/markets?tickers="+encodeURIComponent(s)).then(r=>r.json()).then(data=>{if(data[s])setMktData(p=>({...p,[s]:{...data[s],name:s,type:"stock",sym:s}}));}).catch(()=>{});
  };
 
  // News
@@ -613,20 +603,13 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
  const toneMap={sharp:"WSJ/Bloomberg sharp, direct, zero filler.",analytical:"Analytical causes, effects, long-term implications.",casual:"Smart friend texting you the news.",exec:"Executive briefing most critical fact first."};
  const system=`You are NewsHall's AI journalist. ${toneMap[settings.tone]} ONLY use sources with a strong reputation for straight factual news reporting. AVOID sources with strong editorial bias. For politics report ONLY verified facts. Use web_search. Extract real article URLs.`;
  const userMsg=`Today is ${today}. Morning brief for ${topics.length} topics:\n${topics.map((t,i)=>(i+1)+". "+t).join("\n")}\n\nFor each topic find 3-6 of the most important stories from the last 24 hours. Use only reputable straight-news sources. Include the real article URL for every story.\n\nOutput ONLY raw JSON:\n{"headline":"5-6 word brief headline","topics":[{"topic":"name","stories":[{"headline":"headline of the story","summary":"one sentence, max 20 words, just the key fact","source":"outlet name","url":"https://real-article-url"}]}]}\n\nExactly ${topics.length} topic entries in order. Keep summaries tight — one sentence, the single most important fact only.`;
- const doFetch=msgs=>fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:6000,tools:[{type:"web_search_20250305",name:"web_search"}],system,messages:msgs})}).then(r=>r.json());
  try{
- let messages=[{role:"user",content:userMsg}];let data=await doFetch(messages);let iter=0;
- while(data.stop_reason==="tool_use"&&iter<20){iter++;messages=[...messages,{role:"assistant",content:data.content}];const acks=(data.content||[]).filter(b=>b.type==="tool_use").map(b=>({type:"tool_result",tool_use_id:b.id,content:""}));if(!acks.length)break;messages=[...messages,{role:"user",content:acks}];data=await doFetch(messages);}
- if(data.error)throw new Error(data.error.type+": "+data.error.message);
- const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
- if(!txt)throw new Error("Empty response");
- const stripped=txt.replace(/```[a-z]*/gi,"").replace(/```/g,"").trim();
- const s=stripped.indexOf("{"),e=stripped.lastIndexOf("}");
- if(s===-1||e===-1)throw new Error("No JSON found");
- let parsed;try{parsed=JSON.parse(stripped.slice(s,e+1));}catch(je){throw new Error("JSON parse error: "+je.message);}
- if(!Array.isArray(parsed.topics)||!parsed.topics.length)throw new Error("No topics in response");
- setBrief(parsed);setPhase("done");setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
- }catch(err){setBrief({error:true,raw:String(err.message||err)});setPhase("done");}
+      const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,fmt:settings.fmt,today})});
+      const parsed=await res.json();
+      if(parsed.error)throw new Error(parsed.error);
+      if(!Array.isArray(parsed.topics)||!parsed.topics.length)throw new Error("No topics in response");
+      setBrief(parsed);setPhase("done");setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
+    }catch(err){setBrief({error:true,raw:String(err.message||err)});setPhase("done");}
  };
 
  const ExtIcon=()=>(<svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M7 1h4m0 0v4m0-4L5.5 6.5"/></svg>);
@@ -638,30 +621,11 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
 
   const fetchBoost = async () => {
     setBoostLoading(true); setBoostError(false);
-    const boostReq = msgs => fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:2000,
-        tools:[{type:"web_search_20250305",name:"web_search"}],
-        system:"You are a health and wellness research assistant. Find real evidence-based tips from reputable sources like Harvard Health, Mayo Clinic, NHS, Healthline, or peer-reviewed studies. Return only raw JSON with no markdown.",
-        messages:msgs})
-    }).then(r=>r.json());
     try {
-      const prompt = `Today is ${today}. Search for a real research-backed health tip, a practical daily habit, and a meaningful personal challenge from a reputable source (Harvard Health, Mayo Clinic, NHS, Healthline, Psychology Today, or similar). Also find a well-known motivational quote that fits the theme. Return ONLY this JSON: {"quote":"quote text","author":"Author Name","tip":{"text":"2-3 sentence evidence-based tip","source":"source name","url":"https://url"},"habit":{"text":"2-3 sentence practical habit","source":"source name","url":"https://url"},"challenge":{"text":"specific actionable challenge for today","source":"source name","url":"https://url"}}`;
-      let messages=[{role:"user",content:prompt}];
-      let data=await boostReq(messages); let iter=0;
-      while(data.stop_reason==="tool_use"&&iter<10){
-        iter++;
-        messages=[...messages,{role:"assistant",content:data.content}];
-        const acks=(data.content||[]).filter(b=>b.type==="tool_use").map(b=>({type:"tool_result",tool_use_id:b.id,content:""}));
-        if(!acks.length)break;
-        messages=[...messages,{role:"user",content:acks}];
-        data=await boostReq(messages);
-      }
-      const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim();
-      const stripped=txt.replace(/```[a-z]*/gi,"").replace(/```/g,"").trim();
-      const s=stripped.indexOf("{"),e=stripped.lastIndexOf("}");
-      if(s===-1||e===-1)throw new Error("No JSON");
-      setBoost(JSON.parse(stripped.slice(s,e+1)));
+      const res=await fetch("/api/boost");
+      const parsed=await res.json();
+      if(parsed.error)throw new Error(parsed.error);
+      setBoost(parsed);
     } catch(err){ setBoostError(true); }
     setBoostLoading(false);
   };
