@@ -1,4 +1,3 @@
-'use client';
 import { useState, useRef, useEffect } from "react";
 
 const CITIES=[
@@ -638,11 +637,30 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
 
   const fetchBoost = async () => {
     setBoostLoading(true); setBoostError(false);
+    const boostReq = msgs => fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:2000,
+        tools:[{type:"web_search_20250305",name:"web_search"}],
+        system:"You are a health and wellness research assistant. Find real evidence-based tips from reputable sources like Harvard Health, Mayo Clinic, NHS, Healthline, or peer-reviewed studies. Return only raw JSON with no markdown.",
+        messages:msgs})
+    }).then(r=>r.json());
     try {
-      const res = await fetch("/api/boost");
-      const parsed = await res.json();
-      if(parsed.error) throw new Error(parsed.error);
-      setBoost(parsed);
+      const prompt = `Today is ${today}. Search for a real research-backed health tip, a practical daily habit, and a meaningful personal challenge from a reputable source (Harvard Health, Mayo Clinic, NHS, Healthline, Psychology Today, or similar). Also find a well-known motivational quote that fits the theme. Return ONLY this JSON: {"quote":"quote text","author":"Author Name","tip":{"text":"2-3 sentence evidence-based tip","source":"source name","url":"https://url"},"habit":{"text":"2-3 sentence practical habit","source":"source name","url":"https://url"},"challenge":{"text":"specific actionable challenge for today","source":"source name","url":"https://url"}}`;
+      let messages=[{role:"user",content:prompt}];
+      let data=await boostReq(messages); let iter=0;
+      while(data.stop_reason==="tool_use"&&iter<10){
+        iter++;
+        messages=[...messages,{role:"assistant",content:data.content}];
+        const acks=(data.content||[]).filter(b=>b.type==="tool_use").map(b=>({type:"tool_result",tool_use_id:b.id,content:""}));
+        if(!acks.length)break;
+        messages=[...messages,{role:"user",content:acks}];
+        data=await boostReq(messages);
+      }
+      const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim();
+      const stripped=txt.replace(/```[a-z]*/gi,"").replace(/```/g,"").trim();
+      const s=stripped.indexOf("{"),e=stripped.lastIndexOf("}");
+      if(s===-1||e===-1)throw new Error("No JSON");
+      setBoost(JSON.parse(stripped.slice(s,e+1)));
     } catch(err){ setBoostError(true); }
     setBoostLoading(false);
   };
@@ -1072,7 +1090,7 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
  </div>
  </nav>
 
- {modal&&(<div className="mover" onClick={e=>e.target===e.currentTarget&&setModal(false)}><div className="mbox"><button className="mx" onClick={()=>setModal(false)}></button><h3>Schedule your brief</h3><p>Your personalized digest, delivered every morning before you wake up.</p><div className="msum">{`TOPICS   ${topics.join(", ")}\n\nTIME     ${settings.time}${detectedTz ? " ("+detectedTz+")" : ""}\nDAYS     ${settings.days}\nEMAIL    ${settings.email||"not entered"}\nFORMAT   ${settings.fmt}`}</div><div className="mbtns"><button className="btn-cancel" onClick={()=>setModal(false)}>Cancel</button><button className="btn-ok" onClick={()=>{if(!settings.email){setModal(false);showToast("Enter your email first");return;}setModal(false);showToast(` Scheduled ${topics.length} topics -> ${settings.email} daily`);}}>Confirm -></button></div></div></div>)}
+ {modal&&(<div className="mover" onClick={e=>e.target===e.currentTarget&&setModal(false)}><div className="mbox"><button className="mx" onClick={()=>setModal(false)}></button><h3>Schedule your brief</h3><p>Your personalized digest, delivered every morning before you wake up.</p><div className="msum">{`TOPICS   ${topics.join(", ")}\n\nTIME     ${settings.time}${detectedTz ? " ("+detectedTz+")" : ""}\nDAYS     ${settings.days}\nEMAIL    ${settings.email||"not entered"}\nFORMAT   ${settings.fmt}`}</div><div className="mbtns"><button className="btn-cancel" onClick={()=>setModal(false)}>Cancel</button><button className="btn-ok" onClick={()=>{if(!settings.email){setModal(false);showToast("Enter your email first");return;}setModal(false);showToast("Scheduled " + topics.length + " topics to " + settings.email + " daily");}}>Confirm -></button></div></div></div>)}
  {toast&&<div className="toast">{toast}</div>}
  </>);
 }
