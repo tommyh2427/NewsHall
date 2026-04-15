@@ -522,40 +522,47 @@ export default function NewsHall() {
  setScoresLoaded(true);
  const allSportDefs = [...SPORTS, ...customSports];
  const now = new Date();
- const yesterday = new Date(now-86400000).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
- const tomorrow = new Date(now+86400000).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
- const sportList = toFetch.map(id=>({ id, label: allSportDefs.find(s=>s.id===id)?.label||id }));
-
- // Single API call for ALL selected sports uses only 1-2 web searches total
- const prompt = `Today is ${today}. Yesterday was ${yesterday}. Tomorrow is ${tomorrow}.
-
-Search for scores and schedules for ALL of these sports: ${sportList.map(s=>s.label).join(", ")}.
-
-For EACH sport find:
-- Games played yesterday or today with final scores
-- Games happening right now (live)
-- Games scheduled for today or tomorrow
-
-Use your knowledge of current sports seasons. The NCAA Men's Basketball Tournament typically ends in early April. NBA, NHL regular seasons run through April. MLB season starts in late March/April.
-
-Return ONLY this JSON (no markdown, no backticks, no explanation):
-{"sports":[${sportList.map(s=>`{"id":"${s.id}","games":[]}`).join(",")}]}
-
-Replace each empty games array with the actual games you find. Each game object:
-{"home":"Full Team Name","away":"Full Team Name","homeScore":"number or null","awayScore":"number or null","status":"FINAL or LIVE or UPCOMING","detail":"e.g. Final, 2nd Half 8:23, Tonight 7:30 PM ET, Tomorrow 8:00 PM ET","venue":"arena or empty"}
-
-Include ALL games found. If a sport truly has no games in this 48hr window, leave its games array empty.`;
-
- try {
- const parsed = await fetchSport(prompt);
- const newScores = {};
- toFetch.forEach(id => {
- const sportData = parsed.sports?.find(s=>s.id===id);
- newScores[id] = { loading:false, games: sportData?.games||[], error:null };
+ const yesterday = new Date(now-86400000).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+ const tomorrow = new Date(now+86400000).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+ const todayShort = new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"});
+ const ESPN_ENDPOINTS = {
+   nfl:"football/nfl",nba:"basketball/nba",nhl:"hockey/nhl",mlb:"baseball/mlb",
+   wnba:"basketball/wnba",ncaafb:"football/college-football",
+   ncaabk:"basketball/mens-college-basketball",ncaawbk:"basketball/womens-college-basketball",
+   mls:"soccer/usa.1",nwsl:"soccer/usa.nwsl",epl:"soccer/eng.1",
+   ucl:"soccer/uefa.champions",laliga:"soccer/esp.1",bundesliga:"soccer/ger.1",
+ };
+ const parseESPN = (data) => (data?.events||[]).slice(0,12).map(ev=>{
+   const comps=ev.competitions?.[0];const teams=comps?.competitors||[];
+   const home=teams.find(t=>t.homeAway==="home")||teams[0];
+   const away=teams.find(t=>t.homeAway==="away")||teams[1];
+   const stype=comps?.status?.type?.name||"";
+   return {
+     home:home?.team?.displayName||"Home",away:away?.team?.displayName||"Away",
+     homeScore:home?.score??null,awayScore:away?.score??null,
+     status:stype==="STATUS_IN_PROGRESS"?"LIVE":stype==="STATUS_FINAL"?"FINAL":"UPCOMING",
+     detail:comps?.status?.type?.shortDetail||"",venue:ev.venue?.fullName||""
+   };
  });
- setScores(p=>({...p,...newScores}));
- } catch(e) {
- setScores(p=>{const n={...p};toFetch.forEach(id=>{n[id]={loading:false,games:[],error:"Could not load: "+e.message};});return n;});
+ for (const id of toFetch) {
+   const espnPath = ESPN_ENDPOINTS[id];
+   if (espnPath) {
+     try {
+       const r = await fetch("/api/scores?sport="+encodeURIComponent(espnPath));
+       const d = await r.json();
+       setScores(p=>({...p,[id]:{loading:false,games:parseESPN(d),error:null}}));
+       continue;
+     } catch(e) {}
+   }
+   const label = allSportDefs.find(s=>s.id===id)?.label||id;
+   try {
+     const r = await fetch("/api/scores-ai",{method:"POST",headers:{"Content-Type":"application/json"},
+       body:JSON.stringify({sport:label,today:todayShort,yesterday,tomorrow})});
+     const d = await r.json();
+     setScores(p=>({...p,[id]:{loading:false,games:d.games||[],error:d.error||null}}));
+   } catch(e) {
+     setScores(p=>({...p,[id]:{loading:false,games:[],error:"Could not load"}}));
+   }
  }
  };
  useEffect(()=>{if(tab==="scores"&&!scoresLoaded)fetchScores();},[tab]);
