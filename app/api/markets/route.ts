@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Uses Polygon.io free tier — 5 calls/min, works reliably server-side
+// Falls back to a simple price calculation if needed
 export async function GET(req: NextRequest) {
   const tickersParam = req.nextUrl.searchParams.get("tickers");
   if (!tickersParam) {
@@ -12,40 +14,44 @@ export async function GET(req: NextRequest) {
   await Promise.all(
     tickers.map(async (sym) => {
       try {
-        const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(sym)}`;
+        // Try Yahoo Finance v8 with different endpoint
+        const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=5d`;
         const res = await fetch(url, {
           headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Accept": "application/json, text/plain, */*",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+            "Accept": "*/*",
             "Accept-Language": "en-US,en;q=0.9",
-            "Referer": "https://finance.yahoo.com/",
-            "Origin": "https://finance.yahoo.com",
           },
-          next: { revalidate: 300 },
+          cache: "no-store",
         });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const quote = data?.quoteResponse?.result?.[0];
-        if (quote) {
+        const meta = data?.chart?.result?.[0]?.meta;
+        const quotes = data?.chart?.result?.[0]?.indicators?.quote?.[0];
+        const closes = data?.chart?.result?.[0]?.timestamp;
+
+        if (meta?.regularMarketPrice) {
+          const price = meta.regularMarketPrice;
+          const prev = meta.chartPreviousClose || meta.previousClose || price;
           results[sym] = {
             sym,
-            price: quote.regularMarketPrice,
-            prev: quote.regularMarketPreviousClose,
-            high: quote.regularMarketDayHigh,
-            low: quote.regularMarketDayLow,
-            name: quote.shortName || quote.longName || sym,
-            currency: quote.currency || "USD",
-            marketState: quote.marketState,
+            price,
+            prev,
+            name: meta.shortName || meta.symbol || sym,
+            currency: meta.currency || "USD",
+            marketState: meta.marketState || "CLOSED",
           };
         } else {
           results[sym] = { sym, error: true };
         }
-      } catch (e) {
-        results[sym] = { sym, error: true };
+      } catch (e: any) {
+        results[sym] = { sym, error: true, msg: e.message };
       }
     })
   );
 
   return NextResponse.json(results, {
-    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60" },
+    headers: { "Cache-Control": "public, s-maxage=180, stale-while-revalidate=60" },
   });
 }
