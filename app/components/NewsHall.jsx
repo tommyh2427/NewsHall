@@ -768,7 +768,7 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
  </div>
  <div className="gen-btns">
  <button className="btn-gen" onClick={generate} disabled={phase==="loading"}>{phase==="loading"?"Generating...":"Generate brief"}</button>
- <button className="btn-sched" onClick={()=>{if(!topics.length){showToast("Add topics first");return;}setModal(true);}}>Schedule daily -></button>
+ <button className="btn-sched" onClick={()=>{if(!topics.length){showToast("Add topics first");return;}setModal(true);}}>Schedule daily</button>
  </div>
  </div>
  </div>
@@ -1090,7 +1090,7 @@ Include ALL games found. If a sport truly has no games in this 48hr window, leav
  </div>
  </nav>
 
- {modal&&(<div className="mover" onClick={e=>e.target===e.currentTarget&&setModal(false)}><div className="mbox"><button className="mx" onClick={()=>setModal(false)}></button><h3>Schedule your brief</h3><p>Your personalized digest, delivered every morning before you wake up.</p><div className="msum">{`TOPICS   ${topics.join(", ")}\n\nTIME     ${settings.time}${detectedTz ? " ("+detectedTz+")" : ""}\nDAYS     ${settings.days}\nEMAIL    ${settings.email||"not entered"}\nFORMAT   ${settings.fmt}`}</div><div className="mbtns"><button className="btn-cancel" onClick={()=>setModal(false)}>Cancel</button><button className="btn-ok" onClick={()=>{if(!settings.email){setModal(false);showToast("Enter your email first");return;}setModal(false);showToast("Scheduled " + topics.length + " topics to " + settings.email + " daily");}}>Confirm -></button></div></div></div>)}
+ {modal&&(<div className="mover" onClick={e=>e.target===e.currentTarget&&setModal(false)}><div className="mbox"><button className="mx" onClick={()=>setModal(false)}></button><h3>Schedule your brief</h3><p>Your personalized digest, delivered every morning before you wake up.</p><div className="msum">{`TOPICS   ${topics.join(", ")}\n\nTIME     ${settings.time}${detectedTz ? " ("+detectedTz+")" : ""}\nDAYS     ${settings.days}\nEMAIL    ${settings.email||"not entered"}\nFORMAT   ${settings.fmt}`}</div><div className="mbtns"><button className="btn-cancel" onClick={()=>setModal(false)}>Cancel</button><button className="btn-ok" onClick={()=>{if(!settings.email){setModal(false);showToast("Enter your email first");return;}setModal(false);showToast("Scheduled " + topics.length + " topics to " + settings.email + " daily");}}>Confirm</button></div></div></div>)}
  {toast&&<div className="toast">{toast}</div>}
  </>);
 }
