@@ -60,18 +60,6 @@ const SUGGESTIONS=[
 ];
 
 // Team colors and abbreviations for logo badges
-const TICKERS=[
- {sym:"^GSPC",label:"S&P 500",type:"index"},{sym:"^DJI",label:"Dow Jones",type:"index"},
- {sym:"^IXIC",label:"Nasdaq",type:"index"},{sym:"^RUT",label:"Russell 2000",type:"index"},
- {sym:"AAPL",label:"Apple",type:"stock"},{sym:"MSFT",label:"Microsoft",type:"stock"},
- {sym:"NVDA",label:"Nvidia",type:"stock"},{sym:"GOOGL",label:"Alphabet",type:"stock"},
- {sym:"AMZN",label:"Amazon",type:"stock"},{sym:"TSLA",label:"Tesla",type:"stock"},
- {sym:"META",label:"Meta",type:"stock"},{sym:"BTC-USD",label:"Bitcoin",type:"crypto"},
- {sym:"ETH-USD",label:"Ethereum",type:"crypto"},{sym:"SOL-USD",label:"Solana",type:"crypto"},
-];
-
-
-
 const CSS=`
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -319,6 +307,55 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#faf7f2;color:#1a1f2e
 .mob-tab-ico{font-size:1.3rem;line-height:1;}
 .mob-tab-lbl{font-family:'DM Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:#9ca3af;font-weight:500;}
 .mob-tab.active .mob-tab-lbl{color:#3b6fd4;font-weight:700;}
+/* ── HOME WEATHER WIDGET ── */
+.home-wx{background:linear-gradient(135deg,#0f1729,#162040);padding:18px 36px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.06);}
+.home-wx-label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);white-space:nowrap;}
+.home-wx-search{position:relative;flex:1;min-width:180px;max-width:280px;}
+.home-wx-input{width:100%;background:rgba(255,255,255,0.09);border:1.5px solid rgba(255,255,255,0.14);border-radius:9px;padding:9px 13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.83rem;color:#fff;outline:none;}
+.home-wx-input::placeholder{color:rgba(255,255,255,0.28);}
+.home-wx-dd{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1e2d55;border:1px solid rgba(255,255,255,0.12);border-radius:10px;box-shadow:0 10px 32px rgba(0,0,0,0.4);z-index:200;overflow:hidden;}
+.home-wx-opt{padding:9px 13px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;transition:background 0.1s;border-bottom:1px solid rgba(255,255,255,0.05);}
+.home-wx-opt:last-child{border-bottom:none;}.home-wx-opt:hover{background:rgba(255,255,255,0.08);}
+.home-wx-opt-n{font-size:0.82rem;font-weight:600;color:#fff;}
+.home-wx-opt-s{font-size:0.66rem;color:rgba(255,255,255,0.36);}
+.home-wx-card{display:flex;align-items:center;gap:16px;}
+.home-wx-temp{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;color:#fff;line-height:1;letter-spacing:-0.04em;}
+.home-wx-unit-sm{font-size:0.9rem;color:rgba(255,255,255,0.38);margin-left:1px;}
+.home-wx-info{display:flex;flex-direction:column;gap:1px;}
+.home-wx-city{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.32);}
+.home-wx-cond{font-size:0.78rem;color:rgba(255,255,255,0.55);font-weight:500;}
+.home-wx-stats{display:flex;gap:12px;}
+.home-wx-sv{font-size:0.76rem;font-weight:600;color:rgba(255,255,255,0.7);}
+.home-wx-sl{font-family:'DM Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-top:1px;}
+.home-wx-btns{display:flex;gap:6px;margin-left:auto;}
+.home-wx-unit-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.4);border-radius:6px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:0.54rem;cursor:pointer;letter-spacing:0.06em;}
+.home-wx-clear{background:none;border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.22);border-radius:6px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.08em;cursor:pointer;}
+/* ── BRIEF SCORES STRIP ── */
+.brief-scores{margin-bottom:16px;border-radius:11px;overflow:hidden;border:1px solid rgba(15,23,41,0.08);}
+.brief-scores-hd{background:#0f1729;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;}
+.brief-scores-title{font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.38);}
+.brief-scores-league{font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.08em;text-transform:uppercase;color:#5585e8;}
+.brief-scores-games{background:#fff;display:flex;overflow-x:auto;gap:0;-webkit-overflow-scrolling:touch;}
+.bs-game{min-width:140px;padding:11px 13px;border-right:1px solid rgba(15,23,41,0.07);flex-shrink:0;}
+.bs-game:last-child{border-right:none;}
+.bs-status{font-family:'DM Mono',monospace;font-size:0.46rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:7px;font-weight:600;}
+.bs-status.live{color:#ef4444;}.bs-status.final{color:#6b7280;}.bs-status.upcoming{color:#3b6fd4;}
+.bs-team{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-bottom:3px;}
+.bs-team:last-child{margin-bottom:0;}
+.bs-name{font-size:0.74rem;font-weight:700;color:#0f1729;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.bs-score{font-family:'Fraunces',serif;font-size:0.95rem;font-weight:700;color:#0f1729;min-width:18px;text-align:right;}
+.bs-team.loser .bs-name,.bs-team.loser .bs-score{color:#9ca3af;}
+.bs-divider{border:none;border-top:1px solid rgba(15,23,41,0.07);margin:4px 0;}
+/* ── BRIEF MARKETS STRIP ── */
+.brief-markets{background:#0f1729;border-radius:11px;padding:14px 16px;margin-bottom:16px;}
+.brief-markets-hd{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:11px;}
+.brief-markets-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.bm-ticker{}
+.bm-sym{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:2px;}
+.bm-name{font-size:0.62rem;color:rgba(255,255,255,0.45);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bm-price{font-family:'Fraunces',serif;font-size:0.92rem;font-weight:700;color:#fff;line-height:1;margin-bottom:2px;}
+.bm-chg{font-family:'DM Mono',monospace;font-size:0.52rem;font-weight:500;}
+.bm-chg.up{color:#4ade80;}.bm-chg.down{color:#f87171;}.bm-chg.flat{color:rgba(255,255,255,0.28);}
 @media(max-width:860px){
  .sidebar{display:none;}
  .mob-nav{display:block;}
@@ -476,32 +513,17 @@ export default function NewsHall() {
    setBriefScores(results);
  };
 
- // Markets
- const [mktData, setMktData] = useState({});
- const [mktLoading, setMktLoading] = useState(false);
- const [mktLoaded, setMktLoaded] = useState(false);
- const [mktFilter, setMktFilter] = useState("all");
- const [customTicker, setCustomTicker] = useState("");
- const [watchlist, setWatchlist] = useState(["^GSPC","^DJI","^IXIC","AAPL","NVDA","TSLA","BTC-USD"]);
-
- const fetchMarkets = async () => {
- setMktLoading(true);
- const results={};
- try {
-   const res=await fetch("/api/markets?tickers="+watchlist.map(encodeURIComponent).join(","));
-   const data=await res.json();
-   const enriched={};
-   Object.entries(data).forEach(([sym,d])=>{const meta=TICKERS.find(t=>t.sym===sym);enriched[sym]={...d,name:meta?.label||sym,type:meta?.type||"stock",sym};});
-   setMktData(enriched);
- } catch(e){console.error(e);}
- setMktLoading(false);setMktLoaded(true);
- };
- useEffect(()=>{if(tab==="markets"&&!mktLoaded)fetchMarkets();},[tab]);
-
- const addTicker = () => {
- const s=customTicker.trim().toUpperCase();if(!s||watchlist.includes(s))return;
- setWatchlist(p=>[...p,s]);setCustomTicker("");
- fetch("/api/markets?tickers="+encodeURIComponent(s)).then(r=>r.json()).then(data=>{if(data[s])setMktData(p=>({...p,[s]:{...data[s],name:s,type:"stock",sym:s}}));}).catch(()=>{});
+ // Brief markets — auto-fetch when market/finance topics in brief
+ const [briefMarkets, setBriefMarkets] = useState(null);
+ const BRIEF_MARKET_TICKERS = ["^GSPC","^DJI","^IXIC","GC=F","CL=F","BTC-USD","ETH-USD"];
+ const MARKET_KEYWORDS = ["market","stock","finance","invest","nasdaq","dow","s&p","nyse","wall street","crypto","bitcoin","commodit","oil","gold","trading","equit","fund","bond","treasury","federal reserve","fed ","interest rate","inflation","economy","economic"];
+ const detectMarkets = (topicList) => topicList.some(t => MARKET_KEYWORDS.some(k => t.toLowerCase().includes(k)));
+ const fetchBriefMarkets = async () => {
+   try {
+     const res = await fetch("/api/markets?tickers="+BRIEF_MARKET_TICKERS.map(encodeURIComponent).join(","));
+     const data = await res.json();
+     setBriefMarkets(data);
+   } catch(e) { console.error(e); }
  };
 
  // News
@@ -524,7 +546,7 @@ export default function NewsHall() {
       const parsed=await res.json();
       if(parsed.error)throw new Error(parsed.error);
       if(!Array.isArray(parsed.topics)||!parsed.topics.length)throw new Error("No topics in response");
-      setBrief(parsed);setPhase("done");fetchBriefScores(topics);setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
+      setBrief(parsed);setPhase("done");fetchBriefScores(topics);if(detectMarkets(topics))fetchBriefMarkets();setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
     }catch(err){setBrief({error:true,raw:String(err.message||err)});setPhase("done");}
  };
 
@@ -547,9 +569,9 @@ export default function NewsHall() {
   };
   useEffect(()=>{ if(tab==="daily"&&!boost&&!boostLoading)fetchBoost(); },[tab]);
 
-  const NAVS=[{id:"home",icon:"news",label:"Morning Brief"},{id:"weather",label:"Weather"},{id:"markets",label:"Markets"},{id:"daily",label:"Daily Boost"}];
- const PTITLES={home:"NewsHall",weather:"Weather",markets:"Markets",daily:"Daily Boost"};
- const PSUBS={home:"Your personalized news digest",weather:"Local forecast & hourly",markets:"Stocks, indices & crypto",daily:"Your daily quote, tip & habit"};
+  const NAVS=[{id:"home",icon:"news",label:"Morning Brief"},{id:"daily",label:"Daily Boost"}];
+ const PTITLES={home:"NewsHall",daily:"Daily Boost"};
+ const PSUBS={home:"Your personalized news digest",daily:"Your daily quote, tip & habit"};
 
  return (<>
  <style>{CSS}</style>
@@ -605,6 +627,51 @@ export default function NewsHall() {
  ))}
  </div>
  </section>
+ {/* HOME WEATHER WIDGET */}
+ <div className="home-wx">
+   <span className="home-wx-label">Weather</span>
+   <div className="home-wx-search">
+     <input
+       className="home-wx-input"
+       placeholder="Search city..."
+       value={wxIn}
+       onChange={e=>searchCities(e.target.value)}
+       autoComplete="off"
+       spellCheck="false"
+     />
+     {wxSuggs.length>0&&(
+       <div className="home-wx-dd">
+         {wxSuggs.map((c,i)=>(
+           <div key={i} className="home-wx-opt" onMouseDown={e=>{e.preventDefault();pickCity(c);}}>
+             <span className="home-wx-opt-n">{c.n}</span>
+             <span className="home-wx-opt-s">{[c.s,c.c].filter(Boolean).join(", ")}</span>
+           </div>
+         ))}
+       </div>
+     )}
+   </div>
+   {wx==="loading"&&<div className="spin" style={{width:18,height:18,borderWidth:2,margin:0,flexShrink:0}}/>}
+   {wx&&wx.city&&(
+     <div className="home-wx-card">
+       <div>
+         <div className="home-wx-temp">{showTN(wx.tempC)}<span className="home-wx-unit-sm">°{wUnit}</span></div>
+       </div>
+       <div className="home-wx-info">
+         <div className="home-wx-city">{wx.city}</div>
+         <div className="home-wx-cond">{wDesc(wx.code)}</div>
+       </div>
+       <div className="home-wx-stats">
+         <div><div className="home-wx-sv">{showT(wx.feelsC)}</div><div className="home-wx-sl">Feels like</div></div>
+         <div><div className="home-wx-sv">{wx.wind} mph</div><div className="home-wx-sl">Wind</div></div>
+         <div><div className="home-wx-sv">{wx.humidity}%</div><div className="home-wx-sl">Humidity</div></div>
+       </div>
+       <div className="home-wx-btns">
+         <button className="home-wx-unit-btn" onClick={()=>setWUnit(u=>u==="F"?"C":"F")}>°{wUnit==="F"?"C":"F"}</button>
+         <button className="home-wx-clear" onClick={()=>{setWx(null);setWxIn("");}}>Clear</button>
+       </div>
+     </div>
+   )}
+ </div>
  <div className="trust"><span></span><p><strong>Fact-first, editorially neutral.</strong> NewsHall sources exclusively from outlets with a demonstrated commitment to straight-news reporting. We deliberately avoid sources with strong editorial bias. You get the facts, not the spin.</p></div>
  <div className="features">
  {[{cls:"fi-b",title:"Fully personalized",body:"Choose from popular topics or type anything. Your brief, your way."},{cls:"fi-c",title:"Linked to the source",body:"Every story links directly to the original article. Read the full piece, verify the facts."},{cls:"fi-g",title:"Ready at dawn",body:"Set your time once. Your personalized digest lands before your alarm every morning."}].map(f=>(
@@ -685,133 +752,28 @@ return(<div key={i} className="bs-game">
 ))}
 </div>
 )}
+{briefMarkets&&Object.keys(briefMarkets).length>0&&(
+<div className="brief-markets">
+<div className="brief-markets-hd">Markets</div>
+<div className="brief-markets-grid">
+{[{sym:"^GSPC",label:"S&P 500"},{sym:"^DJI",label:"Dow"},{sym:"^IXIC",label:"Nasdaq"},{sym:"GC=F",label:"Gold"},{sym:"CL=F",label:"Oil"},{sym:"BTC-USD",label:"Bitcoin"},{sym:"ETH-USD",label:"Ethereum"}].map(({sym,label})=>{
+  const d=briefMarkets[sym];
+  if(!d||d.error)return null;
+  const chg=d.price&&d.prev?d.price-d.prev:null;
+  const pct=chg&&d.prev?(chg/d.prev)*100:null;
+  const dir=chg==null?"flat":chg>0?"up":chg<0?"down":"flat";
+  const fmt=p=>{if(!p)return"--";if(p>10000)return p.toLocaleString("en-US",{maximumFractionDigits:0});if(p>100)return p.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});return p.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:4});};
+  return(<div key={sym} className="bm-ticker"><div className="bm-sym">{label}</div><div className="bm-price">{fmt(d.price)}</div><div className={`bm-chg ${dir}`}>{dir==="up"?"+":" "}{pct!=null?pct.toFixed(2)+"%":"--"}</div></div>);
+})}
+</div>
+</div>
+)}
  <div>{(brief.topics||[]).map((tg,ti)=>{const stories=Array.isArray(tg.stories)?tg.stories:[];return(<div key={ti} className="topic-group"><div className="tg-header"><span className="tg-name">{tg.topic}</span><span className="tg-count">{stories.length} {stories.length===1?"story":"stories"}</span></div><div className="story-list">{stories.map((st,si)=>{const hasUrl=st.url&&st.url.startsWith("http");const url=hasUrl?st.url:"https://news.google.com/search?q="+encodeURIComponent(clean(st.headline)+" "+(st.source||""));return(<a key={si} className="story-row" href={url} target="_blank" rel="noopener noreferrer"><div className="story-row-main"><div className="story-row-hl">{clean(st.headline)}</div>{st.summary&&<div className="story-row-sum">{clean(st.summary)}</div>}</div><div className="story-row-meta">{st.source&&<span className="story-row-src">{st.source}</span>}<span className="story-row-arrow">Read</span></div></a>);})}</div></div>);})}</div>
  {brief.watchToday&&(<div className="watch"><div><div className="watch-lbl">Watch today</div><div className="watch-txt">{clean(brief.watchToday)}</div></div></div>)}
  {brief.topics?.some(tg=>tg.stories?.some(s=>s.source))&&(<div className="srcfooter"><strong>Sources </strong>{[...new Set(brief.topics.flatMap(tg=>(tg.stories||[]).map(s=>s.source)).filter(Boolean))].join(" - ")}</div>)}</>
  )}
  </div>
  )}
- </div>
-
- {/* WEATHER */}
- <div className={`page${tab==="weather"?" active":""}`}>
- <div className="wx-page">
-
- {/* Ask for location */}
- {wx==="asking"&&(
- <div className="wx-permission">
- <div className="wx-perm-icon"></div>
- <h2 className="wx-perm-title">See your local weather</h2>
- <p className="wx-perm-sub">Allow location access to get current conditions and hourly forecast for your area automatically.</p>
- <button className="wx-perm-btn" onClick={requestLocation}>Allow location access</button>
- <button className="wx-perm-skip" onClick={()=>setWx("denied")}>No thanks</button>
- </div>
- )}
-
- {/* Loading */}
- {wx==="loading"&&(
- <div style={{textAlign:"center",padding:"64px 20px"}}>
- <div className="spin" style={{margin:"0 auto 16px"}}/>
- <p style={{fontFamily:"'Fraunces',serif",fontSize:"1.1rem",fontWeight:700,color:"#0f1729",marginBottom:"5px"}}>Fetching your weather...</p>
- <p style={{fontSize:"0.78rem",color:"#9ca3af"}}>Getting your location and current conditions</p>
- </div>
- )}
-
- {/* Denied */}
- {wx==="denied"&&(
- <div className="wx-permission">
- <div className="wx-perm-icon"></div>
- <h2 className="wx-perm-title">Location not available</h2>
- <p className="wx-perm-sub">Location access was denied or isn't available in this environment. When you publish NewsHall, users will be able to grant location access normally.</p>
- <button className="wx-perm-btn" onClick={requestLocation}>Try again</button>
- </div>
- )}
-
- {/* Idle */}
- {wx==="idle"&&(
- <div className="wx-permission">
- <div className="wx-perm-icon"></div>
- <h2 className="wx-perm-title">Weather</h2>
- <p className="wx-perm-sub">Get your local weather forecast, current conditions, and hourly breakdown.</p>
- <button className="wx-perm-btn" onClick={requestLocation}>Get my weather</button>
- </div>
- )}
-
- {/* Weather data */}
- {wx&&wx.city&&(
- <div className="wx-card">
- <div className="wx-card-top">
- <div className="wx-big-ico" style={{fontSize:"1.2rem",fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",color:"rgba(255,255,255,0.9)"}}>{wIcon(wx.code)}</div>
- <div>
- <div className="wx-city-n">{wx.city}</div>
- <div className="wx-temp">{showTN(wx.tempC)}<span className="wx-unit-sm">{wUnit}</span></div>
- <div className="wx-cond">{wDesc(wx.code)}</div>
- </div>
- <div className="wx-stats-g">
- <div className="wx-stat-b"><div className="wx-sv">{showT(wx.feelsC)}</div><div className="wx-sl">Feels like</div></div>
- <div className="wx-stat-b"><div className="wx-sv">{wx.wind} mph</div><div className="wx-sl">Wind</div></div>
- <div className="wx-stat-b"><div className="wx-sv">{wx.humidity}%</div><div className="wx-sl">Humidity</div></div>
- <div className="wx-stat-b"><div className="wx-sv" style={{fontSize:"0.9rem",color:"rgba(255,255,255,0.5)"}}>Today</div><div className="wx-sl">{new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}</div></div>
- </div>
- </div>
- <div className="wx-actions">
- <button className="wx-ub" onClick={()=>setWUnit(u=>u==="F"?"C":"F")}>Switch to {wUnit==="F"?"C":"F"}</button>
- <button className="wx-cb" onClick={requestLocation}>Refresh</button>
- </div>
- {wx.hrs&&wx.hrs.length>0&&(
- <div className="wx-hourly">
- {wx.hrs.map((h,i)=>(
- <div key={i} className="wx-hr">
- <div className="wx-hr-t">{h.label}</div>
- <div className="wx-hr-i" style={{fontSize:"0.65rem",fontWeight:700,color:"rgba(255,255,255,0.6)"}}>{wIcon(h.code)}</div>
- <div className="wx-hr-v">{showT(h.tempC)}</div>
- </div>
- ))}
- </div>
- )}
- </div>
- )}
- </div>
- </div>
-
- {/* MARKETS */}
- <div className={`page${tab==="markets"?" active":""}`}>
- <div className="markets-page">
- <div className="mkt-filters">
- {["all","index","stock","crypto"].map(f=><button key={f} className={`mkt-fb${mktFilter===f?" on":""}`} onClick={()=>setMktFilter(f)}>{f==="all"?"All":f==="index"?"Indices":f==="stock"?"Stocks":"Crypto"}</button>)}
- <button className="mkt-refresh" onClick={()=>{setMktLoaded(false);setMktData({});setTimeout(fetchMarkets,100);}}>Refresh</button>
- </div>
- {mktLoading&&<div style={{textAlign:"center",padding:"44px 0"}}><div className="spin" style={{margin:"0 auto 12px"}}/><p style={{color:"#6b7280",fontSize:"0.8rem"}}>Fetching market data...</p></div>}
- {!mktLoading&&mktLoaded&&(()=>{
- const grouped={index:[],stock:[],crypto:[]};
- watchlist.forEach(sym=>{const d=mktData[sym];if(!d)return;const type=d.type||TICKERS.find(t=>t.sym===sym)?.type||"stock";if(!grouped[type])grouped[type]=[];grouped[type].push({...d,sym});});
- return[{key:"index",label:"Indices"},{key:"stock",label:"Stocks"},{key:"crypto",label:"Crypto"}].filter(s=>mktFilter==="all"||mktFilter===s.key).filter(s=>grouped[s.key]?.length>0).map(s=>(
- <div key={s.key} className="mkt-sec">
- <div className="mkt-sec-t">{s.label}</div>
- <div className="tickers-grid">
- {grouped[s.key].map(d=>{
- const chg=d.price&&d.prev?d.price-d.prev:null;const pct=chg&&d.prev?(chg/d.prev)*100:null;
- const dir=chg==null?"flat":chg>0?"up":chg<0?"down":"flat";
- const fmt=p=>{if(p==null)return"--";if(p>10000)return p.toLocaleString("en-US",{maximumFractionDigits:0});if(p>100)return p.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});return p.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:4});};
- return(<div key={d.sym} className="ticker-card">
- <button className="ticker-rm" onClick={()=>setWatchlist(p=>p.filter(x=>x!==d.sym))}></button>
- <div className="ticker-sym">{d.sym}</div><div className="ticker-name">{d.name}</div>
- {d.error?<div style={{fontSize:"0.7rem",color:"#9ca3af"}}>Could not load</div>:<><div className="ticker-price">{fmt(d.price)}</div><div className={`ticker-chg ${dir}`}>{dir==="up"?"":dir==="down"?"":"--"}{chg!=null?` ${Math.abs(chg).toFixed(s.key==="crypto"&&d.price<10?4:2)}`:""}{pct!=null?` (${pct>=0?"+":""}${pct.toFixed(2)}%)`:" "}</div></>}
- </div>);
- })}
- </div>
- </div>
- ));
- })()}
- {mktLoaded&&<div className="mkt-sec" style={{marginTop:8}}>
- <div className="mkt-sec-t">Add to Watchlist</div>
- <div className="mkt-add-row">
- <input className="mkt-add-in" placeholder="Ticker symbol (e.g. NFLX, AMD, DOGE-USD)..." value={customTicker} onChange={e=>setCustomTicker(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTicker()}/>
- <button className="mkt-add-btn" onClick={addTicker}>+ Add</button>
- </div>
- </div>}
- {!mktLoaded&&!mktLoading&&<div style={{textAlign:"center",padding:"44px 0",color:"#9ca3af"}}><div style={{fontSize:"2.8rem",marginBottom:"12px"}}></div><p style={{fontFamily:"'Fraunces',serif",fontSize:"1.05rem",fontWeight:700,color:"#6b7280"}}>Loading market data...</p></div>}
- </div>
  </div>
 
           {/* DAILY BOOST */}
