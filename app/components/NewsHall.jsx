@@ -407,6 +407,26 @@ export default function NewsHall() {
  const c2f = c => Math.round(c*9/5+32);
  const showT = c => wUnit==="F" ? c2f(c)+" F" : Math.round(c)+" C";
  const showTN = c => wUnit==="F" ? c2f(c) : Math.round(c);
+ const wIcon = code => {if(code<=1)return"Clear";if(code<=3)return"Partly Cloudy";if(code<=48)return"Foggy";if(code<=55)return"Drizzle";if(code<=65)return"Rain";if(code<=77)return"Snow";if(code<=82)return"Showers";return"Storm";};
+ const wDesc = code => {if(code<=1)return"Clear skies";if(code<=3)return"Partly cloudy";if(code<=48)return"Foggy";if(code<=55)return"Drizzle";if(code<=65)return"Rain";if(code<=77)return"Snow";if(code<=82)return"Showers";return"Thunderstorm";};
+
+ // Weather search state for home widget
+ const [wxIn, setWxIn] = useState("");
+ const [wxSuggs, setWxSuggs] = useState([]);
+
+ const searchCities = val => {
+   setWxIn(val);
+   if(val.trim().length<1){setWxSuggs([]);return;}
+   const q=val.toLowerCase().trim();
+   setWxSuggs(CITIES.filter(c=>c.n.toLowerCase().startsWith(q)||c.n.toLowerCase().includes(q)).sort((a,b)=>{const as=a.n.toLowerCase().startsWith(q)?0:1,bs=b.n.toLowerCase().startsWith(q)?0:1;return as-bs||a.n.localeCompare(b.n);}).slice(0,6));
+ };
+
+ const pickCity = async city => {
+   setWxSuggs([]);
+   setWxIn([city.n,city.s,city.c].filter(Boolean).join(", "));
+   fetchWxByCoords(city.lat, city.lon, [city.n,city.s,city.c].filter(Boolean).join(", "));
+ };
+
 
  const fetchWxByCoords = async (lat, lon, label) => {
  setWx("loading");
@@ -667,7 +687,7 @@ export default function NewsHall() {
        </div>
        <div className="home-wx-btns">
          <button className="home-wx-unit-btn" onClick={()=>setWUnit(u=>u==="F"?"C":"F")}>°{wUnit==="F"?"C":"F"}</button>
-         <button className="home-wx-clear" onClick={()=>{setWx(null);setWxIn("");}}>Clear</button>
+         <button className="home-wx-clear" onClick={()=>{setWx("idle");setWxIn("");setWxSuggs([]);}}>Clear</button>
        </div>
      </div>
    )}
