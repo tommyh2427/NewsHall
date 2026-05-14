@@ -82,7 +82,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--rule);padding:0 48px;height:56px;display:flex;align-items:center;justify-content:space-between;}
 .tb-wordmark{display:flex;align-items:center;gap:0;}
 .tb-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;color:var(--ink);letter-spacing:-0.03em;line-height:1;}
-.tb-edition{font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);margin-left:10px;padding-left:10px;border-left:1px solid var(--rule);align-self:center;}
+.tb-edition{font-size:0.58rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);margin-left:10px;padding-left:10px;border-left:1px solid var(--rule);align-self:center;display:none;}
+@media(min-width:600px){.tb-edition{display:block;}}
 .tb-auth{display:flex;align-items:center;gap:8px;}
 .auth-user{font-size:0.78rem;font-weight:500;color:var(--ink-3);}
 .auth-btn{font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:600;padding:7px 18px;border-radius:7px;cursor:pointer;transition:all 0.15s;border:none;letter-spacing:0.01em;}
@@ -95,9 +96,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
 
 /* ── HERO ── */
-.hero{background:var(--ink);padding:0;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;min-height:600px;}
+.hero{background:var(--ink);padding:0;display:grid;grid-template-columns:1fr;position:relative;overflow:hidden;min-height:600px;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 100% at 0% 60%,rgba(26,58,107,0.65) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 100% 10%,rgba(200,16,46,0.08) 0%,transparent 55%);pointer-events:none;z-index:0;}
-.hero-l{position:relative;z-index:2;padding:88px 56px 80px 52px;display:flex;flex-direction:column;justify-content:center;}
+.hero-l{position:relative;z-index:2;padding:88px 56px 80px 52px;display:flex;flex-direction:column;justify-content:center;max-width:720px;}
 .hero-date{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:20px;}
 .hero-eyebrow{display:none;}
 .hero-h1{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,5.8vw,6rem);font-weight:900;line-height:0.97;letter-spacing:-0.04em;color:#fff;margin-bottom:28px;}
@@ -122,7 +123,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .prev-tag{font-size:0.58rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:3px 9px;border-radius:5px;white-space:nowrap;margin-top:2px;flex-shrink:0;}
 .prev-txt{font-size:0.84rem;color:rgba(255,255,255,0.5);line-height:1.55;font-weight:400;}
 .prev-txt strong{color:rgba(255,255,255,0.85);font-weight:600;}
-.hero-stats{grid-column:span 2;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(255,255,255,0.06);position:relative;z-index:2;}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(255,255,255,0.06);position:relative;z-index:2;}
 .hstat{padding:22px 52px;border-right:1px solid rgba(255,255,255,0.05);}
 .hstat:last-child{border-right:none;}
 .hstat-n{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1;}
@@ -540,15 +541,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
  .loading{padding:56px 20px;}
  .no-brief-inner{padding:40px 24px;}
  .saved-brief-bar{padding:10px 22px;}
+ .stats-inner{grid-template-columns:1fr 1fr;}
+ .stat-block{border-bottom:1px solid var(--rule);padding:28px 22px;}
+ .stat-block:nth-child(odd){border-right:1px solid var(--rule);}
+ .stat-block:nth-child(even){border-right:none;}
+ .how-steps{grid-template-columns:1fr;}
+ .how-steps::before{display:none;}
+ .how-section{padding:64px 22px;}
+ .demo-section{padding:64px 22px;}
 }
 @media(max-width:500px){
  .sgrid,.tickers-grid,.games-grid{grid-template-columns:1fr;}
  .pillars{grid-template-columns:1fr;}
  .tg-stories,.tg-stories.n2,.tg-stories.n3,.tg-stories.n4,.tg-stories.n5,.tg-stories.n6,.tg-stories.n7,.tg-stories.n8,.tg-stories.n9,.tg-stories.n10{grid-template-columns:1fr;}
  .hero-badges{gap:6px;}
- .demo-inner{grid-template-columns:1fr;gap:48px;} .stats-inner{grid-template-columns:1fr 1fr;} .stat-block{border-bottom:1px solid var(--rule);} .how-steps{grid-template-columns:1fr;} .demo-section{padding:64px 22px;} .how-section{padding:64px 22px;}
+ .stats-inner{grid-template-columns:1fr 1fr;}
 }
-@media(max-width:500px){.stats-inner{grid-template-columns:1fr;}}
 
 /* SCROLL ANIMATIONS */
 .anim{opacity:0;transform:translateY(28px);transition:opacity 0.7s cubic-bezier(0.22,1,0.36,1),transform 0.7s cubic-bezier(0.22,1,0.36,1);}
@@ -566,7 +574,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 /* DEMO SECTION */
 .demo-section{background:var(--ink);padding:100px 48px;position:relative;overflow:hidden;}
 .demo-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 110%,rgba(26,58,107,0.5) 0%,transparent 65%);pointer-events:none;}
-.demo-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:2;}
+.demo-inner{max-width:620px;margin:0 auto;display:block;position:relative;z-index:2;}
+.demo-card{display:none;}
 .demo-eyebrow{font-size:0.64rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
 .demo-eyebrow::before{content:'';width:24px;height:2px;background:var(--accent);flex-shrink:0;}
 .demo-h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.0;margin-bottom:18px;}
@@ -691,6 +700,43 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 /* SMOOTH BRIEF IN */
 .brief-topic-section{animation:briefSectionIn 0.5s cubic-bezier(0.22,1,0.36,1) both;}
 @keyframes briefSectionIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── LANDING SLIDES ── */
+.ls{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px 80px;text-align:center;position:relative;overflow:hidden;}
+.ls-1{background:var(--ink);}
+.ls-2{background:#fff;}
+.ls-3{background:var(--bg-2);border-top:1px solid var(--rule);}
+/* Slide 1 */
+.ls1-hl{font-family:'Playfair Display',serif;font-size:clamp(4rem,16vw,7rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.88;margin-bottom:28px;}
+.ls1-hl em{color:var(--accent);font-style:italic;}
+.ls1-sub{font-size:1rem;color:rgba(255,255,255,0.42);line-height:1.7;max-width:320px;margin:0 auto 40px;font-weight:300;}
+.ls1-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;}
+.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;}
+.ls1-btn-p:hover{background:#e01535;}
+.ls1-btn-g{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.22);border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;width:100%;}
+.ls1-btn-g:hover{background:rgba(255,255,255,0.16);}
+.ls1-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;}
+.ls1-scroll-line{width:1px;height:32px;background:rgba(255,255,255,0.25);animation:lsScroll 2s ease-in-out infinite;}
+.ls1-scroll-label{font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:4px;}
+@keyframes lsScroll{0%,100%{transform:scaleY(1);opacity:0.3}50%{transform:scaleY(0.55);opacity:0.9}}
+/* Slide 2 */
+.ls2-label{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-4);margin-bottom:40px;}
+.ls2-list{display:flex;flex-direction:column;width:100%;max-width:420px;text-align:left;}
+.ls2-item{padding:22px 0;border-top:1px solid var(--rule);}
+.ls2-item:last-child{border-bottom:1px solid var(--rule);}
+.ls2-n{font-size:0.52rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.ls2-title{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,4vw,1.5rem);font-weight:800;color:var(--ink);letter-spacing:-0.03em;line-height:1.1;margin-bottom:4px;}
+.ls2-desc{font-size:0.78rem;color:var(--ink-3);line-height:1.6;}
+/* Slide 3 */
+.ls3-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.ls3-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;color:var(--ink);letter-spacing:-0.04em;line-height:1;margin-bottom:44px;}
+.ls3-steps{display:flex;flex-direction:column;gap:22px;width:100%;max-width:380px;text-align:left;margin-bottom:44px;}
+.ls3-step{display:flex;align-items:flex-start;gap:18px;}
+.ls3-num{width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ls3-step-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:3px;}
+.ls3-step-text{font-size:0.78rem;color:var(--ink-3);line-height:1.6;}
+.ls3-cta{background:var(--ink);color:#fff;border:none;border-radius:14px;padding:18px 40px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;max-width:300px;}
+.ls3-cta:hover{background:var(--accent);}
 `;
 
 export default function NewsHall() {
@@ -1272,59 +1318,56 @@ export default function NewsHall() {
      </div>
    </div>
  ) : (
-   /* ── LOGGED OUT → marketing hero ── */
-   <section className="hero">
-     <div className="hero-blob hero-blob-1"/>
-     <div className="hero-blob hero-blob-2"/>
-     <div className="hero-blob hero-blob-3"/>
-     <div className="hero-l">
-       <div className="hero-date">{today}</div>
-       <h1 className="hero-h1">
-         <span>News without</span>
-         <span>the <em>noise.</em></span>
-       </h1>
-       <p className="hero-deck">Your topics. Real sources. One brief, every morning — no spin, no noise, just what happened.</p>
-       <div className="hero-badges">
-         <span className="hero-badge"><span className="hero-badge-dot"></span>Straight-news sources only</span>
-         <span className="hero-badge"><span className="hero-badge-dot"></span>Every story cited</span>
-         <span className="hero-badge"><span className="hero-badge-dot"></span>Free to start</span>
-       </div>
-       <div className="hero-btns">
-         <button className="btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
-         <button className="btn-g" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>See how it works</button>
-       </div>
+   <>
+   {/* SLIDE 1: INTRO */}
+   <div className="ls ls-1">
+     <div className="hero-blob hero-blob-1"/><div className="hero-blob hero-blob-2"/>
+     <h1 className="ls1-hl">News<br/>without<br/>the <em>noise.</em></h1>
+     <p className="ls1-sub">Your topics. Real sources. One brief, every morning.</p>
+     <div className="ls1-btns">
+       <button className="ls1-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
+       <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
      </div>
-     <div className="hero-r">
-       <div className="prev-card">
-         <div className="prev-hd">
-           <div className="prev-title">Your Morning Brief</div>
-           <div className="prev-time">6:30 AM · Today</div>
+     <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
+   </div>
+   {/* SLIDE 2: WHY */}
+   <div className="ls ls-2">
+     <div className="ls2-label">Why NewsHall</div>
+     <div className="ls2-list">
+       {[
+         {n:"01",title:"Straight-news sources only",desc:"We pull from outlets built for reporting — not opinion, not outrage."},
+         {n:"02",title:"Every story linked and cited",desc:"Every headline goes straight to the original article. No paywalls, no dead ends."},
+         {n:"03",title:"Built fresh every morning",desc:"Your brief is scanned and written for your exact topics. Nobody else gets yours."},
+         {n:"04",title:"Ready before you wake up",desc:"Set a delivery time once and forget it. Your brief is there when your day starts."},
+       ].map(item=>(
+         <div className="ls2-item" key={item.n}>
+           <div className="ls2-n">{item.n}</div>
+           <div className="ls2-title">{item.title}</div>
+           <div className="ls2-desc">{item.desc}</div>
          </div>
-         {[{tag:"World News",txt:"Iran ceasefire deadline expires as US-Iran talks stall over key terms"},{tag:"Tech & AI",txt:"OpenAI releases new model as AI arms race intensifies among labs"},{tag:"Markets",txt:"S&P 500 slips 0.4% amid renewed US-Iran tensions and Fed uncertainty"},{tag:"NBA",txt:"Playoffs heating up as top seeds prepare for second-round matchups"}].map((item,i)=>(
-           <div className="prev-item" key={i}>
-             <span className="prev-tag">{item.tag}</span>
-             <div className="prev-txt"><strong>{item.txt}</strong></div>
-           </div>
-         ))}
-         <div style={{padding:"14px 28px",borderTop:"1px solid rgba(255,255,255,0.05)",marginTop:"auto"}}>
-           <button onClick={()=>{setAuthModal('signup');setAuthError('');}} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",fontFamily:"'JetBrains Mono',monospace",fontSize:"0.5rem",letterSpacing:"0.1em",textTransform:"uppercase",cursor:"pointer",padding:0}}>Sign up to get yours →</button>
-         </div>
-       </div>
-     </div>
-     <div className="hero-stats">
-       {[["Any","Topics"],["1","Brief per morning"],["100%","Live sourced & cited"]].map(([n,l])=>(
-         <div className="hstat" key={l}><div className="hstat-n">{n}</div><div className="hstat-l">{l}</div></div>
        ))}
      </div>
-   </section>
- )}
- {(!user||!brief)&&(<div className="ticker-tape">
-   <div className="ticker-inner">
-     {["World News","·","NBA","·","Stock Market","·","Mental Health","·","Climate","·","Formula 1","·","Women in Business","·","Tech & AI","·","US Politics","·","Travel","·","Fashion & Style","·","MLB","·","Science","·","Crypto","·","Film & TV","·","NFL","·","Food & Dining","·","Business","·","Entertainment","·","Personal Finance","·","Soccer","·","Health & Wellness","·","Real Estate","·","Music","·","World News","·","NBA","·","Stock Market","·","Mental Health","·","Climate","·","Formula 1","·","Women in Business","·","Tech & AI","·","US Politics","·","Travel","·","Fashion & Style","·","MLB","·","Science","·","Crypto","·","Film & TV","·","NFL","·","Food & Dining","·","Business","·","Entertainment","·","Personal Finance","·","Soccer","·","Health & Wellness","·","Real Estate","·","Music","·"].map((t,i)=>(
-       <span key={i} className={`ticker-item${t==="·"?" ticker-dot":""}`}>{t}</span>
-     ))}
    </div>
- </div>)}
+   {/* SLIDE 3: HOW + CTA */}
+   <div className="ls ls-3">
+     <div className="ls3-eyebrow">How it works</div>
+     <h2 className="ls3-hl">Up in 60 seconds</h2>
+     <div className="ls3-steps">
+       {[
+         {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche."},
+         {n:"02",title:"We do the reading",text:"Every morning we scan hundreds of sources and write your brief."},
+         {n:"03",title:"Wake up informed",text:"Your brief is waiting. Read it over coffee, no doomscrolling required."},
+       ].map(s=>(
+         <div className="ls3-step" key={s.n}>
+           <div className="ls3-num">{s.n}</div>
+           <div><div className="ls3-step-title">{s.title}</div><div className="ls3-step-text">{s.text}</div></div>
+         </div>
+       ))}
+     </div>
+     <button className="ls3-cta" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Start for free →</button>
+   </div>
+   </>
+ )}
  {user && savedBriefMeta && phase !== "loading" && (
    <div className="saved-brief-bar">
      <div>
@@ -1336,113 +1379,7 @@ export default function NewsHall() {
  )}
 
 
- {(!user||!brief)&&(<>
 
- {/* DEMO SECTION */}
- <section className="demo-section">
-   <div className="demo-inner">
-     <div className="anim">
-       <div className="demo-eyebrow">See what you get</div>
-       <h2 className="demo-h2">Your brief,<br/><em>beautifully</em> built</h2>
-       <p className="demo-desc">Every morning, we scan hundreds of sources across your chosen topics and surface what actually matters — the story, nothing else.</p>
-       <div className="demo-points">
-         {[{s:"Straight-news sources only.",r:" AP, Reuters, NPR, BBC — outlets known for reporting, not opinion."},{s:"Every claim cited.",r:" Every story links directly to the original article."},{s:"Yours alone.",r:" Nobody else gets your brief. It's built fresh for your exact topics."},{s:"Ready before you wake up.",r:" Set your time once and it's waiting when you open your eyes."}].map((p,i)=>(
-           <div className="demo-point" key={i}><span className="demo-point-dot"/><span className="demo-point-text"><strong>{p.s}</strong>{p.r}</span></div>
-         ))}
-       </div>
-     </div>
-     <div className="anim anim-d2">
-       <div className="demo-card">
-         <div className="demo-card-top"><div className="demo-card-dots"><span/><span/><span/></div><div className="demo-card-kicker">NewsHall · Morning Brief</div></div>
-         <div className="demo-story-section">
-           <div className="demo-section-label">Tech & AI</div>
-           <div className="demo-featured-hl">OpenAI unveils new reasoning model as AI arms race intensifies among labs</div>
-           <div className="demo-featured-sum">The new model outperforms competitors on key benchmarks, raising new questions about the pace of AI development and its implications.</div>
-           <div className="demo-items">
-             {[{tag:"Markets",txt:"NVIDIA shares rise 3.2% on surging AI chip demand"},{tag:"Policy",txt:"EU moves to fast-track landmark AI safety framework"},{tag:"Science",txt:"Researchers warn of newly emergent model behaviors"}].map((item,j)=>(
-               <div className="demo-item" key={j}><span className="demo-item-tag">{item.tag}</span><span className="demo-item-txt">{item.txt}</span><span className="demo-item-arrow">→</span></div>
-             ))}
-           </div>
-         </div>
-         <div className="demo-card-footer"><span className="demo-card-sources">AP · Reuters · Bloomberg · WSJ</span><span className="demo-card-badge"><span className="demo-badge-dot"/>Live sourced</span></div>
-       </div>
-     </div>
-   </div>
- </section>
-
- {/* STATS */}
- <div className="stats-strip">
-   <div className="stats-inner">
-     {[{n:"50",suf:"+",label:"Topics covered",sub:"NFL to quantum physics"},{n:"100",suf:"+",label:"Sources scanned",sub:"Every single morning"},{n:"1",suf:"",label:"Brief per day",sub:"Clean, cited, and delivered"},{n:"24",suf:"h",label:"News window",sub:"Last 24 hours only"}].map((s,i)=>(
-       <div className={`stat-block anim anim-d${i+1}`} key={i}>
-         <div className="stat-n">{s.n}<em>{s.suf}</em></div>
-         <div className="stat-label">{s.label}</div>
-         <div className="stat-sub">{s.sub}</div>
-       </div>
-     ))}
-   </div>
- </div>
-
- {/* HOW IT WORKS */}
- <section className="how-section">
-   <div className="how-inner">
-     <div className="how-hd anim">
-       <div className="how-eyebrow">How it works</div>
-       <h2 className="how-title">Up and running in <em>60 seconds</em></h2>
-       <p className="how-sub">Pick what matters to you. We handle everything else.</p>
-     </div>
-     <div className="how-steps">
-       {[{n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a stock ticker, a sports team, a niche health topic. As specific or broad as you want.",tag:"Takes 60 seconds"},{n:"02",title:"We do the reading",text:"We scan hundreds of reputable sources, find the most important stories from the last 24 hours, and write a clean cited digest just for you.",tag:"Powered by Claude"},{n:"03",title:"Wake up informed",text:"Your brief is ready before you are. Read it over coffee. No doomscrolling, no paywalls, no noise.",tag:"Every morning"}].map((s,i)=>(
-         <div className={`how-step anim anim-d${i+1}`} key={i}>
-           <div className="how-step-num">{s.n}</div>
-           <div className="how-step-title">{s.title}</div>
-           <p className="how-step-text">{s.text}</p>
-           <span className="how-step-tag">{s.tag}</span>
-         </div>
-       ))}
-     </div>
-   </div>
- </section>
-
- {/* TOPIC CLOUD */}
- <section className="cloud-section">
-   <div className="cloud-hd">
-     <div className="cloud-eyebrow">Any topic. Seriously.</div>
-     <h2 className="cloud-title">If you can name it, we can brief it</h2>
-   </div>
-   <div className="cloud-rows">
-     {[
-       ["World News","NBA","Tech & AI","US Politics","Stock Market","Climate","Formula 1","Mental Health","Startups","Film & TV","World News","NBA","Tech & AI","US Politics","Stock Market","Climate","Formula 1","Mental Health","Startups","Film & TV"],
-       ["Soccer","Real Estate","Crypto","Women in Business","NFL","Science","Fashion & Style","Personal Finance","MLB","Travel","Soccer","Real Estate","Crypto","Women in Business","NFL","Science","Fashion & Style","Personal Finance","MLB","Travel"],
-       ["Health & Wellness","Music","Business","WNBA","Food & Dining","Entertainment","Golf","Education","Auto & EVs","NHL","Health & Wellness","Music","Business","WNBA","Food & Dining","Entertainment","Golf","Education","Auto & EVs","NHL"],
-     ].map((row,ri)=>(
-       <div className="cloud-row" key={ri}>
-         <div className="cloud-row-inner">
-           {row.map((pill,pi)=>(<span className="cloud-pill" key={pi}><span className="cloud-pill-dot"/>{pill}</span>))}
-         </div>
-       </div>
-     ))}
-   </div>
- </section>
-
- {/* PILLARS */}
- <div className="pillars">
-   {[{label:"Sources",title:"Trusted outlets only",text:"AP, Reuters, BBC, NPR — sources with a long track record of straight-news reporting. No cable news, no partisan blogs."},{label:"Transparency",title:"Every story linked",text:"Every headline links to the original article. Read the full piece, check the source yourself — we never ask you to take our word for it."},{label:"Coverage",title:"50+ topics, any topic",text:"Sports, markets, science, politics, fashion — if you can name it, we can brief it. Add a stock ticker, a team, a niche you care about."},{label:"Delivery",title:"There when you wake up",text:"Set a delivery time once. Your brief is waiting when you open your eyes — no need to open the app, no need to search."}].map(p=>(
-     <div className="pillar anim" key={p.title}><div className="pillar-label">{p.label}</div><div className="pillar-title">{p.title}</div><div className="pillar-text">{p.text}</div></div>
-   ))}
- </div>
-
- </>)}
-
- {(!user||!brief)&&(<div className="features">
-   {[{n:"01",title:"Any topic, any niche",body:"Sports, science, markets, politics, or anything in between. Type a team, a ticker, a health condition — if it's in the news, we cover it."},{n:"02",title:"Linked to every source",body:"Every story links to the original article. Read more, check the source, verify it yourself. Nothing is behind a paywall."},{n:"03",title:"There before your alarm",body:"Set your delivery time once. Your brief is ready when you wake up — open it over coffee, no hunting for news required."}].map(f=>(
-     <div className="fb" key={f.title} data-n={f.n}>
-       <div className="fb-num">{f.n}</div>
-       <h4>{f.title}</h4>
-       <p>{f.body}</p>
-     </div>
-   ))}
- </div>)}
 
  {(!user||!brief)&&(<div id="builder" className="builder" ref={builderRef}>
    <div className="step-hd">
