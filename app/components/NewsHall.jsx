@@ -783,6 +783,23 @@ export default function NewsHall() {
      setPhase("done");
      setSavedBriefMeta({generated_at: savedBrief.generated_at});
      loadOgImages(savedBrief.content);
+   } else {
+     // No saved brief — check if user generated one before signing in
+     try {
+       const pending = localStorage.getItem("nh_pending_brief");
+       if(pending) {
+         const {brief:pb,topics:pt,ts} = JSON.parse(pending);
+         // Only restore if generated within last 24h
+         if(pb && Date.now()-ts < 86400000) {
+           const now = new Date().toISOString();
+           await supabase.from("briefs").upsert({user_id:u.id,content:pb,generated_at:now},{onConflict:"user_id"});
+           if(pt?.length) await supabase.from("user_settings").upsert({user_id:u.id,topics:pt,updated_at:now},{onConflict:"user_id"});
+           setBrief(pb); setPhase("done"); setSavedBriefMeta({generated_at:now}); loadOgImages(pb);
+           if(pt?.length) setTopics(pt);
+         }
+         localStorage.removeItem("nh_pending_brief");
+       }
+     } catch(_) {}
    }
 
    // Load delivery time setting
@@ -1183,7 +1200,9 @@ export default function NewsHall() {
       const parsed=await res.json();
       if(parsed.error)throw new Error(parsed.error);
       if(!Array.isArray(parsed.topics)||!parsed.topics.length)throw new Error("No topics in response");
-      setBrief(parsed);setPhase("done");saveUserData(parsed,topics);loadOgImages(parsed);setCooldown(60);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
+      setBrief(parsed);setPhase("done");saveUserData(parsed,topics);loadOgImages(parsed);
+      try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:parsed,topics,ts:Date.now()}));}catch(_){}
+      setCooldown(60);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
     }catch(err){setBrief({error:true,raw:String(err.message||err)});setPhase("done");}
  };
 
