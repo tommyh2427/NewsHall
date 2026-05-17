@@ -246,6 +246,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .ld-steps{margin-top:16px;display:flex;flex-direction:column;gap:5px;}
 .ld-step{font-size:0.66rem;font-weight:500;letter-spacing:0.06em;color:var(--ink-4);}
 .brief-wrap{max-width:1000px;margin:0 auto;padding:0 48px 80px;animation:fu 0.4s ease;}
+.watch-section{background:var(--ink);color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:40px;}
+.watch-hd{font-size:0.52rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.watch-hd::before{content:'';width:14px;height:2px;background:var(--accent);display:block;flex-shrink:0;}
+.watch-items{display:flex;flex-direction:column;gap:0;}
+.watch-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.watch-item:last-child{border-bottom:none;padding-bottom:0;}
+.watch-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.watch-text{font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.9);flex:1;line-height:1.4;}
+.watch-topic{font-size:0.55rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.35);white-space:nowrap;}
 @keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 /* Masthead */
 .bmast{padding:40px 0 28px;margin-bottom:44px;border-bottom:1px solid var(--rule);}
@@ -1570,6 +1579,31 @@ export default function NewsHall() {
 
  const clean = t=>(t||"").replace(/\*\*(.*?)\*\*/g,"$1").replace(/\*(.*?)\*/g,"$1").replace(/`([^`]+)`/g,"$1").replace(/^[-*]\s*/,"").trim();
 
+ const getReadingTime = (briefData) => {
+   if(!briefData?.topics) return null;
+   let words = 0;
+   for(const tg of briefData.topics){
+     for(const st of (tg.stories||[])){
+       words += (st.headline||"").split(/\s+/).length;
+       words += (st.summary||"").split(/\s+/).length;
+       words += (st.context||"").split(/\s+/).length;
+     }
+   }
+   const mins = Math.max(1, Math.round(words / 238));
+   return `${mins} min read`;
+ };
+
+ const getWatchItems = (briefData) => {
+   if(!briefData?.topics) return [];
+   const items = [];
+   for(const tg of briefData.topics){
+     for(const w of (tg.watch_for||[])){
+       if(w && items.length < 5) items.push({text:w, topic:tg.topic});
+     }
+   }
+   return items;
+ };
+
  const generate = async () => {
    if(!topics.length){showToast("Add at least one topic first");return;}
    if(user) setTab("brief");
@@ -1744,7 +1778,7 @@ export default function NewsHall() {
          <div>
            <div className="brief-tab-edition">Morning Brief</div>
            <div className="brief-tab-title">{brief.headline||"Your Morning Brief"}</div>
-           <div className="brief-tab-sub">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}):today}</div>
+           <div className="brief-tab-sub">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}):today}{getReadingTime(brief)?" · "+getReadingTime(brief):""}</div>
          </div>
          <button className="brief-refresh-btn" onClick={generate} disabled={isStreaming||cooldown>0}>{cooldown>0?`${cooldown}s`:"Refresh"}</button>
        </div>
@@ -2074,7 +2108,7 @@ export default function NewsHall() {
            </div>
            <div className="bkicker">Your Morning Brief</div>
            <div className="bhl">{brief.headline||"Morning Brief"}</div>
-           <div className="bmeta">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</div>
+           <div className="bmeta">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}{getReadingTime(brief)?" · "+getReadingTime(brief):""}</div>
            {isStreaming&&(
              <div style={{margin:'12px 0 0',background:'var(--bg-2)',border:'1px solid var(--rule)',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',gap:12}}>
                <div style={{width:14,height:14,borderRadius:'50%',border:'2px solid var(--accent)',borderTopColor:'transparent',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
@@ -2097,6 +2131,22 @@ export default function NewsHall() {
              <button className="brefresh" onClick={generate}>Refresh brief</button>
            </div>
          </div>
+         {getWatchItems(brief).length>0&&(
+           <div className="watch-section">
+             <div className="watch-hd">What to Watch</div>
+             <div className="watch-items">
+               {getWatchItems(brief).map((item,i)=>(
+                 <div key={i} className="watch-item">
+                   <span className="watch-dot"/>
+                   <div>
+                     <span className="watch-text">{item.text}</span>
+                     <span className="watch-topic">{item.topic}</span>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           </div>
+         )}
          <div>
            {(brief.topics||[]).map((tg,ti)=>{
              const stories=Array.isArray(tg.stories)?tg.stories:[];

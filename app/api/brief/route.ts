@@ -79,6 +79,12 @@ SUMMARY QUALITY:
 - Bad context: "This development could have wide-ranging implications."
 - Good context: "The ruling blocks the administration's plan to cut $4B in education funding by Friday."
 
+WHAT TO WATCH:
+- After stories, include "watch_for": an array of 1-3 short items (max 12 words each) that are genuinely worth following in the next 24-72 hours based on what you found
+- Only concrete, time-bound things: votes, games, decisions, deadlines, rulings — not vague "developments to monitor"
+- Examples: "Fed rate decision Wednesday", "Game 7 tonight — Spurs vs Thunder", "Senate budget vote expected Thursday"
+- Skip this field entirely if nothing concrete is upcoming
+
 Output ONLY valid JSON. Real URLs only. No markdown.`;
 
 async function generateTopic(topic: string, today: string): Promise<any | null> {
@@ -88,9 +94,9 @@ async function generateTopic(topic: string, today: string): Promise<any | null> 
 Search for what actually happened in the last 24 hours. Be selective — only the stories a well-informed person genuinely needs to know this morning. Put the most impactful story first.
 
 Return ONLY raw JSON:
-{"topics":[{"topic":"${topic}","stories":[{"headline":"specific factual headline","summary":"1-2 sentences of core facts","context":"1 sentence: why this matters or what happens next","source":"outlet name","url":"https://real-url"}]}]}
+{"topics":[{"topic":"${topic}","watch_for":["concrete upcoming item","another if relevant"],"stories":[{"headline":"specific factual headline","summary":"1-2 sentences of core facts","context":"1 sentence: why this matters or what happens next","source":"outlet name","url":"https://real-url"}]}]}
 
-Raw JSON only, no markdown.`;
+Omit watch_for if nothing concrete is upcoming. Raw JSON only, no markdown.`;
 
   let messages: any[] = [{ role: "user", content: userMsg }];
   let data = await callClaude(messages, SYSTEM, maxTokens);
