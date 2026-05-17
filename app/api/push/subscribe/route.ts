@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { subscription, delivery_time, timezone, topics } = await req.json();
+  const { subscription, delivery_time, delivery_hour_utc, timezone, topics } = await req.json();
 
   // Save push subscription
   await supabase.from("push_subscriptions").upsert({
@@ -24,11 +24,12 @@ export async function POST(req: NextRequest) {
     updated_at: new Date().toISOString(),
   }, { onConflict: "user_id" });
 
-  // Save user settings
+  // Save user settings including delivery_hour_utc so the cron can find this user
   await supabase.from("user_settings").upsert({
     user_id: user.id,
     topics,
     delivery_time,
+    delivery_hour_utc,
     timezone,
     updated_at: new Date().toISOString(),
   }, { onConflict: "user_id" });
