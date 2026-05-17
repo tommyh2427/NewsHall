@@ -9,9 +9,9 @@ const BROWSER_HEADERS = {
 
 // Curated Unsplash fallbacks per topic — always looks great
 const TOPIC_IMAGES: Record<string, string> = {
-  "world news":      "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=85",
-  "us politics":     "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=900&q=85",
-  "politics":        "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=900&q=85",
+  "world news":      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=85",
+  "us politics":     "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=85",
+  "politics":        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=85",
   "tech & ai":       "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=85",
   "technology":      "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=85",
   "markets":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=85",
@@ -28,7 +28,7 @@ const TOPIC_IMAGES: Record<string, string> = {
   "health":          "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=85",
   "health & wellness":"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=85",
   "science":         "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=85",
-  "climate":         "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=85",
+  "climate":         "https://images.unsplash.com/photo-1569163139599-0f4517e36f51?w=900&q=85",
   "entertainment":   "https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=900&q=85",
   "film & tv":       "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=900&q=85",
   "music":           "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=85",

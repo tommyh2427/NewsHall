@@ -16,7 +16,7 @@ async function callClaude(messages: any[], system: string, maxTokens: number, at
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: maxTokens,
-      tools: [{ type: "web_search_20250305", name: "web_search" }],
+      tools: [{ type: "web_search_20260209", name: "web_search" }],
       system,
       messages,
     }),
@@ -48,14 +48,7 @@ function repairJson(txt: string): string {
   return fragment;
 }
 
-async function generateBriefForUser(topics: string[], today: string): Promise<any> {
-  const BATCH_SIZE = 3;
-  const batches: string[][] = [];
-  for (let i = 0; i < topics.length; i += BATCH_SIZE) {
-    batches.push(topics.slice(i, i + BATCH_SIZE));
-  }
-
-  const system = `You are NewsHall's AI journalist. Surface what actually matters — stories a well-informed person genuinely needs to know this morning.
+const SYSTEM = `You are NewsHall's AI journalist. Surface what actually matters — stories a well-informed person genuinely needs to know this morning.
 
 SOURCE RULES:
 - General: AP, Reuters, BBC, NPR, PBS, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, Guardian, C-SPAN
@@ -73,53 +66,74 @@ RELEVANCE: Only stories with genuine morning significance from the last 24 hours
 
 Output ONLY valid JSON.`;
 
-  const allTopics: any[] = [];
-
-  for (let i = 0; i < batches.length; i++) {
-    if (i > 0) await sleep(2000);
-    const batch = batches[i];
-    const maxTokens = 3000 + batch.length * 400;
-    const userMsg = `Today is ${today}. Morning brief for: ${batch.join(", ")}.
+async function generateTopic(topic: string, today: string): Promise<any | null> {
+  const maxTokens = 3400;
+  const userMsg = `Today is ${today}. Morning brief for: ${topic}.
 
 Search for what actually happened in the last 24 hours. Select only stories with real significance. 1-2 sentence factual summaries.
 
 Return ONLY raw JSON:
-{"topics":[{"topic":"name","stories":[{"headline":"headline","summary":"summary","source":"outlet","url":"https://url"}]}]}`;
+{"topics":[{"topic":"${topic}","stories":[{"headline":"headline","summary":"summary","source":"outlet","url":"https://url"}]}]}`;
 
-    let messages: any[] = [{ role: "user", content: userMsg }];
-    let data = await callClaude(messages, system, maxTokens);
-    let iter = 0;
+  let messages: any[] = [{ role: "user", content: userMsg }];
+  let data = await callClaude(messages, SYSTEM, maxTokens);
+  let iter = 0;
 
-    while (data.stop_reason === "tool_use" && iter < 10) {
-      iter++;
-      messages = [...messages, { role: "assistant", content: data.content }];
-      const acks = (data.content || [])
-        .filter((b: any) => b.type === "tool_use")
-        .map((b: any) => ({ type: "tool_result", tool_use_id: b.id, content: "" }));
-      if (!acks.length) break;
-      messages = [...messages, { role: "user", content: acks }];
-      data = await callClaude(messages, system, maxTokens);
-    }
-
-    if (data.error) continue;
-
-    const txt = (data.content || []).filter((b: any) => b.type === "text").map((b: any) => b.text).join("").trim();
-    if (!txt) continue;
-
-    const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
-    try {
-      const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
-      const parsed = JSON.parse(clean.slice(s, e + 1));
-      if (Array.isArray(parsed.topics)) allTopics.push(...parsed.topics);
-    } catch {
-      try {
-        const parsed = JSON.parse(repairJson(clean));
-        if (Array.isArray(parsed.topics)) allTopics.push(...parsed.topics);
-      } catch {}
-    }
+  while (data.stop_reason === "tool_use" && iter < 10) {
+    iter++;
+    messages = [...messages, { role: "assistant", content: data.content }];
+    const acks = (data.content || [])
+      .filter((b: any) => b.type === "tool_use")
+      .map((b: any) => ({ type: "tool_result", tool_use_id: b.id, content: "" }));
+    if (!acks.length) break;
+    messages = [...messages, { role: "user", content: acks }];
+    data = await callClaude(messages, SYSTEM, maxTokens);
   }
 
-  return allTopics;
+  if (data.error) return null;
+
+  const txt = (data.content || [])
+    .filter((b: any) => b.type === "text")
+    .map((b: any) => b.text)
+    .join("")
+    .trim();
+  if (!txt) return null;
+
+  const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
+  try {
+    const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
+    const parsed = JSON.parse(clean.slice(s, e + 1));
+    return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
+  } catch {
+    try {
+      const parsed = JSON.parse(repairJson(clean));
+      return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
+    } catch {
+      return null;
+    }
+  }
+}
+
+async function generateBriefForUser(topics: string[], today: string): Promise<any[]> {
+  // All topics in parallel — total time = slowest single topic, not sum
+  const results = await Promise.all(
+    topics.map(t => generateTopic(t, today).catch(() => null))
+  );
+  return results.filter(Boolean);
+}
+
+// Concurrency limiter — run up to `limit` tasks at a time
+async function pLimit<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]> {
+  const results: T[] = new Array(tasks.length);
+  let i = 0;
+  async function worker() {
+    while (i < tasks.length) {
+      const idx = i++;
+      results[idx] = await tasks[idx]();
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker));
+  return results;
 }
 
 export async function GET(req: NextRequest) {
@@ -141,39 +155,42 @@ export async function GET(req: NextRequest) {
 
   const now = new Date();
   const currentHour = now.getUTCHours();
-  const today = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  const today = now.toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+  });
 
-  // Find users whose delivery time (stored as UTC hour) matches right now
+  // Find all users whose delivery UTC hour matches right now
   const { data: settings, error } = await supabase
     .from("user_settings")
     .select("user_id, topics, delivery_hour_utc")
     .eq("delivery_hour_utc", currentHour);
 
   if (error || !settings?.length) {
-    return NextResponse.json({ ok: true, generated: 0 });
+    return NextResponse.json({ ok: true, generated: 0, hour: currentHour });
   }
 
   let generated = 0;
 
-  for (const setting of settings) {
+  // Process up to 5 users in parallel to stay within Vercel limits
+  const tasks = settings.map(setting => async () => {
     try {
       const topics = setting.topics as string[];
-      if (!topics?.length) continue;
+      if (!topics?.length) return;
 
       const briefTopics = await generateBriefForUser(topics, today);
-      if (!briefTopics.length) continue;
+      if (!briefTopics.length) return;
 
       const headline = `${briefTopics[0]?.topic || "Morning"} & ${briefTopics.length - 1} more`;
       const briefData = { headline, topics: briefTopics };
 
-      // Save brief to database
+      // Upsert into briefs table
       await supabase.from("briefs").upsert({
         user_id: setting.user_id,
         content: briefData,
         generated_at: now.toISOString(),
       }, { onConflict: "user_id" });
 
-      // Send push notification
+      // Send push notification if subscription exists
       const { data: sub } = await supabase
         .from("push_subscriptions")
         .select("endpoint, p256dh, auth")
@@ -181,7 +198,9 @@ export async function GET(req: NextRequest) {
         .single();
 
       if (sub) {
-        const totalStories = briefTopics.reduce((n: number, t: any) => n + (t.stories?.length || 0), 0);
+        const totalStories = briefTopics.reduce(
+          (n: number, t: any) => n + (t.stories?.length || 0), 0
+        );
         await webpush.sendNotification(
           { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
           JSON.stringify({
@@ -193,9 +212,10 @@ export async function GET(req: NextRequest) {
       }
 
       generated++;
-      await sleep(1000);
     } catch {}
-  }
+  });
 
-  return NextResponse.json({ ok: true, generated });
+  await pLimit(tasks, 5);
+
+  return NextResponse.json({ ok: true, generated, hour: currentHour });
 }

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const maxDuration = 300;
+
 const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
@@ -14,7 +16,7 @@ async function callClaude(messages: any[], system: string, maxTokens: number, at
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: maxTokens,
-      tools: [{ type: "web_search_20250305", name: "web_search" }],
+      tools: [{ type: "web_search_20260209", name: "web_search" }],
       system,
       messages,
     }),
@@ -46,10 +48,7 @@ function repairJson(txt: string): string {
   return fragment;
 }
 
-async function generateBatch(topics: string[], today: string): Promise<any[]> {
-  const maxTokens = 3000 + topics.length * 400;
-
-  const system = `You are NewsHall's AI journalist. Your job is to surface what actually matters — the stories a well-informed person genuinely needs to know this morning.
+const SYSTEM = `You are NewsHall's AI journalist. Your job is to surface what actually matters — the stories a well-informed person genuinely needs to know this morning.
 
 SOURCE RULES:
 - General news: AP, Reuters, BBC, NPR, PBS NewsHour, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, The Guardian, C-SPAN
@@ -74,18 +73,19 @@ RELEVANCE RULES:
 
 Output ONLY valid JSON. Real URLs only.`;
 
-  const userMsg = `Today is ${today}. Morning brief for ${topics.length} topics:
-${topics.map((t, i) => `${i + 1}. ${t}`).join("\n")}
+async function generateTopic(topic: string, today: string): Promise<any | null> {
+  const maxTokens = 3400;
+  const userMsg = `Today is ${today}. Morning brief for: ${topic}
 
-For each topic: search for what actually happened in the last 24 hours. Select only the stories with real morning significance. Vary story count by how much genuinely happened (2-5 per topic). Each summary is 1-2 sentences, plain facts only, no opinion language.
+Search for what actually happened in the last 24 hours. Select only stories with real morning significance. Each summary is 1-2 sentences, plain facts only.
 
 Return ONLY raw JSON:
-{"topics":[{"topic":"name","stories":[{"headline":"factual headline","summary":"1-2 sentence factual summary, key fact + context","source":"outlet name","url":"https://real-url"}]}]}
+{"topics":[{"topic":"${topic}","stories":[{"headline":"factual headline","summary":"1-2 sentence factual summary","source":"outlet name","url":"https://real-url"}]}]}
 
-${topics.length} topic objects in order. Raw JSON only, no markdown.`;
+Raw JSON only, no markdown.`;
 
   let messages: any[] = [{ role: "user", content: userMsg }];
-  let data = await callClaude(messages, system, maxTokens);
+  let data = await callClaude(messages, SYSTEM, maxTokens);
   let iter = 0;
 
   while (data.stop_reason === "tool_use" && iter < 10) {
@@ -96,45 +96,84 @@ ${topics.length} topic objects in order. Raw JSON only, no markdown.`;
       .map((b: any) => ({ type: "tool_result", tool_use_id: b.id, content: "" }));
     if (!acks.length) break;
     messages = [...messages, { role: "user", content: acks }];
-    data = await callClaude(messages, system, maxTokens);
+    data = await callClaude(messages, SYSTEM, maxTokens);
   }
 
   if (data.error) throw new Error(data.error.message);
 
-  const txt = (data.content || []).filter((b: any) => b.type === "text").map((b: any) => b.text).join("").trim();
-  if (!txt) throw new Error("Empty response");
+  const txt = (data.content || [])
+    .filter((b: any) => b.type === "text")
+    .map((b: any) => b.text)
+    .join("")
+    .trim();
+  if (!txt) return null;
 
   const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
-  let parsed: any;
   try {
     const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
-    if (s === -1 || e === -1) throw new Error("No JSON");
-    parsed = JSON.parse(clean.slice(s, e + 1));
+    if (s === -1 || e === -1) return null;
+    const parsed = JSON.parse(clean.slice(s, e + 1));
+    return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
   } catch {
-    parsed = JSON.parse(repairJson(clean));
+    try {
+      const parsed = JSON.parse(repairJson(clean));
+      return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
+    } catch {
+      return null;
+    }
   }
-
-  return Array.isArray(parsed.topics) ? parsed.topics : [];
 }
 
 export async function POST(req: NextRequest) {
   const { topics, today } = await req.json();
   if (!topics?.length) return NextResponse.json({ error: "No topics provided" }, { status: 400 });
 
-  try {
-    // Run every topic in parallel — total time = slowest single topic, not sum of all
-    const results = await Promise.all(
-      topics.map((topic: string) =>
-        generateBatch([topic], today).catch(() => [])
-      )
-    );
+  const encoder = new TextEncoder();
 
-    const allTopics = results.flat();
-    if (!allTopics.length) throw new Error("No topics generated");
+  const stream = new ReadableStream({
+    async start(controller) {
+      const send = (payload: object) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
+      };
 
-    const headline = `${allTopics[0]?.topic || "Morning"} & ${allTopics.length - 1} more stories`;
-    return NextResponse.json({ headline, topics: allTopics });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to generate brief" }, { status: 500 });
-  }
+      try {
+        const allTopics: any[] = [];
+
+        // All topics race in parallel — each one writes to the stream the moment it finishes
+        await Promise.all(
+          topics.map(async (topic: string) => {
+            try {
+              const result = await generateTopic(topic, today);
+              if (result) {
+                allTopics.push(result);
+                send({ type: "topic", topic: result });
+              }
+            } catch {
+              // Skip failed topics, don't kill the whole stream
+            }
+          })
+        );
+
+        if (!allTopics.length) {
+          send({ type: "error", message: "No topics could be generated" });
+        } else {
+          const headline = `${allTopics[0]?.topic || "Morning"} & ${allTopics.length - 1} more stories`;
+          send({ type: "done", headline });
+        }
+      } catch (err: any) {
+        send({ type: "error", message: err?.message || "Failed to generate brief" });
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+      "X-Accel-Buffering": "no",
+    },
+  });
 }

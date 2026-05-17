@@ -259,12 +259,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brefresh{background:var(--ink);color:#fff;font-weight:600;font-size:0.7rem;padding:9px 18px;border:none;border-radius:7px;cursor:pointer;}
 .btweak{background:transparent;color:var(--ink-2);font-weight:500;font-size:0.7rem;padding:9px 16px;border:1.5px solid var(--rule);border-radius:7px;cursor:pointer;}
 .btweak:hover{background:var(--bg-2);}
-/* Source logos */
-.src-logo-wrap{display:inline-flex;align-items:center;}
-.src-logo-img{height:16px;width:auto;max-width:70px;object-fit:contain;display:block;border-radius:2px;}
-.src-logo-dark{filter:brightness(0) invert(1);opacity:0.85;}
-.src-badge{display:inline-flex;align-items:center;border-radius:4px;padding:2px 7px;flex-shrink:0;}
-.src-name{font-size:0.6rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;}
+/* Source labels */
+.src-badge{display:inline-flex;align-items:center;border-radius:5px;padding:3px 8px;flex-shrink:0;}
+.src-name{font-size:0.55rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;line-height:1;}
 /* Topic sections */
 .brief-topic-section{margin-bottom:64px;}
 .brief-topic-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
@@ -394,13 +391,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .btn-ok{background:#3b6fd4;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:0.76rem;cursor:pointer;box-shadow:0 4px 12px rgba(59,111,212,0.32);}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0f1729;color:#fff;font-weight:600;font-size:0.72rem;padding:10px 18px;border-radius:100px;z-index:9000;white-space:nowrap;box-shadow:0 8px 28px rgba(15,23,41,0.28);animation:tup 0.3s ease;pointer-events:none;}
 @keyframes tup{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(15,23,41,0.1);padding:6px 0 8px;}
-.mob-nav-inner{display:flex;justify-content:space-around;}
-.mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 12px;cursor:pointer;border-radius:10px;transition:all 0.15s;min-width:52px;}
-.mob-tab.active{background:rgba(59,111,212,0.1);}
-.mob-tab-ico{font-size:1.3rem;line-height:1;}
-.mob-tab-lbl{font-family:'Inter',sans-serif;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:#9ca3af;font-weight:500;}
-.mob-tab.active .mob-tab-lbl{color:#3b6fd4;font-weight:700;}
 /* ── HOME WEATHER WIDGET ── */
 .home-wx{background:linear-gradient(135deg,#0f1729,#162040);padding:18px 36px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.06);}
 .home-wx-label{font-family:'Inter',sans-serif;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);white-space:nowrap;}
@@ -709,6 +699,94 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brief-topic-section{animation:briefSectionIn 0.5s cubic-bezier(0.22,1,0.36,1) both;}
 @keyframes briefSectionIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── BOTTOM NAV ── */
+.mob-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(255,255,255,0.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--rule);padding:8px 0 env(safe-area-inset-bottom,10px);}
+.mob-nav-inner{display:flex;justify-content:space-around;max-width:480px;margin:0 auto;}
+.mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;cursor:pointer;flex:1;position:relative;}
+.mob-tab-ico{font-size:1.5rem;line-height:1;transition:transform 0.15s;}
+.mob-tab.active .mob-tab-ico{transform:scale(1.1);}
+.mob-tab-lbl{font-size:0.48rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-4);transition:color 0.15s;}
+.mob-tab.active .mob-tab-lbl{color:var(--ink);}
+.mob-tab-bar{position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--ink);border-radius:0 0 3px 3px;transition:width 0.2s;}
+.mob-tab.active .mob-tab-bar{width:28px;}
+/* TAB BODY */
+.tab-body{padding-bottom:80px;}
+/* ── PROFILE TAB ── */
+.profile-page{max-width:500px;margin:0 auto;padding:36px 22px 32px;}
+.profile-avatar-row{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:36px;padding-bottom:32px;border-bottom:1px solid var(--rule);}
+.profile-avatar{width:68px;height:68px;border-radius:50%;background:var(--ink);color:#fff;font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.profile-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:800;color:var(--ink);letter-spacing:-0.02em;}
+.profile-email-txt{font-size:0.76rem;color:var(--ink-3);}
+.profile-section{background:#fff;border:1px solid var(--rule);border-radius:16px;overflow:hidden;margin-bottom:16px;}
+.profile-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--rule);gap:16px;}
+.profile-row:last-child{border-bottom:none;}
+.profile-row-l{}
+.profile-row-lbl{font-size:0.86rem;font-weight:600;color:var(--ink);}
+.profile-row-sub{font-size:0.72rem;color:var(--ink-3);margin-top:2px;}
+.profile-time{border:none;outline:none;font-size:0.86rem;font-weight:600;color:var(--ink);font-family:'Inter',sans-serif;background:transparent;cursor:pointer;}
+.profile-push-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.profile-push-btn.ok{background:#16a34a;}
+.profile-push-btn.denied{background:var(--ink-3);cursor:not-allowed;}
+.profile-save-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:15px;font-size:0.92rem;font-weight:700;cursor:pointer;margin-bottom:12px;}
+.profile-save-btn:hover{background:var(--accent);}
+.profile-signout{width:100%;background:transparent;border:1.5px solid var(--rule);border-radius:12px;padding:15px;font-size:0.9rem;font-weight:600;color:var(--ink-3);cursor:pointer;}
+.profile-signout:hover{border-color:var(--accent);color:var(--accent);}
+/* ── TOPICS TAB ── */
+.topics-page{max-width:680px;margin:0 auto;padding:32px 22px 32px;}
+.topics-page-hd{margin-bottom:28px;}
+.topics-page-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--ink);letter-spacing:-0.03em;margin-bottom:4px;}
+.topics-page-sub{font-size:0.84rem;color:var(--ink-3);}
+/* ── BRIEF TAB HEADER ── */
+.brief-tab-hd{max-width:1000px;margin:0 auto;padding:28px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.brief-tab-edition{font-size:0.52rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.brief-tab-edition::before{content:'';width:14px;height:2px;background:var(--accent);}
+.brief-tab-title{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,4vw,1.8rem);font-weight:900;color:var(--ink);letter-spacing:-0.03em;line-height:1.1;}
+.brief-tab-sub{font-size:0.68rem;color:var(--ink-3);margin-top:4px;}
+.brief-refresh-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.76rem;font-weight:700;cursor:pointer;flex-shrink:0;margin-top:4px;}
+.brief-refresh-btn:hover{background:var(--accent);}
+.brief-refresh-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* ── NEW USER ONBOARDING ── */
+.nuo{position:fixed;inset:0;z-index:600;background:var(--ink);display:flex;flex-direction:column;overflow:hidden;animation:nuoIn 0.35s cubic-bezier(0.22,1,0.36,1);}
+@keyframes nuoIn{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.nuo-top{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between;}
+.nuo-logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-0.02em;}
+.nuo-step{font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);}
+.nuo-hd{padding:32px 24px 20px;}
+.nuo-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.nuo-eyebrow::before{content:'';width:18px;height:2px;background:var(--accent);}
+.nuo-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,7vw,2.8rem);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.03em;margin-bottom:8px;}
+.nuo-sub{font-size:0.88rem;color:rgba(255,255,255,0.42);line-height:1.65;}
+.nuo-body{flex:1;overflow-y:auto;padding:0 24px 16px;}
+.nuo-search-wrap{position:relative;margin-bottom:14px;}
+.nuo-search{width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.14);border-radius:12px;padding:13px 16px 13px 42px;font-size:0.92rem;color:#fff;outline:none;transition:border-color 0.15s;}
+.nuo-search:focus{border-color:rgba(255,255,255,0.35);}
+.nuo-search::placeholder{color:rgba(255,255,255,0.28);}
+.nuo-search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:0.35;pointer-events:none;font-size:1rem;}
+.nuo-sugg-lbl{font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:10px;}
+.nuo-sugg-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.nuo-sugg{padding:8px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:100px;font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;user-select:none;}
+.nuo-sugg:hover{background:rgba(255,255,255,0.12);}
+.nuo-sugg.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
+.nuo-chips{display:flex;flex-wrap:wrap;gap:7px;min-height:28px;margin-bottom:12px;}
+.nuo-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:100px;padding:6px 12px;font-size:0.78rem;color:#fff;font-weight:500;}
+.nuo-chip-x{cursor:pointer;opacity:0.55;font-size:1rem;line-height:1;}
+.nuo-chip-x:hover{opacity:1;}
+.nuo-footer{padding:16px 24px env(safe-area-inset-bottom,20px);background:linear-gradient(to top,var(--ink) 70%,transparent);}
+.nuo-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:14px;padding:18px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;opacity:0.35;pointer-events:none;}
+.nuo-btn.ready{opacity:1;pointer-events:auto;}
+.nuo-btn.ready:hover{background:#e01535;}
+.nuo-hint{text-align:center;font-size:0.7rem;color:rgba(255,255,255,0.22);margin-top:10px;}
+
+/* ── OFFLINE BANNER ── */
+.offline-bar{position:fixed;top:0;left:0;right:0;z-index:999;background:#dc2626;color:#fff;text-align:center;font-size:0.72rem;font-weight:700;padding:9px 16px;letter-spacing:0.05em;animation:slideDown 0.25s ease;}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+/* ── PULL TO REFRESH ── */
+.ptr-wrap{display:flex;align-items:center;justify-content:center;height:0;overflow:hidden;transition:height 0.15s ease;color:var(--ink-3);font-size:0.75rem;gap:8px;font-weight:500;}
+.ptr-wrap.visible{height:52px;}
+.ptr-spinner{width:18px;height:18px;border:2.5px solid var(--rule);border-top-color:var(--ink);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
+.ptr-arrow{font-size:1.1rem;display:inline-block;transition:transform 0.2s;}
+.ptr-arrow.ready{transform:rotate(180deg);}
 /* ── LANDING SLIDES ── */
 .ls{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px 80px;text-align:center;position:relative;overflow:hidden;}
 .ls-1{background:var(--ink);}
@@ -721,8 +799,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .ls1-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;}
 .ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;}
 .ls1-btn-p:hover{background:#e01535;}
-.ls1-btn-g{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.22);border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;width:100%;}
-.ls1-btn-g:hover{background:rgba(255,255,255,0.16);}
+.ls1-btn-g{background:#fff;color:var(--ink);border:none;border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;}
+.ls1-btn-g:hover{background:rgba(255,255,255,0.9);}
 .ls1-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;}
 .ls1-scroll-line{width:1px;height:32px;background:rgba(255,255,255,0.25);animation:lsScroll 2s ease-in-out infinite;}
 .ls1-scroll-label{font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:4px;}
@@ -760,6 +838,9 @@ export default function NewsHall() {
  const [showPassword, setShowPassword] = useState(false);
  const [authUsername, setAuthUsername] = useState("");
  const [savedBriefMeta, setSavedBriefMeta] = useState(null); // {generated_at}
+ const [briefIsStale, setBriefIsStale] = useState(false); // true if brief is from a previous day
+ const [isStreaming, setIsStreaming] = useState(false); // true while SSE stream is open
+ const [streamedCount, setStreamedCount] = useState(0); // topics received so far
 
  useEffect(()=>{
    supabase.auth.getUser().then(({data:{user}})=>setUser(user??null));
@@ -791,6 +872,13 @@ export default function NewsHall() {
      setPhase("done");
      setSavedBriefMeta({generated_at: savedBrief.generated_at});
      loadOgImages(savedBrief.content);
+     // Check freshness — is it from today?
+     const genDate = new Date(savedBrief.generated_at);
+     const todayDate = new Date();
+     const isToday = genDate.getFullYear()===todayDate.getFullYear() &&
+       genDate.getMonth()===todayDate.getMonth() &&
+       genDate.getDate()===todayDate.getDate();
+     setBriefIsStale(!isToday);
    } else {
      // No saved brief — check if user generated one before signing in
      try {
@@ -820,8 +908,10 @@ export default function NewsHall() {
      setPushStatus(Notification.permission === "granted" ? "granted" : "idle");
    }
 
-   // Show onboarding if no brief and no push set up yet
-   if(!savedBrief?.content && Notification.permission !== "granted") {
+   // New user onboarding — no brief AND no saved topics
+   if(!savedBrief?.content && !prefs?.topics?.length) {
+     setTimeout(()=>setShowNewUserOnboard(true), 400);
+   } else if(!savedBrief?.content && Notification.permission !== "granted") {
      setTimeout(()=>setShowOnboarding(true), 800);
    }
  };
@@ -830,8 +920,13 @@ export default function NewsHall() {
    if(!user) return;
    const now = new Date().toISOString();
    await supabase.from("briefs").upsert({user_id:user.id, content:b, generated_at:now},{onConflict:"user_id"});
-   await supabase.from("user_settings").upsert({user_id:user.id, topics:t, delivery_time:deliveryTime, updated_at:now},{onConflict:"user_id"});
+   // Compute delivery_hour_utc so new users are picked up by the cron
+   const utcOffset = new Date().getTimezoneOffset(); // minutes behind UTC
+   const [h, m] = (deliveryTime||"07:00").split(":").map(Number);
+   const deliveryHourUtc = ((h * 60 + (m||0) + utcOffset) / 60 + 24) % 24 | 0;
+   await supabase.from("user_settings").upsert({user_id:user.id, topics:t, delivery_time:deliveryTime, delivery_hour_utc:deliveryHourUtc, updated_at:now},{onConflict:"user_id"});
    setSavedBriefMeta({generated_at: now});
+   setBriefIsStale(false);
  };
 
  const signInWithGoogle = async () => {
@@ -872,12 +967,13 @@ export default function NewsHall() {
    showToast("Signed out");
  };
 
- const [tab, setTab] = useState("home");
+ const [tab, setTab] = useState("brief");
  const [topics, setTopics] = useState([]);
  const [_mounted, setMounted] = useState(false);
  const [pushStatus, setPushStatus] = useState("idle"); // idle | asking | granted | denied
  const [deliveryTime, setDeliveryTime] = useState("07:00");
  const [showOnboarding, setShowOnboarding] = useState(false);
+ const [showNewUserOnboard, setShowNewUserOnboard] = useState(false);
 
  useEffect(()=>{
    setMounted(true);
@@ -936,6 +1032,28 @@ export default function NewsHall() {
  useEffect(()=>{
    if(!user) try{localStorage.setItem("nh_topics",JSON.stringify(topics));}catch{}
  },[topics, user]);
+
+ const [failedOgImages, setFailedOgImages] = useState(new Set());
+ const markOgFailed = useCallback((topic)=>setFailedOgImages(p=>new Set([...p,topic])),[]);
+
+ // Online/offline + SW registration
+ const [isOnline, setIsOnline] = useState(true);
+ useEffect(()=>{
+   if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+   setIsOnline(navigator.onLine);
+   const go=()=>setIsOnline(true);
+   const bye=()=>setIsOnline(false);
+   window.addEventListener('online', go);
+   window.addEventListener('offline', bye);
+   return()=>{ window.removeEventListener('online', go); window.removeEventListener('offline', bye); };
+ },[]);
+
+ // Pull-to-refresh
+ const [ptrState, setPtrState] = useState("idle"); // idle | pulling | refreshing
+ const ptrStartY = useRef(0);
+ const ptrDist = useRef(0);
+ const PTR_THRESHOLD = 72;
+
  const [input, setInput] = useState("");
  const [phase, setPhase] = useState("idle");
  const [cooldown, setCooldown] = useState(0);
@@ -1130,21 +1248,121 @@ export default function NewsHall() {
    "wired": "#000", "ars technica": "#f60",
  };
  const SOURCE_DOMAINS = {
+   // Wire services
    "ap":"apnews.com","associated press":"apnews.com","ap news":"apnews.com",
-   "reuters":"reuters.com","bbc":"bbc.com","bbc news":"bbc.com",
-   "npr":"npr.org","pbs":"pbs.org","pbs newshour":"pbs.org",
-   "nbc news":"nbcnews.com","nbc":"nbcnews.com",
-   "abc news":"abcnews.go.com","abc":"abcnews.go.com",
-   "cbs news":"cbsnews.com","cbs":"cbsnews.com",
-   "wsj":"wsj.com","wall street journal":"wsj.com",
-   "bloomberg":"bloomberg.com","axios":"axios.com",
+   "reuters":"reuters.com","afp":"afp.com","agence france-presse":"afp.com",
+   // Public broadcast
+   "npr":"npr.org","pbs":"pbs.org","pbs newshour":"pbs.org","c-span":"c-span.org","c span":"c-span.org",
+   "bbc":"bbc.com","bbc news":"bbc.com","bbc sport":"bbc.com","bbc sports":"bbc.com",
+   // US broadcast networks
+   "nbc news":"nbcnews.com","nbc":"nbcnews.com","nbc nightly news":"nbcnews.com","nbc sports":"nbcsports.com",
+   "abc news":"abcnews.go.com","abc":"abcnews.go.com","abc sports":"espn.com",
+   "cbs news":"cbsnews.com","cbs":"cbsnews.com","cbs evening news":"cbsnews.com",
+   "cbs sports":"cbssports.com","cbs sports hq":"cbssports.com",
+   "cnn":"cnn.com","cnn politics":"cnn.com","cnn business":"cnn.com","cnn sport":"cnn.com",
+   "fox news":"foxnews.com","fox":"foxnews.com","fox business":"foxbusiness.com","fox sports":"foxsports.com",
+   "msnbc":"msnbc.com","pbs frontline":"pbs.org",
+   // Print / digital nationals
+   "wsj":"wsj.com","wall street journal":"wsj.com","the wall street journal":"wsj.com",
+   "new york times":"nytimes.com","the new york times":"nytimes.com","nyt":"nytimes.com",
+   "washington post":"washingtonpost.com","the washington post":"washingtonpost.com","wapo":"washingtonpost.com",
+   "usa today":"usatoday.com","los angeles times":"latimes.com","la times":"latimes.com",
+   "new york post":"nypost.com","ny post":"nypost.com",
+   "chicago tribune":"chicagotribune.com","boston globe":"bostonglobe.com",
+   "miami herald":"miamiherald.com","dallas morning news":"dallasnews.com",
+   "houston chronicle":"houstonchronicle.com","seattle times":"seattletimes.com",
+   "san francisco chronicle":"sfchronicle.com","denver post":"denverpost.com",
+   "philadelphia inquirer":"inquirer.com","star tribune":"startribune.com",
+   "new york daily news":"nydailynews.com","nydn":"nydailynews.com",
+   "minneapolis star tribune":"startribune.com","detroit free press":"freep.com",
+   // Magazines / digital
+   "time":"time.com","newsweek":"newsweek.com","the atlantic":"theatlantic.com","atlantic":"theatlantic.com",
+   "new yorker":"newyorker.com","the new yorker":"newyorker.com",
+   "rolling stone":"rollingstone.com","people":"people.com","variety":"variety.com",
+   "entertainment weekly":"ew.com","vulture":"vulture.com","deadline":"deadline.com",
+   "hollywood reporter":"hollywoodreporter.com","thr":"hollywoodreporter.com",
+   // Digital natives
+   "axios":"axios.com","vox":"vox.com","the verge":"theverge.com","verge":"theverge.com",
+   "bloomberg":"bloomberg.com","bloomberg news":"bloomberg.com","bloomberg businessweek":"bloomberg.com",
+   "business insider":"businessinsider.com","insider":"insider.com",
+   "huffpost":"huffpost.com","huffington post":"huffpost.com",
+   "politico":"politico.com","the hill":"thehill.com","hill":"thehill.com",
    "the guardian":"theguardian.com","guardian":"theguardian.com",
-   "politico":"politico.com","c-span":"c-span.org","cnbc":"cnbc.com",
-   "financial times":"ft.com","espn":"espn.com",
-   "the athletic":"theathletic.com","athletic":"theathletic.com",
-   "techcrunch":"techcrunch.com","the verge":"theverge.com","verge":"theverge.com",
-   "wired":"wired.com","ars technica":"arstechnica.com",
-   "nature":"nature.com","mayo clinic":"mayoclinic.org",
+   "vice":"vice.com","vice news":"vice.com","slate":"slate.com",
+   "salon":"salon.com","daily beast":"thedailybeast.com","the daily beast":"thedailybeast.com",
+   "mother jones":"motherjones.com","propublica":"propublica.org","the intercept":"theintercept.com",
+   "national review":"nationalreview.com","reason":"reason.com",
+   "foreign policy":"foreignpolicy.com","foreign affairs":"foreignaffairs.com",
+   "the dispatch":"thedispatch.com","dispatch":"thedispatch.com",
+   "mediaite":"mediaite.com","rawstory":"rawstory.com","raw story":"rawstory.com",
+   // Finance / business
+   "cnbc":"cnbc.com","financial times":"ft.com","ft":"ft.com",
+   "fortune":"fortune.com","forbes":"forbes.com","barron's":"barrons.com","barrons":"barrons.com",
+   "marketwatch":"marketwatch.com","market watch":"marketwatch.com",
+   "the economist":"economist.com","economist":"economist.com",
+   "investopedia":"investopedia.com","seeking alpha":"seekingalpha.com",
+   "yahoo finance":"finance.yahoo.com","yahoo news":"yahoo.com","yahoo":"yahoo.com",
+   "morningstar":"morningstar.com","coindesk":"coindesk.com","coin desk":"coindesk.com",
+   "cointelegraph":"cointelegraph.com","decrypt":"decrypt.co",
+   // Tech
+   "techcrunch":"techcrunch.com","wired":"wired.com","ars technica":"arstechnica.com",
+   "the information":"theinformation.com","recode":"vox.com",
+   "engadget":"engadget.com","9to5mac":"9to5mac.com","macrumors":"macrumors.com",
+   "android police":"androidpolice.com","gsmarena":"gsmarena.com",
+   "zdnet":"zdnet.com","cnet":"cnet.com","pcmag":"pcmag.com","tom's guide":"tomsguide.com",
+   "mit technology review":"technologyreview.com","technology review":"technologyreview.com",
+   "the register":"theregister.com","register":"theregister.com",
+   "venturebeat":"venturebeat.com","venture beat":"venturebeat.com",
+   "gizmodo":"gizmodo.com","lifehacker":"lifehacker.com","kotaku":"kotaku.com",
+   "android authority":"androidauthority.com","xda":"xda-developers.com","xda developers":"xda-developers.com",
+   "slashdot":"slashdot.org","hacker news":"news.ycombinator.com",
+   // Sports — main
+   "espn":"espn.com","the athletic":"theathletic.com","athletic":"theathletic.com",
+   "sports illustrated":"si.com","bleacher report":"bleacherreport.com",
+   "nfl.com":"nfl.com","nba.com":"nba.com","mlb.com":"mlb.com","nhl.com":"nhl.com",
+   "golf digest":"golfdigest.com","golf channel":"golfchannel.com","golfweek":"golfweek.com",
+   "tennis.com":"tennis.com","tennis channel":"tennischannel.com",
+   "sky sports":"skysports.com","goal":"goal.com","the score":"thescore.com","score":"thescore.com",
+   "mlssoccer":"mlssoccer.com","mls":"mlssoccer.com",
+   "pga tour":"pgatour.com","lpga":"lpga.com","masters":"masters.com",
+   "ufc":"ufc.com","bellator":"bellator.com","one championship":"onefc.com",
+   "formula 1":"formula1.com","f1":"formula1.com","motorsport":"motorsport.com",
+   "nascar":"nascar.com","indycar":"indycar.com","motogp":"motogp.com",
+   "nbc sports":"nbcsports.com","turner sports":"nba.com","sportsline":"sportsline.com",
+   "deadspin":"deadspin.com","fivethirtyeight":"fivethirtyeight.com","538":"fivethirtyeight.com",
+   "pro football reference":"pro-football-reference.com","baseball reference":"baseball-reference.com",
+   // Science / health
+   "nature":"nature.com","science":"science.org","scientific american":"scientificamerican.com",
+   "stat news":"statnews.com","stat":"statnews.com","medscape":"medscape.com",
+   "mayo clinic":"mayoclinic.org","webmd":"webmd.com","healthline":"healthline.com",
+   "new england journal of medicine":"nejm.org","nejm":"nejm.org",
+   "the lancet":"thelancet.com","lancet":"thelancet.com","jama":"jamanetwork.com",
+   "nih":"nih.gov","cdc":"cdc.gov","who":"who.int","fda":"fda.gov",
+   "harvard health":"health.harvard.edu","cleveland clinic":"health.clevelandclinic.org",
+   // International
+   "al jazeera":"aljazeera.com","the times":"thetimes.co.uk","sky news":"skynews.com",
+   "the independent":"independent.co.uk","independent":"independent.co.uk",
+   "daily mail":"dailymail.co.uk","the telegraph":"telegraph.co.uk","telegraph":"telegraph.co.uk",
+   "south china morning post":"scmp.com","scmp":"scmp.com","nikkei":"nikkei.com",
+   "the sun":"thesun.co.uk","daily express":"express.co.uk","the mirror":"mirror.co.uk",
+   "le monde":"lemonde.fr","der spiegel":"spiegel.de","the japan times":"japantimes.co.jp",
+   "globo":"globo.com","euronews":"euronews.com","france 24":"france24.com",
+   "dw":"dw.com","deutsche welle":"dw.com","rt":"rt.com",
+   // Lifestyle
+   "bon appétit":"bonappetit.com","bon appetit":"bonappetit.com","epicurious":"epicurious.com",
+   "food network":"foodnetwork.com","eater":"eater.com","serious eats":"seriouseats.com",
+   "architectural digest":"architecturaldigest.com","ad":"architecturaldigest.com",
+   "house beautiful":"housebeautiful.com","better homes and gardens":"bhg.com",
+   "condé nast traveler":"cntraveler.com","travel + leisure":"travelandleisure.com",
+   "vogue":"vogue.com","gq":"gq.com","esquire":"esquire.com","elle":"elle.com",
+   "harper's bazaar":"harpersbazaar.com","marie claire":"marieclaire.com",
+   "cosmopolitan":"cosmopolitan.com","glamour":"glamour.com","allure":"allure.com",
+   "men's health":"menshealth.com","women's health":"womenshealthmag.com",
+   "shape":"shape.com","prevention":"prevention.com","self":"self.com",
+   // Real estate / finance
+   "zillow":"zillow.com","realtor.com":"realtor.com","redfin":"redfin.com",
+   "bankrate":"bankrate.com","nerdwallet":"nerdwallet.com","the motley fool":"fool.com",
+   "motley fool":"fool.com","kiplinger":"kiplinger.com",
  };
  const TOPIC_GRADIENTS = {
    "world news":["#0a1628","#1a3a6b"],"us politics":["#150a28","#3d1a6b"],
@@ -1168,30 +1386,182 @@ export default function NewsHall() {
    return `linear-gradient(135deg, ${c[0]} 0%, ${c[1]} 100%)`;
  };
 
+ // Client-side topic images — always available instantly, no API needed
+ const CLIENT_TOPIC_IMAGES = {
+   "world news":      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80",
+   "us politics":     "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=80",
+   "politics":        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=80",
+   "tech & ai":       "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80",
+   "technology":      "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80",
+   "markets":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+   "stock market":    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+   "business":        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80",
+   "nba":             "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=80",
+   "nfl":             "https://images.unsplash.com/photo-1567459169568-e1b872a93ec0?w=900&q=80",
+   "mlb":             "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=900&q=80",
+   "nhl":             "https://images.unsplash.com/photo-1580420919917-b3e0e0b8943c?w=900&q=80",
+   "sports":          "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
+   "soccer":          "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=80",
+   "formula 1":       "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80",
+   "formula one":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80",
+   "health":          "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=80",
+   "health & wellness":"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=80",
+   "science":         "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=80",
+   "climate":         "https://images.unsplash.com/photo-1569163139599-0f4517e36f51?w=900&q=80",
+   "entertainment":   "https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=900&q=80",
+   "film & tv":       "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=900&q=80",
+   "music":           "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80",
+   "crypto":          "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=900&q=80",
+   "real estate":     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=900&q=80",
+   "travel":          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=900&q=80",
+   "fashion & style": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=900&q=80",
+   "food & dining":   "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80",
+   "personal finance":"https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=900&q=80",
+   "mental health":   "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&q=80",
+   "mma / ufc":       "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
+   "mma":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
+   "ufc":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
+   "golf":            "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=900&q=80",
+   "tennis":          "https://images.unsplash.com/photo-1542144582-1ba00456b5e3?w=900&q=80",
+   "education":       "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80",
+   "auto & evs":      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80",
+   "gaming":          "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=900&q=80",
+   "space":           "https://images.unsplash.com/photo-1446776709462-d6b525c57bd3?w=900&q=80",
+   "economy":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+ };
+ const getTopicImage = (topic) => CLIENT_TOPIC_IMAGES[(topic||"").toLowerCase().trim()] || null;
+
+ // Source abbreviations + brand colors — no external API needed, always renders instantly
+ const SOURCE_META = {
+   // Wire
+   "ap":{abbr:"AP",color:"#1a1a1a"},"associated press":{abbr:"AP",color:"#1a1a1a"},"ap news":{abbr:"AP",color:"#1a1a1a"},
+   "reuters":{abbr:"Reuters",color:"#ff6200"},"afp":{abbr:"AFP",color:"#003399"},
+   // Public broadcast
+   "npr":{abbr:"NPR",color:"#1e4d8c"},"pbs":{abbr:"PBS",color:"#1e4d8c"},"pbs newshour":{abbr:"PBS",color:"#1e4d8c"},
+   "bbc":{abbr:"BBC",color:"#bb1919"},"bbc news":{abbr:"BBC",color:"#bb1919"},"bbc sport":{abbr:"BBC",color:"#bb1919"},
+   "c-span":{abbr:"C-SPAN",color:"#0072ce"},"c span":{abbr:"C-SPAN",color:"#0072ce"},
+   // US TV networks
+   "nbc news":{abbr:"NBC",color:"#f37021"},"nbc":{abbr:"NBC",color:"#f37021"},"nbc nightly news":{abbr:"NBC",color:"#f37021"},
+   "nbc sports":{abbr:"NBC Sports",color:"#003f87"},
+   "abc news":{abbr:"ABC",color:"#1c2d6b"},"abc":{abbr:"ABC",color:"#1c2d6b"},
+   "cbs news":{abbr:"CBS",color:"#0033a0"},"cbs":{abbr:"CBS",color:"#0033a0"},"cbs evening news":{abbr:"CBS",color:"#0033a0"},
+   "cbs sports":{abbr:"CBS Sports",color:"#223f99"},"cbs sports hq":{abbr:"CBS Sports",color:"#223f99"},
+   "cnn":{abbr:"CNN",color:"#cc0000"},"cnn politics":{abbr:"CNN",color:"#cc0000"},"cnn business":{abbr:"CNN",color:"#cc0000"},
+   "fox news":{abbr:"Fox News",color:"#003366"},"fox":{abbr:"Fox",color:"#003366"},"fox business":{abbr:"Fox Business",color:"#003366"},
+   "fox sports":{abbr:"Fox Sports",color:"#002244"},
+   "msnbc":{abbr:"MSNBC",color:"#00529b"},
+   // Print nationals
+   "wsj":{abbr:"WSJ",color:"#1a1a1a"},"wall street journal":{abbr:"WSJ",color:"#1a1a1a"},"the wall street journal":{abbr:"WSJ",color:"#1a1a1a"},
+   "new york times":{abbr:"NYT",color:"#1a1a1a"},"the new york times":{abbr:"NYT",color:"#1a1a1a"},"nyt":{abbr:"NYT",color:"#1a1a1a"},
+   "washington post":{abbr:"WaPo",color:"#1a1a1a"},"the washington post":{abbr:"WaPo",color:"#1a1a1a"},"wapo":{abbr:"WaPo",color:"#1a1a1a"},
+   "usa today":{abbr:"USA Today",color:"#009bde"},
+   "los angeles times":{abbr:"LA Times",color:"#1a1a1a"},"la times":{abbr:"LA Times",color:"#1a1a1a"},
+   "new york post":{abbr:"NY Post",color:"#cc0000"},"ny post":{abbr:"NY Post",color:"#cc0000"},
+   "chicago tribune":{abbr:"Tribune",color:"#cc0000"},"boston globe":{abbr:"Globe",color:"#1a1a1a"},
+   // Digital
+   "axios":{abbr:"Axios",color:"#ff4e45"},"vox":{abbr:"Vox",color:"#f7df1e"},
+   "the verge":{abbr:"Verge",color:"#fa4848"},"verge":{abbr:"Verge",color:"#fa4848"},
+   "bloomberg":{abbr:"Bloomberg",color:"#1a1a1a"},"bloomberg news":{abbr:"Bloomberg",color:"#1a1a1a"},
+   "the guardian":{abbr:"Guardian",color:"#052962"},"guardian":{abbr:"Guardian",color:"#052962"},
+   "politico":{abbr:"Politico",color:"#cc0000"},"the hill":{abbr:"The Hill",color:"#1a1a1a"},"hill":{abbr:"The Hill",color:"#1a1a1a"},
+   "huffpost":{abbr:"HuffPost",color:"#00857c"},"huffington post":{abbr:"HuffPost",color:"#00857c"},
+   "business insider":{abbr:"BI",color:"#1a1a1a"},"insider":{abbr:"Insider",color:"#1a1a1a"},
+   "vice":{abbr:"Vice",color:"#1a1a1a"},"vice news":{abbr:"Vice",color:"#1a1a1a"},
+   "slate":{abbr:"Slate",color:"#1a1a1a"},"propublica":{abbr:"ProPublica",color:"#5a2d82"},
+   // Finance
+   "cnbc":{abbr:"CNBC",color:"#1a7ac8"},"financial times":{abbr:"FT",color:"#fff1e5"},"ft":{abbr:"FT",color:"#fff1e5"},
+   "fortune":{abbr:"Fortune",color:"#1a1a1a"},"forbes":{abbr:"Forbes",color:"#1a1a1a"},
+   "barron's":{abbr:"Barron's",color:"#1a1a1a"},"barrons":{abbr:"Barron's",color:"#1a1a1a"},
+   "marketwatch":{abbr:"MarketWatch",color:"#1a1a1a"},"market watch":{abbr:"MarketWatch",color:"#1a1a1a"},
+   "the economist":{abbr:"Economist",color:"#e3120b"},"economist":{abbr:"Economist",color:"#e3120b"},
+   "yahoo finance":{abbr:"Yahoo Finance",color:"#6001d2"},"yahoo news":{abbr:"Yahoo",color:"#6001d2"},"yahoo":{abbr:"Yahoo",color:"#6001d2"},
+   "coindesk":{abbr:"CoinDesk",color:"#1652f0"},"cointelegraph":{abbr:"CT",color:"#4cae99"},
+   // Tech
+   "techcrunch":{abbr:"TechCrunch",color:"#0a8f08"},"wired":{abbr:"Wired",color:"#1a1a1a"},
+   "ars technica":{abbr:"Ars",color:"#f04800"},"the information":{abbr:"The Information",color:"#1a1a1a"},
+   "engadget":{abbr:"Engadget",color:"#cc0000"},"9to5mac":{abbr:"9to5Mac",color:"#1a1a1a"},
+   "macrumors":{abbr:"MacRumors",color:"#cc0000"},"zdnet":{abbr:"ZDNet",color:"#cc0000"},
+   "cnet":{abbr:"CNET",color:"#cc0000"},"pcmag":{abbr:"PCMag",color:"#cc0000"},
+   "venturebeat":{abbr:"VentureBeat",color:"#cc0000"},"gizmodo":{abbr:"Gizmodo",color:"#1a1a1a"},
+   "mit technology review":{abbr:"MIT Tech Review",color:"#a31f34"},"technology review":{abbr:"MIT Tech Review",color:"#a31f34"},
+   // Sports
+   "espn":{abbr:"ESPN",color:"#d50a0a"},"the athletic":{abbr:"Athletic",color:"#1a1a1a"},"athletic":{abbr:"Athletic",color:"#1a1a1a"},
+   "sports illustrated":{abbr:"SI",color:"#cc0000"},"bleacher report":{abbr:"BR",color:"#cc0000"},
+   "nfl.com":{abbr:"NFL",color:"#013369"},"nba.com":{abbr:"NBA",color:"#17408b"},"mlb.com":{abbr:"MLB",color:"#002d72"},"nhl.com":{abbr:"NHL",color:"#000080"},
+   "golf digest":{abbr:"Golf Digest",color:"#1a4a1a"},"golf channel":{abbr:"Golf Channel",color:"#005c39"},
+   "sky sports":{abbr:"Sky Sports",color:"#00a6e2"},"goal":{abbr:"Goal",color:"#1a1a1a"},
+   "the score":{abbr:"The Score",color:"#e5231b"},"score":{abbr:"The Score",color:"#e5231b"},
+   "nbc sports":{abbr:"NBC Sports",color:"#003f87"},"deadspin":{abbr:"Deadspin",color:"#1a1a1a"},
+   "formula 1":{abbr:"F1",color:"#e10600"},"f1":{abbr:"F1",color:"#e10600"},"motorsport":{abbr:"Motorsport",color:"#cc0000"},
+   "nascar":{abbr:"NASCAR",color:"#ffd700"},"ufc":{abbr:"UFC",color:"#d20a0a"},
+   // Health / Science
+   "nature":{abbr:"Nature",color:"#005c8a"},"scientific american":{abbr:"Sci Am",color:"#cc6600"},
+   "stat news":{abbr:"STAT",color:"#1a1a1a"},"stat":{abbr:"STAT",color:"#1a1a1a"},
+   "mayo clinic":{abbr:"Mayo Clinic",color:"#00558c"},"webmd":{abbr:"WebMD",color:"#00558c"},
+   "healthline":{abbr:"Healthline",color:"#1c6b4a"},"nejm":{abbr:"NEJM",color:"#cc0000"},
+   // International
+   "al jazeera":{abbr:"Al Jazeera",color:"#cc0000"},"sky news":{abbr:"Sky News",color:"#0072c6"},
+   "the independent":{abbr:"Independent",color:"#cc0000"},"independent":{abbr:"Independent",color:"#cc0000"},
+   "daily mail":{abbr:"Daily Mail",color:"#cc0000"},"the telegraph":{abbr:"Telegraph",color:"#1a1a1a"},"telegraph":{abbr:"Telegraph",color:"#1a1a1a"},
+   "south china morning post":{abbr:"SCMP",color:"#cc0000"},"scmp":{abbr:"SCMP",color:"#cc0000"},
+   "euronews":{abbr:"Euronews",color:"#00489c"},"france 24":{abbr:"France 24",color:"#00489c"},
+   "dw":{abbr:"DW",color:"#c72730"},"deutsche welle":{abbr:"DW",color:"#c72730"},
+   // Entertainment
+   "variety":{abbr:"Variety",color:"#7b2d8b"},"deadline":{abbr:"Deadline",color:"#cc0000"},
+   "hollywood reporter":{abbr:"THR",color:"#cc0000"},"thr":{abbr:"THR",color:"#cc0000"},
+   "rolling stone":{abbr:"Rolling Stone",color:"#cc0000"},"people":{abbr:"People",color:"#cc0000"},
+   "vulture":{abbr:"Vulture",color:"#007f6e"},"entertainment weekly":{abbr:"EW",color:"#cc0000"},
+ };
+
  const SourceLogo = ({source, dark=false}) => {
    const key = (source||'').toLowerCase().trim();
-   const domain = SOURCE_DOMAINS[key];
-   const label = source ? source.replace(/^[Tt]he /i,'').replace(/ News$/i,'') : '??';
-   const color = SOURCE_COLORS[key] || (dark ? "rgba(255,255,255,0.55)" : "#6b7280");
-   const bg = dark ? "rgba(255,255,255,0.12)" : "#f3f4f6";
-   if (domain) {
+   // Look up meta: try exact key, then strip "The ", then keyword fallbacks
+   let meta = SOURCE_META[key] || SOURCE_META[key.replace(/^the\s+/,'')];
+   if (!meta) {
+     if (/\bcbs\s*sports\b/i.test(key)) meta = SOURCE_META["cbs sports"];
+     else if (/\bnbc\s*sports\b/i.test(key)) meta = SOURCE_META["nbc sports"];
+     else if (/\bfox\s*sports\b/i.test(key)) meta = {abbr:"Fox Sports",color:"#002244"};
+     else if (/\bcbs\s*news\b|\bcbs\b/i.test(key)) meta = SOURCE_META["cbs news"];
+     else if (/\bnbc\s*news\b|\bnbc\b/i.test(key)) meta = SOURCE_META["nbc news"];
+     else if (/\babc\s*news\b|\babc\b/i.test(key)) meta = SOURCE_META["abc news"];
+     else if (/\bfox\s*news\b/i.test(key)) meta = SOURCE_META["fox news"];
+     else if (/\bfox\b/i.test(key)) meta = SOURCE_META["fox"];
+     else if (/\bcnn\b/i.test(key)) meta = SOURCE_META["cnn"];
+     else if (/\bmsnbc\b/i.test(key)) meta = SOURCE_META["msnbc"];
+     else if (/\bespn\b/i.test(key)) meta = SOURCE_META["espn"];
+     else if (/\bbloomberg\b/i.test(key)) meta = SOURCE_META["bloomberg"];
+     else if (/\breuters\b/i.test(key)) meta = SOURCE_META["reuters"];
+     else if (/\b(ap|associated press)\b/i.test(key)) meta = SOURCE_META["ap"];
+     else if (/\bnpr\b/i.test(key)) meta = SOURCE_META["npr"];
+     else if (/\bbbc\b/i.test(key)) meta = SOURCE_META["bbc"];
+     else if (/\bwsj\b/i.test(key)) meta = SOURCE_META["wsj"];
+     else if (/\bnyt\b|\bnew york times\b/i.test(key)) meta = SOURCE_META["nyt"];
+     else if (/\bguardian\b/i.test(key)) meta = SOURCE_META["guardian"];
+     else if (/\bpolitico\b/i.test(key)) meta = SOURCE_META["politico"];
+     else if (/\baxios\b/i.test(key)) meta = SOURCE_META["axios"];
+     else if (/\bverge\b/i.test(key)) meta = SOURCE_META["verge"];
+     else if (/\bathletic\b/i.test(key)) meta = SOURCE_META["athletic"];
+     else if (/\bcnbc\b/i.test(key)) meta = SOURCE_META["cnbc"];
+     else if (/\bforbes\b/i.test(key)) meta = SOURCE_META["forbes"];
+     else if (/\bfortune\b/i.test(key)) meta = SOURCE_META["fortune"];
+     else if (/\bnba\b/i.test(key)) meta = SOURCE_META["nba.com"];
+     else if (/\bnfl\b/i.test(key)) meta = SOURCE_META["nfl.com"];
+     else if (/\bmlb\b/i.test(key)) meta = SOURCE_META["mlb.com"];
+     else if (/\bnhl\b/i.test(key)) meta = SOURCE_META["nhl.com"];
+   }
+   const abbr = meta?.abbr || (source ? source.replace(/^[Tt]he /i,'').slice(0,12) : '?');
+   const brandColor = meta?.color || "#6b7280";
+   if (dark) {
+     // On dark hero: match the "LEAD STORY" badge style exactly — same class
      return (
-       <span className="src-logo-wrap">
-         <img
-           src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
-           alt={label}
-           className={`src-logo-img${dark?" src-logo-dark":""}`}
-           onError={e=>{e.currentTarget.style.display='none';if(e.currentTarget.nextSibling)e.currentTarget.nextSibling.style.display='inline-flex';}}
-         />
-         <span className="src-badge" style={{display:'none',background:bg}}>
-           <span className="src-name" style={{color}}>{label}</span>
-         </span>
-       </span>
+       <span className="brief-feat-label" style={{color:'rgba(255,255,255,0.92)'}}>{abbr}</span>
      );
    }
+   // Light mode: colored text on tinted background
+   const pillBg = brandColor === "#1a1a1a" ? "#f3f4f6" : brandColor + "15";
    return (
-     <span className="src-badge" style={{background:bg}}>
-       <span className="src-name" style={{color}}>{label}</span>
+     <span style={{display:'inline-flex',alignItems:'center',background:pillBg,borderRadius:5,padding:'3px 8px'}}>
+       <span style={{fontSize:'0.55rem',fontWeight:800,letterSpacing:'0.06em',textTransform:'uppercase',color:brandColor,whiteSpace:'nowrap',lineHeight:1}}>{abbr}</span>
      </span>
    );
  };
@@ -1199,19 +1569,56 @@ export default function NewsHall() {
  const clean = t=>(t||"").replace(/\*\*(.*?)\*\*/g,"$1").replace(/\*(.*?)\*/g,"$1").replace(/`([^`]+)`/g,"$1").replace(/^[-*]\s*/,"").trim();
 
  const generate = async () => {
- if(!topics.length){showToast("Add at least one topic first");return;}
- setPhase("loading");setBrief(null);setSteps([]);setOgImages({});
- const stepMessages=["Searching live sources...","Scanning " + topics.length + " topic" + (topics.length>1?"s":"") + "...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
- stepMessages.forEach((s,i)=>setTimeout(()=>setSteps(p=>[...p,s]),i*1800));
- try{
-      const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,today})});
-      const parsed=await res.json();
-      if(parsed.error)throw new Error(parsed.error);
-      if(!Array.isArray(parsed.topics)||!parsed.topics.length)throw new Error("No topics in response");
-      setBrief(parsed);setPhase("done");saveUserData(parsed,topics);loadOgImages(parsed);
-      try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:parsed,topics,ts:Date.now()}));}catch(_){}
-      setCooldown(60);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);
-    }catch(err){setBrief({error:true,raw:String(err.message||err)});setPhase("done");}
+   if(!topics.length){showToast("Add at least one topic first");return;}
+   if(user) setTab("brief");
+   setPhase("loading");setBrief(null);setSteps([]);setOgImages({});
+   setIsStreaming(true);setStreamedCount(0);
+   const stepMessages=["Searching live sources...","Scanning "+topics.length+" topic"+(topics.length>1?"s":"")+"...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
+   stepMessages.forEach((s,i)=>setTimeout(()=>setSteps(p=>[...p,s]),i*1800));
+   try{
+     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,today})});
+     if(!res.ok||!res.body)throw new Error(`HTTP ${res.status}`);
+     const reader=res.body.getReader();
+     const decoder=new TextDecoder();
+     let buf="";
+     let partialBrief={topics:[],headline:"Your Morning Brief"};
+     let scrolled=false;
+     while(true){
+       const{done,value}=await reader.read();
+       if(done)break;
+       buf+=decoder.decode(value,{stream:true});
+       const lines=buf.split("\n");
+       buf=lines.pop()||"";
+       for(const line of lines){
+         if(!line.startsWith("data: "))continue;
+         try{
+           const msg=JSON.parse(line.slice(6));
+           if(msg.type==="topic"){
+             partialBrief={...partialBrief,topics:[...partialBrief.topics,msg.topic]};
+             setBrief({...partialBrief});
+             setStreamedCount(c=>c+1);
+             setPhase("done"); // show UI as soon as first topic lands
+             if(!scrolled){scrolled=true;setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);}
+           }else if(msg.type==="done"){
+             partialBrief={...partialBrief,headline:msg.headline};
+             setBrief({...partialBrief});
+             setIsStreaming(false);
+             saveUserData(partialBrief,topics);
+             loadOgImages(partialBrief);
+             try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:partialBrief,topics,ts:Date.now()}));}catch(_){}
+             setCooldown(15);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);
+           }else if(msg.type==="error"){
+             throw new Error(msg.message);
+           }
+         }catch(_){}
+       }
+     }
+     setIsStreaming(false);
+   }catch(err){
+     setIsStreaming(false);
+     setBrief({error:true,raw:String(err.message||err)});
+     setPhase("done");
+   }
  };
 
  const ExtIcon=()=>(<svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M7 1h4m0 0v4m0-4L5.5 6.5"/></svg>);
@@ -1242,6 +1649,28 @@ export default function NewsHall() {
    els.forEach(el=>obs.observe(el));
    return()=>obs.disconnect();
  },[phase]);
+
+ const ptrStart = useCallback((e)=>{
+   if(window.scrollY===0) ptrStartY.current=e.touches[0].clientY;
+ },[]);
+ const ptrMove = useCallback((e)=>{
+   if(!ptrStartY.current) return;
+   const d=e.touches[0].clientY-ptrStartY.current;
+   if(d>0&&window.scrollY===0){
+     ptrDist.current=d;
+     setPtrState(d>PTR_THRESHOLD?"pulling":"idle");
+   }
+ },[PTR_THRESHOLD]);
+ const ptrEnd = useCallback(()=>{
+   if(ptrDist.current>PTR_THRESHOLD&&phase!=="loading"&&tab==="brief"){
+     setPtrState("refreshing");
+     generate();
+   } else {
+     setPtrState("idle");
+   }
+   ptrStartY.current=0;
+   ptrDist.current=0;
+ },[generate,phase,tab,PTR_THRESHOLD]);
 
  useEffect(()=>{
    const onScroll=()=>{
@@ -1279,136 +1708,298 @@ export default function NewsHall() {
    </div>
  </div>
 
- {/* ── LOGGED IN: HAS BRIEF → show dashboard header ── */}
- {user && brief && brief.topics ? (
-   <>
-   <div className="dashboard">
-     <div className="dashboard-hd">
-       <div className="dashboard-hd-l">
-         <div className="dashboard-edition">Your Morning Brief</div>
-         <div className="dashboard-title">{brief.headline||"Your Morning Brief"}</div>
-         <div className="dashboard-sub">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta ? new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}) : today}</div>
-       </div>
-       <div className="dashboard-hd-r">
-         <div className="dashboard-date">{today}</div>
-         <div className="dashboard-actions">
-           <button className="dash-btn-edit" onClick={()=>setShowEditor(e=>!e)}>{showEditor?"Done editing":"Edit topics"}</button>
-           <button className="dash-btn-regen" onClick={generate} disabled={phase==="loading"}>{phase==="loading"?"Generating...":"Refresh brief"}</button>
-         </div>
-       </div>
+ {/* ── OFFLINE BANNER ── */}
+ {!isOnline&&<div className="offline-bar">You're offline — showing your last saved brief</div>}
+
+ {/* ── MAIN CONTENT ── */}
+ {user ? (
+ <>
+ <div className="tab-body" onTouchStart={ptrStart} onTouchMove={ptrMove} onTouchEnd={ptrEnd}>
+
+   {/* ── BRIEF TAB ── */}
+   {tab==="brief"&&(<>
+     {/* Pull-to-refresh indicator */}
+     <div className={`ptr-wrap${ptrState!=="idle"?" visible":""}`}>
+       {ptrState==="refreshing"
+         ? <><div className="ptr-spinner"/><span>Refreshing…</span></>
+         : <><span className={`ptr-arrow${ptrState==="pulling"?" ready":""}`}>↓</span><span>{ptrState==="pulling"?"Release to refresh":"Pull to refresh"}</span></>
+       }
      </div>
-   </div>
-   {showEditor&&(
-     <div className="editor-panel">
-       <div style={{maxWidth:900,margin:"0 auto"}}>
-         <div className="step-hd" style={{marginBottom:20}}>
-           <div className="step-tag" style={{background:"var(--accent)"}}><span className="step-n">Topics</span></div>
-           <h2 className="step-h2" style={{fontSize:"1.3rem"}}>Edit your topics</h2>
-           <p className="step-sub">Add or remove topics — hit Refresh brief to regenerate with your new selection.</p>
+     {phase==="loading"&&(
+       <div className="loading">
+         <div className="ld-orbs"><div className="ld-orb"/><div className="ld-orb"/><div className="ld-orb"/></div>
+         <div className="ld-h">Building your Morning Brief</div>
+         <div className="ld-s">Scanning live sources across {topics.length} topic{topics.length>1?"s":""}...</div>
+         <div className="ld-bar-wrap"><div className="ld-bar"/></div>
+         <div className="ld-topics">
+           {topics.map((t,i)=>{const si=steps.length;const done=i<si-1;const scan=i===si-1||(!done&&i===0&&steps.length===0);return(<span key={t} className={`ld-topic-pill${scan?" scanning":done?" done":""}`} style={{animationDelay:`${i*0.1}s`}}><span className="ld-pill-dot"/>{t}</span>);})}
          </div>
-         <div className="search-wrap">
-           <span className="search-ico"></span>
-           <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTopic()} placeholder="Add a topic..."/>
-           <button className="add-btn" onClick={()=>addTopic()} disabled={topics.length>=MAX_TOPICS} style={{opacity:topics.length>=MAX_TOPICS?0.4:1}}>Add</button>
+         <div className="ld-steps">{steps.map((s,i)=><div key={i} className="ld-step">✓ {s}</div>)}</div>
+       </div>
+     )}
+     {phase==="done"&&brief&&!brief.error&&(
+       <div className="brief-tab-hd">
+         <div>
+           <div className="brief-tab-edition">Morning Brief</div>
+           <div className="brief-tab-title">{brief.headline||"Your Morning Brief"}</div>
+           <div className="brief-tab-sub">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}):today}</div>
          </div>
-         <div className="sugg-wrap" style={{marginBottom:12}}>
-           {SUGGESTIONS.slice(0,16).map(s=><div key={s.name} className={`sugg${topics.includes(s.name)?" on":""}${topics.length>=MAX_TOPICS&&!topics.includes(s.name)?" disabled":""}`} onClick={()=>togSugg(s.name)} style={{opacity:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?0.35:1,cursor:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?"not-allowed":"pointer"}}>{s.name}</div>)}
+         <button className="brief-refresh-btn" onClick={generate} disabled={isStreaming||cooldown>0}>{cooldown>0?`${cooldown}s`:"Refresh"}</button>
+       </div>
+     )}
+     {isStreaming&&phase==="done"&&(
+       <div style={{margin:'0 22px 10px',background:'var(--bg-2)',border:'1px solid var(--rule)',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',gap:12}}>
+         <div style={{width:16,height:16,borderRadius:'50%',border:'2px solid var(--accent)',borderTopColor:'transparent',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
+         <div style={{flex:1}}>
+           <div style={{fontSize:'0.75rem',fontWeight:600,color:'var(--ink)',marginBottom:4}}>
+             {streamedCount} of {topics.length} topic{topics.length!==1?"s":""} ready
+           </div>
+           <div style={{height:3,background:'var(--rule)',borderRadius:2,overflow:'hidden'}}>
+             <div style={{height:'100%',width:`${(streamedCount/topics.length)*100}%`,background:'var(--accent)',borderRadius:2,transition:'width 0.4s ease'}}/>
+           </div>
          </div>
-         <div className="chips">
-           <span className="chips-lbl">Your topics:</span>
-           {topics.length===0?<span style={{fontSize:"0.72rem",color:"#b0b8c4"}}>Nothing yet</span>:topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)}
-           {topics.length>0&&<span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=4?"warn":"ok"}`}>{topics.length}/5</span>}
+       </div>
+     )}
+     {phase==="done"&&brief&&!brief.error&&briefIsStale&&!isStreaming&&(
+       <div style={{margin:'0 22px 8px',background:'#fffbeb',border:'1px solid #fde68a',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
+         <div style={{display:'flex',alignItems:'center',gap:8}}>
+           <span style={{fontSize:'1rem'}}>☀️</span>
+           <span style={{fontSize:'0.78rem',color:'#92400e',fontWeight:600}}>This brief is from yesterday — refresh for today's news</span>
          </div>
-         <div style={{marginTop:16,display:"flex",gap:8}}>
-           <button className="dash-btn-regen" onClick={()=>{setShowEditor(false);generate();}} disabled={phase==="loading"||!topics.length}>
-             {phase==="loading"?"Generating...":"Refresh brief with new topics"}
-           </button>
-           <button className="dash-btn-edit" onClick={()=>setShowEditor(false)}>Cancel</button>
+         <button onClick={generate} disabled={phase==="loading"||cooldown>0} style={{fontSize:'0.72rem',fontWeight:700,color:'#92400e',background:'#fde68a',border:'none',borderRadius:6,padding:'5px 12px',cursor:'pointer',whiteSpace:'nowrap'}}>
+           {cooldown>0?`${cooldown}s`:"Refresh now"}
+         </button>
+       </div>
+     )}
+     {phase==="done"&&brief&&(
+       <div className="brief-wrap" ref={briefRef}>
+         {brief.error?(
+           <div className="err-box">
+             <div className="err-msg">{brief.raw||"Could not generate brief — please try again."}</div>
+             {brief.raw&&<pre className="err-pre">{brief.raw}</pre>}
+           </div>
+         ):(
+           <>
+             <div>
+               {(brief.topics||[]).map((tg,ti)=>{
+                 const stories=Array.isArray(tg.stories)?tg.stories:[];
+                 const featured=stories[0];
+                 const rest=stories.slice(1);
+                 const fUrl=featured&&(featured.url&&featured.url.startsWith("http")?featured.url:"https://news.google.com/search?q="+encodeURIComponent(clean(featured.headline)+" "+(featured.source||"")));
+                 const gradient=getTopicGradient(tg.topic);
+                 return(
+                   <div key={ti} className="brief-topic-section" style={{animationDelay:`${ti*0.08}s`}}>
+                     <div className="brief-topic-header">
+                       <span className="brief-topic-name">{tg.topic}</span>
+                       <span className="brief-topic-count">{stories.length} {stories.length===1?"story":"stories"}</span>
+                     </div>
+                     {featured&&(
+                       <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
+                         {(()=>{const tk=tg.topic.toLowerCase().trim();const apiImg=ogImages[tk]&&!failedOgImages.has(tk)?ogImages[tk]:null;const fallbackImg=getTopicImage(tg.topic);const imgSrc=apiImg||fallbackImg;return(
+                         <div className="brief-feat-img" style={imgSrc?{backgroundImage:`linear-gradient(to bottom,transparent 25%,rgba(0,0,0,0.75) 100%),url(${imgSrc})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:gradient}}>
+                           {apiImg&&<img src={apiImg} alt="" style={{display:"none"}} onError={()=>markOgFailed(tk)}/>}
+                           <div className="brief-feat-img-meta">
+                             {featured.source&&<SourceLogo source={featured.source} dark/>}
+                             <span className="brief-feat-label">Lead story</span>
+                           </div>
+                         </div>
+                         );})()}
+                         <div className="brief-feat-body">
+                           <div className="brief-feat-hl">{clean(featured.headline)}</div>
+                           {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
+                           <span className="brief-feat-read">Read full story →</span>
+                         </div>
+                       </a>
+                     )}
+                     {rest.length>0&&(
+                       <div className="brief-story-grid">
+                         {rest.map((st,si)=>{
+                           const hasUrl=st.url&&st.url.startsWith("http");
+                           const url=hasUrl?st.url:"https://news.google.com/search?q="+encodeURIComponent(clean(st.headline)+" "+(st.source||""));
+                           return(
+                             <a key={si} className="brief-story-card" href={url} target="_blank" rel="noopener noreferrer">
+                               {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
+                               <div className="brief-story-hl">{clean(st.headline)}</div>
+                               {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
+                               <span className="brief-story-read">Read →</span>
+                             </a>
+                           );
+                         })}
+                       </div>
+                     )}
+                   </div>
+                 );
+               })}
+             </div>
+             {brief.topics?.some(tg=>tg.stories?.some(s=>s.source))&&(
+               <div className="srcfooter"><strong>Sources: </strong>{[...new Set(brief.topics.flatMap(tg=>(tg.stories||[]).map(s=>s.source)).filter(Boolean))].join(" · ")}</div>
+             )}
+           </>
+         )}
+       </div>
+     )}
+     {phase!=="loading"&&(!brief||brief.error)&&(
+       <div className="no-brief">
+         <div className="no-brief-inner">
+           <div className="no-brief-eyebrow">Good morning, {user.user_metadata?.username||user.email?.split('@')[0]}</div>
+           <div className="no-brief-title">Your brief is<br/><em>ready to build</em></div>
+           <div className="no-brief-sub">Pick your topics and we’ll build your brief in seconds.</div>
+           <button className="no-brief-btn" onClick={()=>setTab("topics")}>Build my brief</button>
+           {topics.length>0&&(
+             <div className="no-brief-topics">
+               {topics.map((t,i)=><span key={i} className="no-brief-topic-tag">{t}</span>)}
+             </div>
+           )}
+         </div>
+       </div>
+     )}
+   </>)}
+
+   {/* ── TOPICS TAB ── */}
+   {tab==="topics"&&(
+     <div className="topics-page">
+       <div className="topics-page-hd">
+         <div className="topics-page-title">Your Topics</div>
+         <div className="topics-page-sub">Choose what you want to wake up to every morning.</div>
+       </div>
+       <div className="search-wrap">
+         <span className="search-ico"></span>
+         <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTopic()} placeholder="Search topic"/>
+         <button className="add-btn" onClick={()=>addTopic()} disabled={topics.length>=MAX_TOPICS} style={{opacity:topics.length>=MAX_TOPICS?0.4:1,cursor:topics.length>=MAX_TOPICS?"not-allowed":"pointer"}}>Add</button>
+       </div>
+       <div className="sugg-lbl">Popular topics — click to add</div>
+       <div className="sugg-wrap">
+         {SUGGESTIONS.map(s=><div key={s.name} className={`sugg${topics.includes(s.name)?" on":""}${topics.length>=MAX_TOPICS&&!topics.includes(s.name)?" disabled":""}`} onClick={()=>togSugg(s.name)} style={{opacity:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?0.35:1,cursor:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?"not-allowed":"pointer"}}>{s.name}</div>)}
+       </div>
+       <div className="chips">
+         <span className="chips-lbl">Your topics:</span>
+         {topics.length===0
+           ? <span style={{fontSize:"0.72rem",color:"#b0b8c4"}}>Nothing yet — add topics above</span>
+           : topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)
+         }
+         {topics.length>0&&(
+           <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=4?"warn":"ok"}`}>{topics.length}/5</span>
+         )}
+       </div>
+       {topics.length>=MAX_TOPICS&&(
+         <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fff2f2",border:"1px solid #fca5a5",borderRadius:6,marginTop:6}}>
+           <span style={{fontSize:"0.78rem",color:"#dc2626"}}>5 topic limit reached.</span>
+           <span style={{fontSize:"0.78rem",color:"#6b7280"}}>Remove one to add another.</span>
+         </div>
+       )}
+       <div className="gen-wrap" style={{padding:"24px 0 0"}}>
+         <div className="gen-panel">
+           <div>
+             <div className="gen-title">Generate your brief</div>
+             <div className="gen-sub">{topics.length===0?"Add topics above first":`${topics.length} topic${topics.length>1?"s":""} selected`}</div>
+           </div>
+           <div className="gen-btns">
+             <button className={`btn-gen${topics.length>0&&!isStreaming&&phase!=="loading"&&!cooldown?" ready":""}`} onClick={generate} disabled={phase==="loading"||isStreaming||cooldown>0}>{phase==="loading"||isStreaming?"Generating...":cooldown>0?`Wait ${cooldown}s...`:"Generate brief"}</button>
+           </div>
          </div>
        </div>
      </div>
    )}
-   </>
- ) : user && !brief ? (
-   /* ── LOGGED IN: NO BRIEF → prompt to generate ── */
-   <div className="no-brief">
-     <div className="no-brief-inner">
-       <div className="no-brief-eyebrow">Good morning, {user.user_metadata?.username||user.email?.split('@')[0]}</div>
-       <div className="no-brief-title">Your brief is<br/><em>ready to build</em></div>
-       <div className="no-brief-sub">Pick your topics below and we'll build your brief in seconds.</div>
-       <button className="no-brief-btn" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Build my brief</button>
-       {topics.length>0&&(
-         <div className="no-brief-topics">
-           {topics.map((t,i)=><span key={i} className="no-brief-topic-tag">{t}</span>)}
+
+   {/* ── PROFILE TAB ── */}
+   {tab==="profile"&&(
+     <div className="profile-page">
+       <div className="profile-avatar-row">
+         <div className="profile-avatar">{(user.user_metadata?.username||user.email||"?")[0].toUpperCase()}</div>
+         <div className="profile-name">{user.user_metadata?.username||user.email?.split('@')[0]}</div>
+         <div className="profile-email-txt">{user.email}</div>
+       </div>
+       <div className="profile-section">
+         <div className="profile-row">
+           <div className="profile-row-l">
+             <div className="profile-row-lbl">Delivery time</div>
+             <div className="profile-row-sub">When your brief is generated daily</div>
+           </div>
+           <input type="time" value={deliveryTime} onChange={e=>setDeliveryTime(e.target.value)} className="profile-time"/>
          </div>
-       )}
+         <div className="profile-row">
+           <div className="profile-row-l">
+             <div className="profile-row-lbl">Push notifications</div>
+             <div className="profile-row-sub">{pushStatus==="granted"?"Enabled":"Get notified when your brief is ready"}</div>
+           </div>
+           {pushStatus==="granted"
+             ? <span className="profile-push-btn ok">On</span>
+             : pushStatus==="denied"
+             ? <span className="profile-push-btn denied">Blocked</span>
+             : <button className="profile-push-btn" onClick={saveSettings}>Enable</button>
+           }
+         </div>
+       </div>
+       <button className="profile-save-btn" onClick={saveSettings}>Save settings</button>
+       <button className="profile-signout" onClick={signOut}>Sign out</button>
      </div>
+   )}
+
+ </div>
+
+ {/* BOTTOM NAV */}
+ <div className="mob-nav">
+   <div className="mob-nav-inner">
+     {[{id:"brief",label:"Brief"},{id:"topics",label:"Topics"},{id:"profile",label:"Profile"}].map(t=>(
+       <button key={t.id} className={`mob-tab${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
+         <div className="mob-tab-bar"/>
+         <span className="mob-tab-lbl">{t.label}</span>
+       </button>
+     ))}
    </div>
+ </div>
+ </>
  ) : (
-   <>
-   {/* SLIDE 1: INTRO */}
-   <div className="ls ls-1">
-     <div className="hero-blob hero-blob-1"/><div className="hero-blob hero-blob-2"/>
-     <h1 className="ls1-hl">News<br/>without<br/>the <em>noise.</em></h1>
-     <p className="ls1-sub">Your topics. Real sources. One brief, every morning.</p>
-     <div className="ls1-btns">
-       <button className="ls1-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
-       <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
-     </div>
-     <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
+ <>
+ {/* SLIDE 1: INTRO */}
+ <div className="ls ls-1">
+   <div className="hero-blob hero-blob-1"/><div className="hero-blob hero-blob-2"/>
+   <h1 className="ls1-hl">News<br/>without<br/>the <em>noise.</em></h1>
+   <p className="ls1-sub">Your topics. Real sources. One brief, every morning.</p>
+   <div className="ls1-btns">
+     <button className="ls1-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
+     <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
    </div>
-   {/* SLIDE 2: WHY */}
-   <div className="ls ls-2">
-     <div className="ls2-label">Why NewsHall</div>
-     <div className="ls2-list">
-       {[
-         {n:"01",title:"Straight-news sources only",desc:"We pull from outlets built for reporting — not opinion, not outrage."},
-         {n:"02",title:"Every story linked and cited",desc:"Every headline goes straight to the original article. No paywalls, no dead ends."},
-         {n:"03",title:"Built fresh every morning",desc:"Your brief is scanned and written for your exact topics. Nobody else gets yours."},
-         {n:"04",title:"Ready before you wake up",desc:"Set a delivery time once and forget it. Your brief is there when your day starts."},
-       ].map(item=>(
-         <div className="ls2-item" key={item.n}>
-           <div className="ls2-n">{item.n}</div>
-           <div className="ls2-title">{item.title}</div>
-           <div className="ls2-desc">{item.desc}</div>
-         </div>
-       ))}
-     </div>
+   <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
+ </div>
+ {/* SLIDE 2: WHY */}
+ <div className="ls ls-2">
+   <div className="ls2-label">Why NewsHall</div>
+   <div className="ls2-list">
+     {[
+       {n:"01",title:"Straight-news sources only",desc:"We pull from outlets built for reporting — not opinion, not outrage."},
+       {n:"02",title:"Every story linked and cited",desc:"Every headline goes straight to the original article. No paywalls, no dead ends."},
+       {n:"03",title:"Built fresh every morning",desc:"Your brief is scanned and written for your exact topics. Nobody else gets yours."},
+       {n:"04",title:"Ready before you wake up",desc:"Set a delivery time once and forget it. Your brief is there when your day starts."},
+     ].map(item=>(
+       <div className="ls2-item" key={item.n}>
+         <div className="ls2-n">{item.n}</div>
+         <div className="ls2-title">{item.title}</div>
+         <div className="ls2-desc">{item.desc}</div>
+       </div>
+     ))}
    </div>
-   {/* SLIDE 3: HOW + CTA */}
-   <div className="ls ls-3">
-     <div className="ls3-eyebrow">How it works</div>
-     <h2 className="ls3-hl">Up in 60 seconds</h2>
-     <div className="ls3-steps">
-       {[
-         {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche."},
-         {n:"02",title:"We do the reading",text:"Every morning we scan hundreds of sources and write your brief."},
-         {n:"03",title:"Wake up informed",text:"Your brief is waiting. Read it over coffee, no doomscrolling required."},
-       ].map(s=>(
-         <div className="ls3-step" key={s.n}>
-           <div className="ls3-num">{s.n}</div>
-           <div><div className="ls3-step-title">{s.title}</div><div className="ls3-step-text">{s.text}</div></div>
-         </div>
-       ))}
-     </div>
-     <button className="ls3-cta" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Start for free →</button>
+ </div>
+ {/* SLIDE 3: HOW + CTA */}
+ <div className="ls ls-3">
+   <div className="ls3-eyebrow">How it works</div>
+   <h2 className="ls3-hl">Up in 60 seconds</h2>
+   <div className="ls3-steps">
+     {[
+       {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche."},
+       {n:"02",title:"We do the reading",text:"Every morning we scan hundreds of sources and write your brief."},
+       {n:"03",title:"Wake up informed",text:"Your brief is waiting. Read it over coffee, no doomscrolling required."},
+     ].map(s=>(
+       <div className="ls3-step" key={s.n}>
+         <div className="ls3-num">{s.n}</div>
+         <div><div className="ls3-step-title">{s.title}</div><div className="ls3-step-text">{s.text}</div></div>
+       </div>
+     ))}
    </div>
-   </>
- )}
- {user && savedBriefMeta && phase !== "loading" && (
-   <div className="saved-brief-bar">
-     <div>
-       <div className="saved-brief-bar-text"><strong>Your brief is ready</strong> — last generated {new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}</div>
-       <div className="saved-brief-bar-time">{new Date(savedBriefMeta.generated_at).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</div>
-     </div>
-     <button className="saved-brief-btn" onClick={()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"})}>Read your brief</button>
-   </div>
- )}
-
-
-
-
- {(!user||!brief)&&(<div id="builder" className="builder" ref={builderRef}>
+   <button className="ls3-cta" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Start for free →</button>
+ </div>
+ {/* LOGGED-OUT BUILDER */}
+ <div id="builder" className="builder" ref={builderRef}>
    <div className="step-hd">
      <div className="step-tag"><span className="step-n">01</span> Choose topics</div>
      <h2 className="step-h2">What do you want to wake up to?</h2>
@@ -1430,9 +2021,7 @@ export default function NewsHall() {
        : topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)
      }
      {topics.length>0&&(
-       <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=4?"warn":"ok"}`}>
-         {topics.length}/5
-       </span>
+       <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=4?"warn":"ok"}`}>{topics.length}/5</span>
      )}
    </div>
    {topics.length>=MAX_TOPICS&&(
@@ -1441,20 +2030,18 @@ export default function NewsHall() {
        <span style={{fontSize:"0.78rem",color:"#6b7280"}}>Remove a topic to add a different one.</span>
      </div>
    )}
- </div>)}
-
- {(!user||!brief)&&(<div className="gen-wrap">
+ </div>
+ <div className="gen-wrap">
    <div className="gen-panel">
      <div>
        <div className="gen-title">Ready to preview?</div>
        <div className="gen-sub">{topics.length===0?"Add topics above first":`${topics.length} topic${topics.length>1?"s":""} ready — generate your digest`}</div>
      </div>
      <div className="gen-btns">
-       <button className={`btn-gen${topics.length>0&&phase!=="loading"&&!cooldown?" ready":""}`} onClick={generate} disabled={phase==="loading"||cooldown>0}>{phase==="loading"?"Generating...":cooldown>0?`Wait ${cooldown}s...`:"Generate brief"}</button>
+       <button className={`btn-gen${topics.length>0&&!isStreaming&&phase!=="loading"&&!cooldown?" ready":""}`} onClick={generate} disabled={phase==="loading"||isStreaming||cooldown>0}>{phase==="loading"||isStreaming?"Generating...":cooldown>0?`Wait ${cooldown}s...`:"Generate brief"}</button>
      </div>
    </div>
- </div>)}
-
+ </div>
  {phase==="loading"&&(
    <div className="loading">
      <div className="ld-orbs"><div className="ld-orb"/><div className="ld-orb"/><div className="ld-orb"/></div>
@@ -1462,20 +2049,11 @@ export default function NewsHall() {
      <div className="ld-s">Scanning live sources across {topics.length} topic{topics.length>1?"s":""}...</div>
      <div className="ld-bar-wrap"><div className="ld-bar"/></div>
      <div className="ld-topics">
-       {topics.map((t,i)=>{
-         const stepIdx=steps.length;
-         const isDone=i<stepIdx-1;
-         const isScanning=i===stepIdx-1||(!isDone&&i===0&&steps.length===0);
-         return(<span key={t} className={`ld-topic-pill${isScanning?" scanning":isDone?" done":""}`} style={{animationDelay:`${i*0.1}s`}}>
-           <span className="ld-pill-dot"/>
-           {t}
-         </span>);
-       })}
+       {topics.map((t,i)=>{const si=steps.length;const done=i<si-1;const scan=i===si-1||(!done&&i===0&&steps.length===0);return(<span key={t} className={`ld-topic-pill${scan?" scanning":done?" done":""}`} style={{animationDelay:`${i*0.1}s`}}><span className="ld-pill-dot"/>{t}</span>);})}
      </div>
      <div className="ld-steps">{steps.map((s,i)=><div key={i} className="ld-step">✓ {s}</div>)}</div>
    </div>
  )}
-
  {phase==="done"&&brief&&(
    <div className="brief-wrap" ref={briefRef}>
      {brief.error?(
@@ -1493,16 +2071,28 @@ export default function NewsHall() {
            <div className="bkicker">Your Morning Brief</div>
            <div className="bhl">{brief.headline||"Morning Brief"}</div>
            <div className="bmeta">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</div>
+           {isStreaming&&(
+             <div style={{margin:'12px 0 0',background:'var(--bg-2)',border:'1px solid var(--rule)',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',gap:12}}>
+               <div style={{width:14,height:14,borderRadius:'50%',border:'2px solid var(--accent)',borderTopColor:'transparent',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
+               <div style={{flex:1}}>
+                 <div style={{fontSize:'0.72rem',fontWeight:600,color:'var(--ink)',marginBottom:4}}>{streamedCount} of {topics.length} topic{topics.length!==1?"s":""} ready</div>
+                 <div style={{height:3,background:'var(--rule)',borderRadius:2,overflow:'hidden'}}>
+                   <div style={{height:'100%',width:`${(streamedCount/topics.length)*100}%`,background:'var(--accent)',borderRadius:2,transition:'width 0.4s ease'}}/>
+                 </div>
+               </div>
+             </div>
+           )}
+           {briefIsStale&&!isStreaming&&(
+             <div style={{margin:'12px 0 0',background:'#fffbeb',border:'1px solid #fde68a',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
+               <span style={{fontSize:'0.78rem',color:'#92400e',fontWeight:600}}>☀️ This brief is from yesterday — refresh for today's news</span>
+               <button onClick={generate} disabled={phase==="loading"||cooldown>0} style={{fontSize:'0.72rem',fontWeight:700,color:'#92400e',background:'#fde68a',border:'none',borderRadius:6,padding:'5px 12px',cursor:'pointer',whiteSpace:'nowrap'}}>{cooldown>0?`${cooldown}s`:"Refresh now"}</button>
+             </div>
+           )}
            <div className="bmast-btns">
              <button className="btweak" onClick={()=>builderRef.current?.scrollIntoView({behavior:"smooth",block:"start"})}>Edit topics</button>
              <button className="brefresh" onClick={generate}>Refresh brief</button>
            </div>
          </div>
-
-
-
-
-
          <div>
            {(brief.topics||[]).map((tg,ti)=>{
              const stories=Array.isArray(tg.stories)?tg.stories:[];
@@ -1552,15 +2142,14 @@ export default function NewsHall() {
              );
            })}
          </div>
-
          {brief.topics?.some(tg=>tg.stories?.some(s=>s.source))&&(
            <div className="srcfooter"><strong>Sources: </strong>{[...new Set(brief.topics.flatMap(tg=>(tg.stories||[]).map(s=>s.source)).filter(Boolean))].join(" · ")}</div>
          )}
-
-
        </>
      )}
    </div>
+ )}
+ </>
  )}
 
  {showOnboarding&&user&&(
@@ -1584,6 +2173,65 @@ export default function NewsHall() {
          {pushStatus==="asking"?"Setting up...":"Enable morning notifications"}
        </button>
        <button className="ob-skip" onClick={()=>setShowOnboarding(false)}>I'll set this up later</button>
+     </div>
+   </div>
+ )}
+
+ {/* ── NEW USER ONBOARDING ── */}
+ {showNewUserOnboard&&user&&(
+   <div className="nuo">
+     <div className="nuo-top">
+       <div className="nuo-logo">NewsHall</div>
+       <div className="nuo-step">{topics.length}/5 topics</div>
+     </div>
+     <div className="nuo-hd">
+       <div className="nuo-eyebrow">Welcome</div>
+       <div className="nuo-title">What do you<br/>care about?</div>
+       <div className="nuo-sub">Pick a few topics and we'll build your first brief in seconds.</div>
+     </div>
+     <div className="nuo-body">
+       <div className="nuo-search-wrap">
+         <span className="nuo-search-ico">🔍</span>
+         <input
+           className="nuo-search"
+           value={input}
+           onChange={e=>setInput(e.target.value)}
+           onKeyDown={e=>e.key==="Enter"&&addTopic()}
+           placeholder="Or type anything specific…"
+         />
+       </div>
+       {topics.length>0&&(
+         <div className="nuo-chips">
+           {topics.map(t=>(
+             <span key={t} className="nuo-chip">
+               {t}
+               <span className="nuo-chip-x" onClick={()=>rmTopic(t)}>×</span>
+             </span>
+           ))}
+         </div>
+       )}
+       <div className="nuo-sugg-lbl">Popular topics</div>
+       <div className="nuo-sugg-wrap">
+         {SUGGESTIONS.map(s=>(
+           <div
+             key={s.name}
+             className={`nuo-sugg${topics.includes(s.name)?" on":""}${topics.length>=MAX_TOPICS&&!topics.includes(s.name)?" disabled":""}`}
+             onClick={()=>topics.length<MAX_TOPICS||topics.includes(s.name)?togSugg(s.name):null}
+             style={{opacity:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?0.3:1,cursor:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?"not-allowed":"pointer"}}
+           >
+             {s.name}
+           </div>
+         ))}
+       </div>
+     </div>
+     <div className="nuo-footer">
+       <button
+         className={`nuo-btn${topics.length>0?" ready":""}`}
+         onClick={()=>{setShowNewUserOnboard(false);generate();}}
+       >
+         {topics.length===0?"Pick at least one topic →":`Build my brief — ${topics.length} topic${topics.length>1?"s":""} →`}
+       </button>
+       <div className="nuo-hint">Takes about 15 seconds</div>
      </div>
    </div>
  )}
