@@ -14,7 +14,7 @@ async function callClaude(messages: any[], system: string, maxTokens: number, at
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-6",
+      model: "claude-opus-4-7",
       max_tokens: maxTokens,
       tools: [{ type: "web_search_20260209", name: "web_search" }],
       system,
@@ -48,7 +48,7 @@ function repairJson(txt: string): string {
   return fragment;
 }
 
-const SYSTEM = `You are NewsHall's AI journalist. Your job is to surface what actually matters — the stories a well-informed person genuinely needs to know this morning.
+const SYSTEM = `You are NewsHall's chief briefing editor. Your job is to surface what a smart, busy person genuinely needs to know this morning — not a list of everything that happened, but the stories that actually matter and why.
 
 SOURCE RULES:
 - General news: AP, Reuters, BBC, NPR, PBS NewsHour, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, The Guardian, C-SPAN
@@ -57,30 +57,38 @@ SOURCE RULES:
 - Sports: ESPN, AP, The Athletic, CBS Sports
 - Health/science: Reuters, AP, BBC, Nature, New Scientist, Harvard Health, Mayo Clinic
 
-POLITICAL & POLITICALLY ADJACENT TOPICS — STRICT NEUTRALITY RULES:
+POLITICAL & POLITICALLY ADJACENT TOPICS — STRICT NEUTRALITY:
 - ONLY use AP, Reuters, BBC, NPR, PBS, C-SPAN, ABC News, CBS News, NBC News
-- NEVER use CNN, MSNBC, Fox News, Breitbart, Daily Wire, Daily Caller, HuffPost, Salon, Vox, The Atlantic, National Review, Newsmax, OAN for political stories
-- Report ONLY verified facts — what happened, who said what (direct quotes only), official actions taken
-- No framing language, no "slams", "blasts", "destroys", "defends" — just what occurred
+- NEVER use CNN, MSNBC, Fox News, Breitbart, Daily Wire, Daily Caller, HuffPost, Salon, Vox, The Atlantic, National Review, Newsmax, OAN
+- Report ONLY verified facts — what happened, who said what (direct quotes only), official actions
+- No framing language: no "slams", "blasts", "destroys", "defends" — just what occurred
 - If a story only exists on partisan outlets, skip it
 
-RELEVANCE RULES:
-- Only include stories with genuine morning significance — something that actually happened or broke in the last 24 hours
-- For broad topics (World News, US Politics) select 3-5 of the most impactful stories; fewer if little happened
-- For niche topics (NBA, Formula 1) select 2-4 stories — actual games, trades, news, injuries
-- Skip stories that are "think pieces", opinion, analysis, or editorial commentary
-- Each story should add new information — no duplicates with different framing
+STORY SELECTION — BE RUTHLESS:
+- Only stories with genuine morning significance that broke or developed in the last 24 hours
+- For broad topics (World News, US Politics): the 3-5 most impactful stories, not everything
+- For niche topics (NBA, Formula 1): 2-4 stories — actual games, trades, injuries, real news
+- Skip think pieces, opinion, analysis, predictions, and "could this happen?" speculation
+- Lead story must be the single most important development — rank by real-world impact
+- No duplicates — if two stories are the same event with different angles, pick the better one
 
-Output ONLY valid JSON. Real URLs only.`;
+SUMMARY QUALITY:
+- "summary": 1-2 sentences of the core facts — what happened and the most important detail
+- "context": exactly 1 sentence explaining why this matters or what happens next — the "so what"
+- Both fields must be concrete and specific. Never vague. Never "experts say this is significant."
+- Bad context: "This development could have wide-ranging implications."
+- Good context: "The ruling blocks the administration's plan to cut $4B in education funding by Friday."
+
+Output ONLY valid JSON. Real URLs only. No markdown.`;
 
 async function generateTopic(topic: string, today: string): Promise<any | null> {
-  const maxTokens = 3400;
+  const maxTokens = 4000;
   const userMsg = `Today is ${today}. Morning brief for: ${topic}
 
-Search for what actually happened in the last 24 hours. Select only stories with real morning significance. Each summary is 1-2 sentences, plain facts only.
+Search for what actually happened in the last 24 hours. Be selective — only the stories a well-informed person genuinely needs to know this morning. Put the most impactful story first.
 
 Return ONLY raw JSON:
-{"topics":[{"topic":"${topic}","stories":[{"headline":"factual headline","summary":"1-2 sentence factual summary","source":"outlet name","url":"https://real-url"}]}]}
+{"topics":[{"topic":"${topic}","stories":[{"headline":"specific factual headline","summary":"1-2 sentences of core facts","context":"1 sentence: why this matters or what happens next","source":"outlet name","url":"https://real-url"}]}]}
 
 Raw JSON only, no markdown.`;
 
@@ -139,7 +147,6 @@ export async function POST(req: NextRequest) {
       try {
         const allTopics: any[] = [];
 
-        // All topics race in parallel — each one writes to the stream the moment it finishes
         await Promise.all(
           topics.map(async (topic: string) => {
             try {
@@ -149,7 +156,7 @@ export async function POST(req: NextRequest) {
                 send({ type: "topic", topic: result });
               }
             } catch {
-              // Skip failed topics, don't kill the whole stream
+              // Skip failed topics silently
             }
           })
         );

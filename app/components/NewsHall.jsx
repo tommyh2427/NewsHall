@@ -277,7 +277,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brief-feat-label{font-size:0.48rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.22);border-radius:4px;padding:3px 8px;}
 .brief-feat-body{padding:20px 22px 18px;background:#fff;}
 .brief-feat-hl{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.2vw,1.6rem);font-weight:800;line-height:1.15;letter-spacing:-0.025em;color:var(--ink);margin-bottom:8px;}
-.brief-feat-sum{font-size:0.82rem;color:var(--ink-3);line-height:1.62;margin-bottom:14px;}
+.brief-feat-sum{font-size:0.82rem;color:var(--ink-3);line-height:1.62;margin-bottom:10px;}
+.brief-feat-ctx{font-size:0.78rem;color:var(--accent-2);line-height:1.55;margin-bottom:14px;font-weight:500;padding-left:12px;border-left:2px solid var(--accent);}
 .brief-feat-read{font-size:0.6rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--accent-2);transition:color 0.15s;}
 .brief-featured:hover .brief-feat-read{color:var(--ink);}
 /* Story grid */
@@ -286,7 +287,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brief-story-card:hover{box-shadow:0 4px 20px rgba(15,23,41,0.1);transform:translateY(-1px);}
 .brief-story-src{margin-bottom:10px;}
 .brief-story-hl{font-family:'Playfair Display',serif;font-size:0.96rem;font-weight:700;line-height:1.3;letter-spacing:-0.02em;color:var(--ink);margin-bottom:6px;}
-.brief-story-sum{font-size:0.76rem;color:var(--ink-3);line-height:1.55;margin-bottom:12px;flex:1;}
+.brief-story-sum{font-size:0.76rem;color:var(--ink-3);line-height:1.55;margin-bottom:6px;flex:1;}
+.brief-story-ctx{font-size:0.72rem;color:var(--accent-2);line-height:1.5;margin-bottom:12px;font-weight:500;padding-left:10px;border-left:2px solid var(--accent);}
 .brief-story-read{font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-2);margin-top:auto;}
 /* Sources footer */
 .srcfooter{margin-top:8px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;font-size:0.6rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-4);line-height:2;}
@@ -1807,6 +1809,7 @@ export default function NewsHall() {
                          <div className="brief-feat-body">
                            <div className="brief-feat-hl">{clean(featured.headline)}</div>
                            {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
+                               {featured.context&&<div className="brief-feat-ctx">{clean(featured.context)}</div>}
                            <span className="brief-feat-read">Read full story →</span>
                          </div>
                        </a>
@@ -1821,6 +1824,7 @@ export default function NewsHall() {
                                {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
                                <div className="brief-story-hl">{clean(st.headline)}</div>
                                {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
+                               {st.context&&<div className="brief-story-ctx">{clean(st.context)}</div>}
                                <span className="brief-story-read">Read →</span>
                              </a>
                            );
@@ -2132,6 +2136,7 @@ export default function NewsHall() {
                            {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
                            <div className="brief-story-hl">{clean(st.headline)}</div>
                            {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
+                           {st.context&&<div className="brief-story-ctx">{clean(st.context)}</div>}
                            <span className="brief-story-read">Read →</span>
                          </a>
                        );
