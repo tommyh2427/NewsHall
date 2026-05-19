@@ -93,10 +93,15 @@ async function generateTopic(topic: string, today: string): Promise<any | null> 
 
 Search for what actually happened in the last 24 hours. Be selective — only the stories a well-informed person genuinely needs to know this morning. Put the most impactful story first.
 
-Return ONLY raw JSON:
-{"topics":[{"topic":"${topic}","watch_for":["concrete upcoming item","another if relevant"],"stories":[{"headline":"specific factual headline","summary":"1-2 sentences of core facts","context":"1 sentence: why this matters or what happens next","source":"outlet name","url":"https://real-url"}]}]}
+Return ONLY raw JSON matching this exact structure. Every story MUST have all four fields — headline, summary, context, source, url. The "context" field is required and must never be omitted or merged into summary.
 
-Omit watch_for if nothing concrete is upcoming. Raw JSON only, no markdown.`;
+{"topics":[{"topic":"${topic}","watch_for":["concrete upcoming item","another if relevant"],"stories":[{"headline":"specific factual headline","summary":"1-2 sentences of core facts only — what happened","context":"1 sentence: the so-what — why this matters or what happens next","source":"outlet name","url":"https://real-url"}]}]}
+
+Rules:
+- summary = what happened (facts only, 1-2 sentences)
+- context = so-what (why it matters or what comes next, 1 sentence, always present)
+- Omit watch_for if nothing concrete is upcoming
+- Raw JSON only, no markdown`;
 
   let messages: any[] = [{ role: "user", content: userMsg }];
   let data = await callClaude(messages, SYSTEM, maxTokens);
