@@ -1630,6 +1630,7 @@ export default function NewsHall() {
          try{
            const msg=JSON.parse(line.slice(6));
            if(msg.type==="topic"){
+             console.log("[NH] topic received:", JSON.stringify(msg.topic?.stories?.map(s=>({hl:s.headline?.slice(0,40),ctx:s.context?.slice(0,60)}))));
              partialBrief={...partialBrief,topics:[...partialBrief.topics,msg.topic]};
              setBrief({...partialBrief});
              setStreamedCount(c=>c+1);
