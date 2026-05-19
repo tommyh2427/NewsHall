@@ -7,6 +7,12 @@ const BROWSER_HEADERS = {
   "Cache-Control": "no-cache",
 };
 
+// Topics where we always use the curated fallback — article OG images are
+// usually politician headshots or logos that look wrong as section headers
+const ALWAYS_USE_FALLBACK = new Set([
+  "us politics", "politics", "world news", "us news",
+]);
+
 // Curated Unsplash fallbacks per topic — always looks great
 const TOPIC_IMAGES: Record<string, string> = {
   "world news":      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=85",
@@ -110,7 +116,7 @@ export async function POST(req: NextRequest) {
         const topic = (item?.topic || "").toLowerCase().trim();
         const fallback = TOPIC_IMAGES[topic] || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=85";
 
-        if (url.startsWith("http")) {
+        if (url.startsWith("http") && !ALWAYS_USE_FALLBACK.has(topic)) {
           const ogImage = await fetchOgImage(url);
           if (ogImage) return [topic, ogImage];
         }
