@@ -1,4 +1,4 @@
-const CACHE = 'newshall-v3';
+const CACHE = 'newshall-v4';
 const PRECACHE = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 // ── Install: pre-cache app shell ──────────────────────────────────────────
@@ -29,18 +29,10 @@ self.addEventListener('fetch', e => {
   // API calls — always network, never cache
   if (url.pathname.startsWith('/api/')) return;
 
-  // Next.js static chunks — cache-first (hashed filenames never change)
-  if (url.pathname.startsWith('/_next/static/')) {
-    e.respondWith(
-      caches.open(CACHE).then(cache =>
-        cache.match(request).then(hit => hit || fetch(request).then(res => {
-          cache.put(request, res.clone());
-          return res;
-        }))
-      )
-    );
-    return;
-  }
+  // Next.js static chunks — skip SW cache entirely.
+  // These are content-hashed so the browser HTTP cache (immutable) handles them.
+  // Intercepting them here caused stale JS to persist across deploys.
+  if (url.pathname.startsWith('/_next/')) return;
 
   // Navigation (HTML pages) — network-first, fall back to cached shell
   if (request.mode === 'navigate') {
