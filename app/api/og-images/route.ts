@@ -110,19 +110,11 @@ export async function POST(req: NextRequest) {
     const { urls } = await req.json();
     if (!Array.isArray(urls) || !urls.length) return NextResponse.json({ images: {} });
 
-    const results = await Promise.all(
-      urls.slice(0, 15).map(async (item: { url: string; topic: string }) => {
-        const url = item?.url || "";
-        const topic = (item?.topic || "").toLowerCase().trim();
-        const fallback = TOPIC_IMAGES[topic] || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=85";
-
-        if (url.startsWith("http") && !ALWAYS_USE_FALLBACK.has(topic)) {
-          const ogImage = await fetchOgImage(url);
-          if (ogImage) return [topic, ogImage];
-        }
-        return [topic, fallback];
-      })
-    );
+    const results = urls.slice(0, 15).map((item: { url: string; topic: string }) => {
+      const topic = (item?.topic || "").toLowerCase().trim();
+      const fallback = TOPIC_IMAGES[topic] || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=85";
+      return [topic, fallback];
+    });
 
     const images: Record<string, string> = {};
     for (const [topic, image] of results) {

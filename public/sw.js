@@ -1,4 +1,4 @@
-const CACHE = 'newshall-v2';
+const CACHE = 'newshall-v3';
 const PRECACHE = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 // ── Install: pre-cache app shell ──────────────────────────────────────────
