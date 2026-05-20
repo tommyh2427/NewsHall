@@ -1572,7 +1572,7 @@ export default function NewsHall() {
    if (dark) {
      // On the dark hero image: plain semi-transparent text, visually distinct from LEAD STORY badge
      return (
-       <span style={{fontSize:'0.48rem',fontWeight:800,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.82)',whiteSpace:'nowrap'}}>{abbr}</span>
+       <span style={{fontSize:'0.62rem',fontWeight:700,letterSpacing:'0.06em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)',whiteSpace:'nowrap'}}>{abbr}</span>
      );
    }
    // Light mode: colored pill
