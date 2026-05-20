@@ -1524,9 +1524,8 @@ export default function NewsHall() {
    "vulture":{abbr:"Vulture",color:"#007f6e"},"entertainment weekly":{abbr:"EW",color:"#cc0000"},
  };
 
- const SourceLogo = ({source, dark=false}) => {
+ const resolveSource = (source) => {
    const key = (source||'').toLowerCase().trim();
-   // Look up meta: try exact key, then strip "The ", then keyword fallbacks
    let meta = SOURCE_META[key] || SOURCE_META[key.replace(/^the\s+/,'')];
    if (!meta) {
      if (/\bcbs\s*sports\b/i.test(key)) meta = SOURCE_META["cbs sports"];
@@ -1560,16 +1559,24 @@ export default function NewsHall() {
      else if (/\bmlb\b/i.test(key)) meta = SOURCE_META["mlb.com"];
      else if (/\bnhl\b/i.test(key)) meta = SOURCE_META["nhl.com"];
    }
-   const abbr = meta?.abbr || (source ? source.replace(/^[Tt]he /i,'').slice(0,12) : '?');
+   return meta;
+ };
+
+ const SourceLogo = ({source, dark=false}) => {
+   const meta = resolveSource(source);
+   // Unknown source — show raw name trimmed, grey pill. Never render empty.
+   const abbr = meta?.abbr || (source||'').replace(/^[Tt]he /i,'').trim().slice(0,14);
+   if (!abbr) return null;
    const brandColor = meta?.color || "#6b7280";
+
    if (dark) {
-     // On dark hero: match the "LEAD STORY" badge style exactly — same class
+     // On the dark hero image: plain semi-transparent text, visually distinct from LEAD STORY badge
      return (
-       <span className="brief-feat-label" style={{color:'rgba(255,255,255,0.92)'}}>{abbr}</span>
+       <span style={{fontSize:'0.48rem',fontWeight:800,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.82)',whiteSpace:'nowrap'}}>{abbr}</span>
      );
    }
-   // Light mode: colored text on tinted background
-   const pillBg = brandColor === "#1a1a1a" ? "#f3f4f6" : brandColor + "15";
+   // Light mode: colored pill
+   const pillBg = brandColor === "#1a1a1a" ? "#f3f4f6" : brandColor + "18";
    return (
      <span style={{display:'inline-flex',alignItems:'center',background:pillBg,borderRadius:5,padding:'3px 8px'}}>
        <span style={{fontSize:'0.55rem',fontWeight:800,letterSpacing:'0.06em',textTransform:'uppercase',color:brandColor,whiteSpace:'nowrap',lineHeight:1}}>{abbr}</span>
