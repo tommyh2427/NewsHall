@@ -88,26 +88,21 @@ WHAT TO WATCH:
 Output ONLY valid JSON. Real URLs only. No markdown.`;
 
 async function generateTopic(topic: string, today: string): Promise<any | null> {
-  const maxTokens = 4000;
+  const maxTokens = 2000;
   const userMsg = `Today is ${today}. Morning brief for: ${topic}
 
-Search for what actually happened in the last 24 hours. Be selective — only the stories a well-informed person genuinely needs to know this morning. Put the most impactful story first.
+Search once for today's top stories, then immediately output JSON. 3-5 stories max, most impactful first.
 
-Return ONLY raw JSON matching this exact structure. Every story MUST have all four fields — headline, summary, context, source, url. The "context" field is required and must never be omitted or merged into summary.
+Output ONLY this JSON, no markdown:
+{"topics":[{"topic":"${topic}","watch_for":["upcoming event or deadline"],"stories":[{"headline":"factual headline","summary":"1-2 sentences of facts","context":"1 sentence why it matters","source":"outlet","url":"https://..."}]}]}
 
-{"topics":[{"topic":"${topic}","watch_for":["concrete upcoming item","another if relevant"],"stories":[{"headline":"specific factual headline","summary":"1-2 sentences of core facts only — what happened","context":"1 sentence: the so-what — why this matters or what happens next","source":"outlet name","url":"https://real-url"}]}]}
-
-Rules:
-- summary = what happened (facts only, 1-2 sentences)
-- context = so-what (why it matters or what comes next, 1 sentence, always present)
-- Omit watch_for if nothing concrete is upcoming
-- Raw JSON only, no markdown`;
+Omit watch_for if nothing concrete is upcoming.`;
 
   let messages: any[] = [{ role: "user", content: userMsg }];
   let data = await callClaude(messages, SYSTEM, maxTokens);
   let iter = 0;
 
-  while (data.stop_reason === "tool_use" && iter < 5) {
+  while (data.stop_reason === "tool_use" && iter < 3) {
     iter++;
     messages = [...messages, { role: "assistant", content: data.content }];
     const acks = (data.content || [])
@@ -158,19 +153,22 @@ export async function POST(req: NextRequest) {
       try {
         const allTopics: any[] = [];
 
-        // Run topics sequentially — avoids rate limit collisions and each
-        // streams to the UI as soon as it finishes (~15-25s per topic).
-        for (const topic of topics) {
-          try {
-            const result = await generateTopic(topic, today);
-            if (result) {
-              allTopics.push(result);
-              send({ type: "topic", topic: result });
+        // Run all topics in parallel — Sonnet has high enough rate limits.
+        // Stagger starts by 300ms each to avoid simultaneous bursts.
+        await Promise.all(
+          topics.map(async (topic: string, i: number) => {
+            if (i > 0) await sleep(i * 300);
+            try {
+              const result = await generateTopic(topic, today);
+              if (result) {
+                allTopics.push(result);
+                send({ type: "topic", topic: result });
+              }
+            } catch {
+              // Skip failed topics silently
             }
-          } catch {
-            // Skip failed topics silently
-          }
-        }
+          })
+        );
 
         if (!allTopics.length) {
           send({ type: "error", message: "No topics could be generated" });
