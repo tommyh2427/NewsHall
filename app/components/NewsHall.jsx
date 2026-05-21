@@ -1890,7 +1890,6 @@ export default function NewsHall() {
                          <div className="brief-feat-body">
                            <div className="brief-feat-hl">{clean(featured.headline)}</div>
                            {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
-                               {featured.context&&<div className="brief-feat-ctx">{clean(featured.context)}</div>}
                            <span className="brief-feat-read">Read full story →</span>
                          </div>
                        </a>
@@ -1905,7 +1904,6 @@ export default function NewsHall() {
                                {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
                                <div className="brief-story-hl">{clean(st.headline)}</div>
                                {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
-                               {st.context&&<div className="brief-story-ctx">{clean(st.context)}</div>}
                                <span className="brief-story-read">Read →</span>
                              </a>
                            );
@@ -2259,7 +2257,6 @@ export default function NewsHall() {
                      <div className="brief-feat-body">
                        <div className="brief-feat-hl">{clean(featured.headline)}</div>
                        {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
-                       {featured.context&&<div className="brief-feat-ctx">{clean(featured.context)}</div>}
                        <span className="brief-feat-read">Read full story →</span>
                      </div>
                    </a>
@@ -2274,7 +2271,6 @@ export default function NewsHall() {
                            {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
                            <div className="brief-story-hl">{clean(st.headline)}</div>
                            {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
-                           {st.context&&<div className="brief-story-ctx">{clean(st.context)}</div>}
                            <span className="brief-story-read">Read →</span>
                          </a>
                        );
