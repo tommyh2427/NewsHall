@@ -800,40 +800,80 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .ptr-arrow.ready{transform:rotate(180deg);}
 /* ── LANDING SLIDES ── */
 .ls{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px 80px;text-align:center;position:relative;overflow:hidden;}
-.ls-1{background:var(--ink);}
-.ls-2{background:#fff;}
-.ls-3{background:var(--bg-2);border-top:1px solid var(--rule);}
-/* Slide 1 */
-.ls1-hl{font-family:'Playfair Display',serif;font-size:clamp(4rem,16vw,7rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.88;margin-bottom:28px;}
+.ls-1{background:var(--ink);text-align:left;}
+.ls-2{background:var(--ink);}
+.ls-3{background:#fff;border-top:1px solid var(--rule);}
+
+/* ── SLIDE 1: HERO ── */
+.ls1-inner{width:100%;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:48px;align-items:center;}
+.ls1-hl{font-family:'Playfair Display',serif;font-size:clamp(3.6rem,10vw,6.2rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.9;margin-bottom:24px;}
 .ls1-hl em{color:var(--accent);font-style:italic;}
-.ls1-sub{font-size:1rem;color:rgba(255,255,255,0.42);line-height:1.7;max-width:320px;margin:0 auto 40px;font-weight:300;}
-.ls1-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;}
-.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;}
+.ls1-sub{font-size:1.05rem;color:rgba(255,255,255,0.5);line-height:1.7;max-width:340px;margin:0 0 36px;font-weight:300;}
+.ls1-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:15px 28px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;white-space:nowrap;}
 .ls1-btn-p:hover{background:#e01535;}
-.ls1-btn-g{background:#fff;color:var(--ink);border:none;border-radius:14px;padding:18px 32px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;}
-.ls1-btn-g:hover{background:rgba(255,255,255,0.9);}
+.ls1-btn-g{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.2);border-radius:12px;padding:15px 28px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+.ls1-btn-g:hover{background:rgba(255,255,255,0.15);}
+.ls1-sources{display:flex;align-items:center;gap:8px;margin-top:28px;flex-wrap:wrap;}
+.ls1-src-label{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+.ls1-src-pill{font-size:0.58rem;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.38);background:rgba(255,255,255,0.07);border-radius:4px;padding:2px 7px;}
+/* Mockup */
+.ls1-mockup{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:18px;overflow:hidden;width:100%;max-width:480px;margin:0 auto;}
+.ls1-mk-bar{background:rgba(255,255,255,0.06);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);}
+.ls1-mk-dots{display:flex;gap:5px;}
+.ls1-mk-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.15);}
+.ls1-mk-label{font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.25);}
+.ls1-mk-body{padding:16px;}
+.ls1-mk-topic{font-size:0.48rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.ls1-mk-topic::before{content:'';width:16px;height:2px;background:var(--accent);flex-shrink:0;}
+.ls1-mk-feat{border-radius:12px;overflow:hidden;margin-bottom:10px;background:linear-gradient(135deg,#1a3a6b,#0a1628);}
+.ls1-mk-img{aspect-ratio:16/7;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,0.7) 100%),url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=480&q=70');background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:12px 14px;}
+.ls1-mk-feat-hl{font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:800;color:#fff;line-height:1.25;letter-spacing:-0.02em;}
+.ls1-mk-feat-sum{font-size:0.56rem;color:rgba(255,255,255,0.65);line-height:1.5;padding:8px 14px 10px;}
+.ls1-mk-stories{display:flex;flex-direction:column;gap:7px;}
+.ls1-mk-story{background:rgba(255,255,255,0.05);border-radius:8px;padding:9px 12px;border-left:2px solid rgba(200,16,46,0.4);}
+.ls1-mk-story-hl{font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.35;margin-bottom:2px;}
+.ls1-mk-story-src{font-size:0.46rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);}
 .ls1-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;}
 .ls1-scroll-line{width:1px;height:32px;background:rgba(255,255,255,0.25);animation:lsScroll 2s ease-in-out infinite;}
 .ls1-scroll-label{font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:4px;}
 @keyframes lsScroll{0%,100%{transform:scaleY(1);opacity:0.3}50%{transform:scaleY(0.55);opacity:0.9}}
-/* Slide 2 */
-.ls2-label{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-4);margin-bottom:40px;}
-.ls2-list{display:flex;flex-direction:column;width:100%;max-width:420px;text-align:left;}
-.ls2-item{padding:22px 0;border-top:1px solid var(--rule);}
-.ls2-item:last-child{border-bottom:1px solid var(--rule);}
-.ls2-n{font-size:0.52rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
-.ls2-title{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,4vw,1.5rem);font-weight:800;color:var(--ink);letter-spacing:-0.03em;line-height:1.1;margin-bottom:4px;}
-.ls2-desc{font-size:0.78rem;color:var(--ink-3);line-height:1.6;}
-/* Slide 3 */
-.ls3-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
-.ls3-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;color:var(--ink);letter-spacing:-0.04em;line-height:1;margin-bottom:44px;}
-.ls3-steps{display:flex;flex-direction:column;gap:22px;width:100%;max-width:380px;text-align:left;margin-bottom:44px;}
-.ls3-step{display:flex;align-items:flex-start;gap:18px;}
-.ls3-num{width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ls3-step-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:3px;}
-.ls3-step-text{font-size:0.78rem;color:var(--ink-3);line-height:1.6;}
-.ls3-cta{background:var(--ink);color:#fff;border:none;border-radius:14px;padding:18px 40px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;width:100%;max-width:300px;}
+@media(min-width:860px){
+  .ls-1{text-align:left;}
+  .ls1-inner{grid-template-columns:1fr 1fr;}
+  .ls1-mockup{margin:0;}
+}
+
+/* ── SLIDE 2: WHY ── */
+.ls2-inner{width:100%;max-width:1000px;}
+.ls2-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:14px;}
+.ls2-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1;margin-bottom:56px;}
+.ls2-hl em{color:var(--accent);font-style:italic;}
+.ls2-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.ls2-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:36px 32px;text-align:left;transition:background 0.2s;}
+.ls2-card:hover{background:rgba(255,255,255,0.07);}
+.ls2-card:first-child{border-radius:16px 0 0 0;}
+.ls2-card:nth-child(2){border-radius:0 16px 0 0;}
+.ls2-card:nth-child(3){border-radius:0 0 0 16px;}
+.ls2-card:last-child{border-radius:0 0 16px 0;}
+.ls2-icon{font-size:1.5rem;margin-bottom:16px;display:block;}
+.ls2-card-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px;}
+.ls2-card-text{font-size:0.8rem;color:rgba(255,255,255,0.48);line-height:1.68;}
+@media(max-width:600px){.ls2-grid{grid-template-columns:1fr;}.ls2-card:first-child,.ls2-card:nth-child(2),.ls2-card:nth-child(3),.ls2-card:last-child{border-radius:12px;}}
+
+/* ── SLIDE 3: HOW ── */
+.ls3-inner{width:100%;max-width:1000px;}
+.ls3-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.ls3-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:var(--ink);letter-spacing:-0.04em;line-height:1;margin-bottom:56px;}
+.ls3-steps{display:grid;grid-template-columns:1fr;gap:16px;width:100%;margin-bottom:48px;}
+.ls3-step{display:flex;align-items:flex-start;gap:20px;background:var(--bg-2);border:1px solid var(--rule);border-radius:16px;padding:28px 28px;text-align:left;transition:transform 0.2s,box-shadow 0.2s;}
+.ls3-step:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(10,15,30,0.08);}
+.ls3-num{width:48px;height:48px;border-radius:14px;background:var(--ink);color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ls3-step-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:4px;}
+.ls3-step-text{font-size:0.82rem;color:var(--ink-3);line-height:1.65;}
+.ls3-cta{background:var(--ink);color:#fff;border:none;border-radius:12px;padding:16px 36px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;}
 .ls3-cta:hover{background:var(--accent);}
+@media(min-width:700px){.ls3-steps{grid-template-columns:repeat(3,1fr);}}
 `;
 
 export default function NewsHall() {
@@ -1996,52 +2036,92 @@ export default function NewsHall() {
  </>
  ) : (
  <>
- {/* SLIDE 1: INTRO */}
+ {/* SLIDE 1: HERO */}
  <div className="ls ls-1">
    <div className="hero-blob hero-blob-1"/><div className="hero-blob hero-blob-2"/>
-   <h1 className="ls1-hl">News<br/>without<br/>the <em>noise.</em></h1>
-   <p className="ls1-sub">Your topics. Real sources. One brief, every morning.</p>
-   <div className="ls1-btns">
-     <button className="ls1-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
-     <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
+   <div className="ls1-inner">
+     <div>
+       <h1 className="ls1-hl">News<br/>without<br/>the <em>noise.</em></h1>
+       <p className="ls1-sub">Your topics. Trusted sources. One sharp brief, every morning.</p>
+       <div className="ls1-btns">
+         <button className="ls1-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
+         <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
+       </div>
+       <div className="ls1-sources">
+         <span className="ls1-src-label">Sources include</span>
+         {["AP","Reuters","BBC","WSJ","Bloomberg","NPR"].map(s=><span key={s} className="ls1-src-pill">{s}</span>)}
+       </div>
+     </div>
+     <div className="ls1-mockup">
+       <div className="ls1-mk-bar">
+         <div className="ls1-mk-dots"><div className="ls1-mk-dot"/><div className="ls1-mk-dot"/><div className="ls1-mk-dot"/></div>
+         <span className="ls1-mk-label">Morning Brief · Wednesday</span>
+       </div>
+       <div className="ls1-mk-body">
+         <div className="ls1-mk-topic">World News <span style={{marginLeft:"auto",fontSize:"0.44rem",color:"rgba(255,255,255,0.3)"}}>4 STORIES</span></div>
+         <div className="ls1-mk-feat">
+           <div className="ls1-mk-img">
+             <div style={{width:"100%"}}>
+               <div className="ls1-mk-feat-hl">Xi and Putin Sign Joint Declaration,<br/>Pledging 'Multipolar World' Partnership</div>
+             </div>
+           </div>
+           <div className="ls1-mk-feat-sum">Russian President Putin met Xi Jinping in Beijing, signing a bilateral friendship treaty and issuing a joint statement warning against a return to the "law of the jungle."</div>
+         </div>
+         <div className="ls1-mk-stories">
+           <div className="ls1-mk-story">
+             <div className="ls1-mk-story-hl">Senate Confirms 49 Trump Nominees in Single Bloc Vote</div>
+             <div className="ls1-mk-story-src">AP · US Politics</div>
+           </div>
+           <div className="ls1-mk-story">
+             <div className="ls1-mk-story-hl">Knicks Erase 22-Point Deficit, Beat Cavaliers 115–104 in OT</div>
+             <div className="ls1-mk-story-src">ESPN · NBA</div>
+           </div>
+         </div>
+       </div>
+     </div>
    </div>
    <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
  </div>
  {/* SLIDE 2: WHY */}
  <div className="ls ls-2">
-   <div className="ls2-label">Why NewsHall</div>
-   <div className="ls2-list">
-     {[
-       {n:"01",title:"Straight-news sources only",desc:"We pull from outlets built for reporting — not opinion, not outrage."},
-       {n:"02",title:"Every story linked and cited",desc:"Every headline goes straight to the original article. No paywalls, no dead ends."},
-       {n:"03",title:"Built fresh every morning",desc:"Your brief is scanned and written for your exact topics. Nobody else gets yours."},
-       {n:"04",title:"Ready before you wake up",desc:"Set a delivery time once and forget it. Your brief is there when your day starts."},
-     ].map(item=>(
-       <div className="ls2-item" key={item.n}>
-         <div className="ls2-n">{item.n}</div>
-         <div className="ls2-title">{item.title}</div>
-         <div className="ls2-desc">{item.desc}</div>
-       </div>
-     ))}
+   <div className="ls2-inner">
+     <div className="ls2-eyebrow">Why NewsHall</div>
+     <h2 className="ls2-hl">News that informs,<br/>not <em>inflames.</em></h2>
+     <div className="ls2-grid">
+       {[
+         {icon:"📰",title:"Straight-news sources only",text:"We pull from AP, Reuters, BBC, NPR, WSJ, Bloomberg and more. No opinion sites, no outrage farms."},
+         {icon:"🔗",title:"Every story linked & cited",text:"Every headline links straight to the original article. No paywalls, no dead ends, no summaries without receipts."},
+         {icon:"⚡",title:"Built fresh every morning",text:"Your brief is scanned and written for your exact topics. Nobody else gets yours. It's ready before you wake up."},
+         {icon:"🎯",title:"Your topics, not an algorithm's",text:"You pick what you wake up to. World news, NBA, personal finance, Formula 1 — as specific as you want."},
+       ].map(c=>(
+         <div className="ls2-card" key={c.title}>
+           <span className="ls2-icon">{c.icon}</span>
+           <div className="ls2-card-title">{c.title}</div>
+           <div className="ls2-card-text">{c.text}</div>
+         </div>
+       ))}
+     </div>
    </div>
  </div>
  {/* SLIDE 3: HOW + CTA */}
  <div className="ls ls-3">
-   <div className="ls3-eyebrow">How it works</div>
-   <h2 className="ls3-hl">Up in 60 seconds</h2>
-   <div className="ls3-steps">
-     {[
-       {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche."},
-       {n:"02",title:"We do the reading",text:"Every morning we scan hundreds of sources and write your brief."},
-       {n:"03",title:"Wake up informed",text:"Your brief is waiting. Read it over coffee, no doomscrolling required."},
-     ].map(s=>(
-       <div className="ls3-step" key={s.n}>
-         <div className="ls3-num">{s.n}</div>
-         <div><div className="ls3-step-title">{s.title}</div><div className="ls3-step-text">{s.text}</div></div>
-       </div>
-     ))}
+   <div className="ls3-inner">
+     <div className="ls3-eyebrow">How it works</div>
+     <h2 className="ls3-hl">Ready in 60 seconds</h2>
+     <div className="ls3-steps">
+       {[
+         {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche. Up to 5 topics free."},
+         {n:"02",title:"We do the reading",text:"Every morning we scan hundreds of sources, filter by relevance, and write your brief from scratch."},
+         {n:"03",title:"Wake up informed",text:"Your brief is waiting when you open the app — or delivered by push notification at your chosen time."},
+       ].map(s=>(
+         <div className="ls3-step" key={s.n}>
+           <div className="ls3-num">{s.n}</div>
+           <div><div className="ls3-step-title">{s.title}</div><div className="ls3-step-text">{s.text}</div></div>
+         </div>
+       ))}
+     </div>
+     <button className="ls3-cta" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Try it free →</button>
    </div>
-   <button className="ls3-cta" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Start for free →</button>
  </div>
  {/* LOGGED-OUT BUILDER */}
  <div id="builder" className="builder" ref={builderRef}>
