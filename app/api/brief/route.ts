@@ -14,7 +14,7 @@ async function callClaude(messages: any[], system: string, maxTokens: number, at
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-opus-4-7",
+      model: "claude-sonnet-4-6",
       max_tokens: maxTokens,
       tools: [{ type: "web_search_20260209", name: "web_search" }],
       system,
@@ -22,8 +22,8 @@ async function callClaude(messages: any[], system: string, maxTokens: number, at
     }),
   });
   const data = await res.json();
-  if (data.error?.type === "rate_limit_error" && attempt < 2) {
-    await sleep((attempt + 1) * 8000);
+  if (data.error?.type === "rate_limit_error" && attempt < 4) {
+    await sleep((attempt + 1) * 5000);
     return callClaude(messages, system, maxTokens, attempt + 1);
   }
   return data;
@@ -107,7 +107,7 @@ Rules:
   let data = await callClaude(messages, SYSTEM, maxTokens);
   let iter = 0;
 
-  while (data.stop_reason === "tool_use" && iter < 10) {
+  while (data.stop_reason === "tool_use" && iter < 5) {
     iter++;
     messages = [...messages, { role: "assistant", content: data.content }];
     const acks = (data.content || [])
@@ -158,19 +158,19 @@ export async function POST(req: NextRequest) {
       try {
         const allTopics: any[] = [];
 
-        await Promise.all(
-          topics.map(async (topic: string) => {
-            try {
-              const result = await generateTopic(topic, today);
-              if (result) {
-                allTopics.push(result);
-                send({ type: "topic", topic: result });
-              }
-            } catch {
-              // Skip failed topics silently
+        // Run topics sequentially — avoids rate limit collisions and each
+        // streams to the UI as soon as it finishes (~15-25s per topic).
+        for (const topic of topics) {
+          try {
+            const result = await generateTopic(topic, today);
+            if (result) {
+              allTopics.push(result);
+              send({ type: "topic", topic: result });
             }
-          })
-        );
+          } catch {
+            // Skip failed topics silently
+          }
+        }
 
         if (!allTopics.length) {
           send({ type: "error", message: "No topics could be generated" });
