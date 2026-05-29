@@ -159,11 +159,10 @@ export async function GET(req: NextRequest) {
     weekday: "long", month: "long", day: "numeric", year: "numeric",
   });
 
-  // Find all users whose delivery UTC hour matches right now
+  // Generate briefs for ALL users every morning — everyone gets a fresh brief
   const { data: settings, error } = await supabase
     .from("user_settings")
-    .select("user_id, topics, delivery_hour_utc")
-    .eq("delivery_hour_utc", currentHour);
+    .select("user_id, topics");
 
   if (error || !settings?.length) {
     return NextResponse.json({ ok: true, generated: 0, hour: currentHour });

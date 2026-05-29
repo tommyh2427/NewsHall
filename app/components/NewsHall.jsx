@@ -748,7 +748,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .topics-page-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--ink);letter-spacing:-0.03em;margin-bottom:4px;}
 .topics-page-sub{font-size:0.84rem;color:var(--ink-3);}
 /* ── BRIEF TAB HEADER ── */
-.brief-tab-hd{max-width:1000px;margin:0 auto;padding:28px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.brief-tab-hd{max-width:1000px;margin:0 auto;padding:36px 22px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--rule);}
 .brief-tab-edition{font-size:0.52rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
 .brief-tab-edition::before{content:'';width:14px;height:2px;background:var(--accent);}
 .brief-tab-title{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,4vw,1.8rem);font-weight:900;color:var(--ink);letter-spacing:-0.03em;line-height:1.1;}
@@ -756,6 +756,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brief-refresh-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.76rem;font-weight:700;cursor:pointer;flex-shrink:0;margin-top:4px;}
 .brief-refresh-btn:hover{background:var(--accent);}
 .brief-refresh-btn:disabled{opacity:0.5;cursor:not-allowed;}
+/* ── STALE NOTICE ── */
+.stale-notice{max-width:1000px;margin:0 auto;padding:0 22px;}
+.stale-notice-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);}
+.stale-notice-text{font-size:0.68rem;font-weight:500;color:var(--ink-3);letter-spacing:0.02em;}
+.stale-notice-text strong{color:var(--ink-2);font-weight:600;}
+.stale-notice-btn{font-size:0.68rem;font-weight:700;color:var(--ink);background:transparent;border:1.5px solid var(--rule);border-radius:6px;padding:5px 12px;cursor:pointer;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
+.stale-notice-btn:hover{border-color:var(--ink);background:var(--ink);color:#fff;}
+.stale-notice-btn:disabled{opacity:0.4;cursor:not-allowed;}
+/* inline stale variant (inside masthead) */
+.stale-inline{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.stale-inline-text{font-size:0.68rem;color:rgba(255,255,255,0.45);font-weight:500;}
+.stale-inline-btn{font-size:0.68rem;font-weight:700;color:#fff;background:transparent;border:1.5px solid rgba(255,255,255,0.2);border-radius:6px;padding:5px 12px;cursor:pointer;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
+.stale-inline-btn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.35);}
 
 /* ── NEW USER ONBOARDING ── */
 .nuo{position:fixed;inset:0;z-index:600;background:var(--ink);display:flex;flex-direction:column;overflow:hidden;animation:nuoIn 0.35s cubic-bezier(0.22,1,0.36,1);}
@@ -1654,17 +1667,47 @@ export default function NewsHall() {
  const generate = async () => {
    if(!topics.length){showToast("Add at least one topic first");return;}
    if(user) setTab("brief");
-   setPhase("loading");setBrief(null);setSteps([]);setOgImages({});
-   setIsStreaming(true);setStreamedCount(0);
-   const stepMessages=["Searching live sources...","Scanning "+topics.length+" topic"+(topics.length>1?"s":"")+"...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
-   stepMessages.forEach((s,i)=>setTimeout(()=>setSteps(p=>[...p,s]),i*1800));
+
+   // Instant cache: if a brief was generated in the last 30 min for the same topics, show it immediately
+   try {
+     const cached = localStorage.getItem("nh_pending_brief");
+     if(cached) {
+       const {brief:cb, topics:ct, ts} = JSON.parse(cached);
+       const sameTopics = ct && ct.length===topics.length && ct.every((t,i)=>t===topics[i]);
+       if(cb && sameTopics && Date.now()-ts < 30*60*1000) {
+         setBrief(cb); setPhase("done"); setSavedBriefMeta({generated_at:new Date(ts).toISOString()});
+         loadOgImages(cb); setBriefIsStale(false);
+         showToast("Showing your latest brief");
+         return; // no API call needed
+       }
+     }
+   } catch(_) {}
+
+   // Stale-while-revalidate: if we already have a brief, keep showing it while we refresh in background
+   const isRefresh = phase==="done" && brief && !brief.error;
+
+   setSteps([]);
+   setIsStreaming(true);
+   setStreamedCount(0);
+
+   if(!isRefresh){
+     // First generation — show full loading screen
+     setPhase("loading");
+     setBrief(null);
+     setOgImages({});
+     const stepMessages=["Searching live sources...","Scanning "+topics.length+" topic"+(topics.length>1?"s":"")+"...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
+     stepMessages.forEach((s,i)=>setTimeout(()=>setSteps(p=>[...p,s]),i*1800));
+   }
+   // For refresh: keep existing brief visible — user can keep reading while we fetch
+
    try{
      const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,today})});
      if(!res.ok||!res.body)throw new Error(`HTTP ${res.status}`);
      const reader=res.body.getReader();
      const decoder=new TextDecoder();
      let buf="";
-     let partialBrief={topics:[],headline:"Your Morning Brief"};
+     // Collect all incoming topics; for refresh we swap all at once at the end
+     let incomingBrief={topics:[],headline:"Your Morning Brief"};
      let scrolled=false;
      while(true){
        const{done,value}=await reader.read();
@@ -1677,19 +1720,26 @@ export default function NewsHall() {
          try{
            const msg=JSON.parse(line.slice(6));
            if(msg.type==="topic"){
-             partialBrief={...partialBrief,topics:[...partialBrief.topics,msg.topic]};
-             setBrief({...partialBrief});
+             incomingBrief={...incomingBrief,topics:[...incomingBrief.topics,msg.topic]};
              setStreamedCount(c=>c+1);
-             setPhase("done"); // show UI as soon as first topic lands
-             if(!scrolled){scrolled=true;setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);}
+             if(!isRefresh){
+               // For first gen, show topics as they trickle in
+               setBrief({...incomingBrief});
+               setPhase("done");
+               if(!scrolled){scrolled=true;setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);}
+             }
            }else if(msg.type==="done"){
-             partialBrief={...partialBrief,headline:msg.headline};
-             setBrief({...partialBrief});
+             incomingBrief={...incomingBrief,headline:msg.headline};
+             // Always swap in the complete brief on done
+             setBrief({...incomingBrief});
+             if(isRefresh) setPhase("done");
              setIsStreaming(false);
-             saveUserData(partialBrief,topics);
-             loadOgImages(partialBrief);
-             try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:partialBrief,topics,ts:Date.now()}));}catch(_){}
+             setOgImages({});
+             saveUserData(incomingBrief,topics);
+             loadOgImages(incomingBrief);
+             try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:incomingBrief,topics,ts:Date.now()}));}catch(_){}
              setCooldown(15);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);
+             if(isRefresh) showToast("Brief updated with today's news");
            }else if(msg.type==="error"){
              throw new Error(msg.message);
            }
@@ -1699,8 +1749,12 @@ export default function NewsHall() {
      setIsStreaming(false);
    }catch(err){
      setIsStreaming(false);
-     setBrief({error:true,raw:String(err.message||err)});
-     setPhase("done");
+     if(!isRefresh){
+       setBrief({error:true,raw:String(err.message||err)});
+       setPhase("done");
+     }else{
+       showToast("Refresh failed — try again");
+     }
    }
  };
 
@@ -1831,27 +1885,19 @@ export default function NewsHall() {
        </div>
      )}
      {isStreaming&&phase==="done"&&(
-       <div style={{margin:'0 22px 10px',background:'var(--bg-2)',border:'1px solid var(--rule)',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',gap:12}}>
-         <div style={{width:16,height:16,borderRadius:'50%',border:'2px solid var(--accent)',borderTopColor:'transparent',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
-         <div style={{flex:1}}>
-           <div style={{fontSize:'0.75rem',fontWeight:600,color:'var(--ink)',marginBottom:4}}>
-             {streamedCount} of {topics.length} topic{topics.length!==1?"s":""} ready
-           </div>
-           <div style={{height:3,background:'var(--rule)',borderRadius:2,overflow:'hidden'}}>
-             <div style={{height:'100%',width:`${(streamedCount/topics.length)*100}%`,background:'var(--accent)',borderRadius:2,transition:'width 0.4s ease'}}/>
-           </div>
-         </div>
+       <div style={{maxWidth:1000,margin:'0 auto',padding:'0 22px 10px',display:'flex',alignItems:'center',gap:10}}>
+         <div style={{width:13,height:13,borderRadius:'50%',border:'2px solid var(--accent)',borderTopColor:'transparent',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
+         <span style={{fontSize:'0.7rem',color:'var(--ink-3)',fontWeight:500}}>Fetching today's news in the background — keep reading</span>
        </div>
      )}
      {phase==="done"&&brief&&!brief.error&&briefIsStale&&!isStreaming&&(
-       <div style={{margin:'0 22px 8px',background:'#fffbeb',border:'1px solid #fde68a',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
-         <div style={{display:'flex',alignItems:'center',gap:8}}>
-           <span style={{fontSize:'1rem'}}>☀️</span>
-           <span style={{fontSize:'0.78rem',color:'#92400e',fontWeight:600}}>This brief is from yesterday — refresh for today's news</span>
+       <div className="stale-notice">
+         <div className="stale-notice-inner">
+           <span className="stale-notice-text">Generated <strong>yesterday</strong> — today's news is ready</span>
+           <button className="stale-notice-btn" onClick={generate} disabled={phase==="loading"||cooldown>0}>
+             {cooldown>0?`Wait ${cooldown}s`:"Refresh"}
+           </button>
          </div>
-         <button onClick={generate} disabled={phase==="loading"||cooldown>0} style={{fontSize:'0.72rem',fontWeight:700,color:'#92400e',background:'#fde68a',border:'none',borderRadius:6,padding:'5px 12px',cursor:'pointer',whiteSpace:'nowrap'}}>
-           {cooldown>0?`${cooldown}s`:"Refresh now"}
-         </button>
        </div>
      )}
      {phase==="done"&&brief&&(
@@ -2195,20 +2241,15 @@ export default function NewsHall() {
            <div className="bhl">{brief.headline||"Morning Brief"}</div>
            <div className="bmeta">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}{getReadingTime(brief)?" · "+getReadingTime(brief):""}</div>
            {isStreaming&&(
-             <div style={{margin:'12px 0 0',background:'var(--bg-2)',border:'1px solid var(--rule)',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',gap:12}}>
-               <div style={{width:14,height:14,borderRadius:'50%',border:'2px solid var(--accent)',borderTopColor:'transparent',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
-               <div style={{flex:1}}>
-                 <div style={{fontSize:'0.72rem',fontWeight:600,color:'var(--ink)',marginBottom:4}}>{streamedCount} of {topics.length} topic{topics.length!==1?"s":""} ready</div>
-                 <div style={{height:3,background:'var(--rule)',borderRadius:2,overflow:'hidden'}}>
-                   <div style={{height:'100%',width:`${(streamedCount/topics.length)*100}%`,background:'var(--accent)',borderRadius:2,transition:'width 0.4s ease'}}/>
-                 </div>
-               </div>
+             <div style={{marginTop:12,display:'flex',alignItems:'center',gap:8}}>
+               <div style={{width:12,height:12,borderRadius:'50%',border:'2px solid rgba(255,255,255,0.4)',borderTopColor:'#fff',animation:'spin 0.8s linear infinite',flexShrink:0}}/>
+               <span style={{fontSize:'0.7rem',color:'rgba(255,255,255,0.45)',fontWeight:500}}>Searching today's news…</span>
              </div>
            )}
            {briefIsStale&&!isStreaming&&(
-             <div style={{margin:'12px 0 0',background:'#fffbeb',border:'1px solid #fde68a',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
-               <span style={{fontSize:'0.78rem',color:'#92400e',fontWeight:600}}>☀️ This brief is from yesterday — refresh for today's news</span>
-               <button onClick={generate} disabled={phase==="loading"||cooldown>0} style={{fontSize:'0.72rem',fontWeight:700,color:'#92400e',background:'#fde68a',border:'none',borderRadius:6,padding:'5px 12px',cursor:'pointer',whiteSpace:'nowrap'}}>{cooldown>0?`${cooldown}s`:"Refresh now"}</button>
+             <div className="stale-inline">
+               <span className="stale-inline-text">Generated yesterday — today's news is ready</span>
+               <button className="stale-inline-btn" onClick={generate} disabled={phase==="loading"||cooldown>0}>{cooldown>0?`Wait ${cooldown}s`:"Refresh"}</button>
              </div>
            )}
            <div className="bmast-btns">

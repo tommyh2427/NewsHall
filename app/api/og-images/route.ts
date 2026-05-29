@@ -15,43 +15,43 @@ const ALWAYS_USE_FALLBACK = new Set([
 
 // Curated Unsplash fallbacks per topic — always looks great
 const TOPIC_IMAGES: Record<string, string> = {
-  "world news":      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=85",
-  "us politics":     "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=85",
-  "politics":        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=85",
-  "tech & ai":       "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=85",
-  "technology":      "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=85",
-  "markets":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=85",
-  "stock market":    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=85",
-  "business":        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=85",
-  "nba":             "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85",
-  "nfl":             "https://images.unsplash.com/photo-1567459169568-e1b872a93ec0?w=900&q=85",
-  "mlb":             "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=900&q=85",
-  "nhl":             "https://images.unsplash.com/photo-1580420919917-b3e0e0b8943c?w=900&q=85",
-  "sports":          "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=85",
-  "soccer":          "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=85",
-  "formula 1":       "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=85",
-  "formula one":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=85",
-  "health":          "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=85",
-  "health & wellness":"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=85",
-  "science":         "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=85",
-  "climate":         "https://images.unsplash.com/photo-1569163139599-0f4517e36f51?w=900&q=85",
-  "entertainment":   "https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=900&q=85",
-  "film & tv":       "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=900&q=85",
-  "music":           "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=85",
-  "crypto":          "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=900&q=85",
-  "real estate":     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=900&q=85",
-  "travel":          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=900&q=85",
-  "fashion & style": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=900&q=85",
-  "food & dining":   "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=85",
-  "personal finance":"https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=900&q=85",
-  "mental health":   "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&q=85",
-  "mma / ufc":       "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=85",
-  "mma":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=85",
-  "ufc":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=85",
-  "golf":            "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=900&q=85",
-  "tennis":          "https://images.unsplash.com/photo-1542144582-1ba00456b5e3?w=900&q=85",
-  "education":       "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=85",
-  "auto & evs":      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=85",
+  "world news":      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=700&q=65&fm=webp",
+  "us politics":     "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=700&q=65&fm=webp",
+  "politics":        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=700&q=65&fm=webp",
+  "tech & ai":       "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=700&q=65&fm=webp",
+  "technology":      "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=700&q=65&fm=webp",
+  "markets":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=700&q=65&fm=webp",
+  "stock market":    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=700&q=65&fm=webp",
+  "business":        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=700&q=65&fm=webp",
+  "nba":             "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=700&q=65&fm=webp",
+  "nfl":             "https://images.unsplash.com/photo-1567459169568-e1b872a93ec0?w=700&q=65&fm=webp",
+  "mlb":             "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=700&q=65&fm=webp",
+  "nhl":             "https://images.unsplash.com/photo-1580420919917-b3e0e0b8943c?w=700&q=65&fm=webp",
+  "sports":          "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=700&q=65&fm=webp",
+  "soccer":          "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=700&q=65&fm=webp",
+  "formula 1":       "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=700&q=65&fm=webp",
+  "formula one":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=700&q=65&fm=webp",
+  "health":          "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=700&q=65&fm=webp",
+  "health & wellness":"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=700&q=65&fm=webp",
+  "science":         "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=700&q=65&fm=webp",
+  "climate":         "https://images.unsplash.com/photo-1569163139599-0f4517e36f51?w=700&q=65&fm=webp",
+  "entertainment":   "https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=700&q=65&fm=webp",
+  "film & tv":       "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=700&q=65&fm=webp",
+  "music":           "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=700&q=65&fm=webp",
+  "crypto":          "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=700&q=65&fm=webp",
+  "real estate":     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=700&q=65&fm=webp",
+  "travel":          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&q=65&fm=webp",
+  "fashion & style": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=700&q=65&fm=webp",
+  "food & dining":   "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=65&fm=webp",
+  "personal finance":"https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=700&q=65&fm=webp",
+  "mental health":   "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=700&q=65&fm=webp",
+  "mma / ufc":       "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=700&q=65&fm=webp",
+  "mma":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=700&q=65&fm=webp",
+  "ufc":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=700&q=65&fm=webp",
+  "golf":            "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=700&q=65&fm=webp",
+  "tennis":          "https://images.unsplash.com/photo-1542144582-1ba00456b5e3?w=700&q=65&fm=webp",
+  "education":       "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=700&q=65&fm=webp",
+  "auto & evs":      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=65&fm=webp",
 };
 
 function isLogoLikeUrl(url: string): boolean {
@@ -110,10 +110,21 @@ export async function POST(req: NextRequest) {
     const { urls } = await req.json();
     if (!Array.isArray(urls) || !urls.length) return NextResponse.json({ images: {} });
 
+    const topicKeys = Object.keys(TOPIC_IMAGES);
+    const resolveImage = (raw: string): string => {
+      const t = raw.toLowerCase().trim();
+      // 1. Exact match
+      if (TOPIC_IMAGES[t]) return TOPIC_IMAGES[t];
+      // 2. Topic key contained in incoming string ("nfl" in "nfl football")
+      const partial = topicKeys.find(k => t.includes(k) || k.includes(t));
+      if (partial) return TOPIC_IMAGES[partial];
+      // 3. Generic fallback
+      return "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=700&q=65&fm=webp";
+    };
+
     const results = urls.slice(0, 15).map((item: { url: string; topic: string }) => {
       const topic = (item?.topic || "").toLowerCase().trim();
-      const fallback = TOPIC_IMAGES[topic] || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=85";
-      return [topic, fallback];
+      return [topic, resolveImage(item?.topic || "")];
     });
 
     const images: Record<string, string> = {};

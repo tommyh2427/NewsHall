@@ -2,32 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 300;
 
-const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
+const GEMINI_API = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
-async function callClaude(messages: any[], system: string, maxTokens: number, attempt = 0): Promise<any> {
-  const res = await fetch(ANTHROPIC_API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY!,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: maxTokens,
-      tools: [{ type: "web_search_20260209", name: "web_search" }],
-      system,
-      messages,
-    }),
-  });
-  const data = await res.json();
-  if (data.error?.type === "rate_limit_error" && attempt < 4) {
-    await sleep((attempt + 1) * 5000);
-    return callClaude(messages, system, maxTokens, attempt + 1);
-  }
-  return data;
-}
 
 function repairJson(txt: string): string {
   const s = txt.indexOf("{");
@@ -48,92 +24,83 @@ function repairJson(txt: string): string {
   return fragment;
 }
 
-const SYSTEM = `You are NewsHall's chief briefing editor. Your job is to surface what a smart, busy person genuinely needs to know this morning — not a list of everything that happened, but the stories that actually matter and why.
+const SYSTEM = `You are NewsHall's chief briefing editor. Use Google Search to find today's top stories and return structured JSON.
 
 SOURCE RULES:
-- General news: AP, Reuters, BBC, NPR, PBS NewsHour, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, The Guardian, C-SPAN
-- Business/markets: WSJ, Bloomberg, Reuters, CNBC, Financial Times, Axios
+- General/politics: AP, Reuters, BBC, NPR, PBS, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, C-SPAN only
+- NEVER use: CNN, MSNBC, Fox News, Breitbart, Daily Wire, HuffPost, Salon, Vox, National Review, Newsmax, OAN
+- Business/markets: WSJ, Bloomberg, Reuters, CNBC, Financial Times
 - Tech: The Verge, Ars Technica, Wired, TechCrunch, Reuters
 - Sports: ESPN, AP, The Athletic, CBS Sports
-- Health/science: Reuters, AP, BBC, Nature, New Scientist, Harvard Health, Mayo Clinic
+- Health/science: Reuters, AP, BBC, Nature, Harvard Health
 
-POLITICAL & POLITICALLY ADJACENT TOPICS — STRICT NEUTRALITY:
-- ONLY use AP, Reuters, BBC, NPR, PBS, C-SPAN, ABC News, CBS News, NBC News
-- NEVER use CNN, MSNBC, Fox News, Breitbart, Daily Wire, Daily Caller, HuffPost, Salon, Vox, The Atlantic, National Review, Newsmax, OAN
-- Report ONLY verified facts — what happened, who said what (direct quotes only), official actions
-- No framing language: no "slams", "blasts", "destroys", "defends" — just what occurred
-- If a story only exists on partisan outlets, skip it
+STORY RULES:
+- Only stories from the last 24 hours with real significance
+- 2-4 stories per topic, most impactful first
+- Facts only — no opinion, no framing language like "slams" or "blasts"
+- "summary": 1-2 factual sentences of what happened
+- "watch_for": 1-3 short items (max 12 words) for concrete upcoming events — votes, games, deadlines only. Omit if nothing concrete.
 
-STORY SELECTION — BE RUTHLESS:
-- Only stories with genuine morning significance that broke or developed in the last 24 hours
-- For broad topics (World News, US Politics): the 3-5 most impactful stories, not everything
-- For niche topics (NBA, Formula 1): 2-4 stories — actual games, trades, injuries, real news
-- Skip think pieces, opinion, analysis, predictions, and "could this happen?" speculation
-- Lead story must be the single most important development — rank by real-world impact
-- No duplicates — if two stories are the same event with different angles, pick the better one
+Output ONLY valid JSON, no markdown fences, no explanation.`;
 
-SUMMARY QUALITY:
-- "summary": 1-2 sentences of the core facts — what happened and the most important detail
-- "context": exactly 1 sentence explaining why this matters or what happens next — the "so what"
-- Both fields must be concrete and specific. Never vague. Never "experts say this is significant."
-- Bad context: "This development could have wide-ranging implications."
-- Good context: "The ruling blocks the administration's plan to cut $4B in education funding by Friday."
+async function generateAllTopics(topics: string[], today: string, attempt = 0): Promise<any[]> {
+  const topicList = topics.map(t => `"${t}"`).join(", ");
 
-WHAT TO WATCH:
-- After stories, include "watch_for": an array of 1-3 short items (max 12 words each) that are genuinely worth following in the next 24-72 hours based on what you found
-- Only concrete, time-bound things: votes, games, decisions, deadlines, rulings — not vague "developments to monitor"
-- Examples: "Fed rate decision Wednesday", "Game 7 tonight — Spurs vs Thunder", "Senate budget vote expected Thursday"
-- Skip this field entirely if nothing concrete is upcoming
+  const userMsg = `Today is ${today}. Search Google News for today's top stories for each of these topics: ${topicList}
 
-Output ONLY valid JSON. Real URLs only. No markdown.`;
+Output ONLY this JSON — one object per topic in the same order as requested:
+{"topics":[{"topic":"Topic Name","stories":[{"headline":"factual headline","summary":"1-2 sentences of facts","source":"outlet name","url":"https://..."}],"watch_for":["upcoming event"]}]}
 
-async function generateTopic(topic: string, today: string): Promise<any | null> {
-  const maxTokens = 2000;
-  const userMsg = `Today is ${today}. Morning brief for: ${topic}
+2-4 stories per topic. Omit watch_for if nothing concrete is upcoming.`;
 
-Search once for today's top stories, then immediately output JSON. 3-5 stories max, most impactful first.
+  const res = await fetch(`${GEMINI_API}?key=${process.env.GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM }] },
+      contents: [{ role: "user", parts: [{ text: userMsg }] }],
+      tools: [{ googleSearch: {} }],
+      generationConfig: {
+        maxOutputTokens: 4000,
+        temperature: 0.1,
+      },
+    }),
+  });
 
-Output ONLY this JSON, no markdown:
-{"topics":[{"topic":"${topic}","watch_for":["upcoming event or deadline"],"stories":[{"headline":"factual headline","summary":"1-2 sentences of facts","context":"1 sentence why it matters","source":"outlet","url":"https://..."}]}]}
-
-Omit watch_for if nothing concrete is upcoming.`;
-
-  let messages: any[] = [{ role: "user", content: userMsg }];
-  let data = await callClaude(messages, SYSTEM, maxTokens);
-  let iter = 0;
-
-  while (data.stop_reason === "tool_use" && iter < 3) {
-    iter++;
-    messages = [...messages, { role: "assistant", content: data.content }];
-    const acks = (data.content || [])
-      .filter((b: any) => b.type === "tool_use")
-      .map((b: any) => ({ type: "tool_result", tool_use_id: b.id, content: "" }));
-    if (!acks.length) break;
-    messages = [...messages, { role: "user", content: acks }];
-    data = await callClaude(messages, SYSTEM, maxTokens);
+  if (res.status === 429 && attempt < 3) {
+    await sleep((attempt + 1) * 3000);
+    return generateAllTopics(topics, today, attempt + 1);
   }
 
-  if (data.error) throw new Error(data.error.message);
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Gemini API error ${res.status}: ${err.slice(0, 300)}`);
+  }
 
-  const txt = (data.content || [])
-    .filter((b: any) => b.type === "text")
-    .map((b: any) => b.text)
+  const data = await res.json();
+  const txt = (data.candidates?.[0]?.content?.parts || [])
+    .map((p: any) => p.text || "")
     .join("")
     .trim();
-  if (!txt) return null;
+
+  if (!txt) return [];
 
   const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
+
+  const normalize = (raw: any[]): any[] =>
+    raw.map((t, i) => ({ ...t, topic: topics[i] || t.topic }));
+
   try {
     const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
-    if (s === -1 || e === -1) return null;
+    if (s === -1 || e === -1) return [];
     const parsed = JSON.parse(clean.slice(s, e + 1));
-    return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
+    return Array.isArray(parsed.topics) ? normalize(parsed.topics) : [];
   } catch {
     try {
       const parsed = JSON.parse(repairJson(clean));
-      return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
+      return Array.isArray(parsed.topics) ? normalize(parsed.topics) : [];
     } catch {
-      return null;
+      return [];
     }
   }
 }
@@ -151,28 +118,14 @@ export async function POST(req: NextRequest) {
       };
 
       try {
-        const allTopics: any[] = [];
-
-        // Run all topics in parallel — Sonnet has high enough rate limits.
-        // Stagger starts by 300ms each to avoid simultaneous bursts.
-        await Promise.all(
-          topics.map(async (topic: string, i: number) => {
-            if (i > 0) await sleep(i * 300);
-            try {
-              const result = await generateTopic(topic, today);
-              if (result) {
-                allTopics.push(result);
-                send({ type: "topic", topic: result });
-              }
-            } catch {
-              // Skip failed topics silently
-            }
-          })
-        );
+        const allTopics = await generateAllTopics(topics, today);
 
         if (!allTopics.length) {
           send({ type: "error", message: "No topics could be generated" });
         } else {
+          for (const topic of allTopics) {
+            send({ type: "topic", topic });
+          }
           const headline = `${allTopics[0]?.topic || "Morning"} & ${allTopics.length - 1} more stories`;
           send({ type: "done", headline });
         }
