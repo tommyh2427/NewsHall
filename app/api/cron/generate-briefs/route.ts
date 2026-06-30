@@ -1,139 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import webpush from "web-push";
+import {
+  normalizeTopicKey, briefDateKey, readTopicCache, writeTopicCache,
+  generateTopics, promoteLeadWithPhoto,
+} from "@/app/lib/news-pipeline";
 
-const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+export const maxDuration = 300;
 
-async function callClaude(messages: any[], system: string, maxTokens: number, attempt = 0): Promise<any> {
-  const res = await fetch(ANTHROPIC_API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY!,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: maxTokens,
-      tools: [{ type: "web_search_20260209", name: "web_search" }],
-      system,
-      messages,
-    }),
-  });
-  const data = await res.json();
-  if (data.error?.type === "rate_limit_error" && attempt < 3) {
-    await sleep((attempt + 1) * 20000);
-    return callClaude(messages, system, maxTokens, attempt + 1);
-  }
-  return data;
-}
+// PHASE 1 — pre-warm the shared cache: generate every unique topic exactly once.
+// This is the only AI work. Uses the SAME pipeline as the live /api/brief route.
+async function prewarmTopics(allKeys: string[], today: string, dateKey: string): Promise<void> {
+  const unique = [...new Set(allKeys)];
+  const cached = await readTopicCache(unique, dateKey);
+  const misses = unique.filter(k => !cached[k]);
+  if (!misses.length) return;
 
-function repairJson(txt: string): string {
-  const s = txt.indexOf("{");
-  if (s === -1) return txt;
-  let fragment = txt.slice(s);
-  let opens: string[] = [];
-  let inStr = false, escaped = false;
-  for (const ch of fragment) {
-    if (escaped) { escaped = false; continue; }
-    if (ch === "\\") { escaped = true; continue; }
-    if (ch === '"') { inStr = !inStr; continue; }
-    if (inStr) continue;
-    if (ch === "{" || ch === "[") opens.push(ch);
-    if (ch === "}" || ch === "]") opens.pop();
-  }
-  if (inStr) fragment += '"';
-  for (let i = opens.length - 1; i >= 0; i--) fragment += opens[i] === "{" ? "}" : "]";
-  return fragment;
-}
-
-const SYSTEM = `You are NewsHall's AI journalist. Surface what actually matters — stories a well-informed person genuinely needs to know this morning.
-
-SOURCE RULES:
-- General: AP, Reuters, BBC, NPR, PBS, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, Guardian, C-SPAN
-- Business/markets: WSJ, Bloomberg, Reuters, CNBC, Financial Times
-- Tech: The Verge, Ars Technica, Wired, TechCrunch, Reuters
-- Sports: ESPN, AP, The Athletic, CBS Sports
-- Health/science: Reuters, AP, BBC, Nature, Harvard Health, Mayo Clinic
-
-POLITICS — STRICT NEUTRALITY:
-- ONLY: AP, Reuters, BBC, NPR, PBS, C-SPAN, ABC News, CBS News, NBC News
-- NEVER: CNN, MSNBC, Fox News, Breitbart, Daily Wire, HuffPost, Salon, Vox, National Review, Newsmax, OAN
-- Facts only — what happened, direct quotes only, no framing language
-
-RELEVANCE: Only stories with genuine morning significance from the last 24 hours. 2-5 per topic based on what actually happened.
-
-Output ONLY valid JSON.`;
-
-async function generateTopic(topic: string, today: string): Promise<any | null> {
-  const maxTokens = 3400;
-  const userMsg = `Today is ${today}. Morning brief for: ${topic}.
-
-Search for what actually happened in the last 24 hours. Select only stories with real significance. 1-2 sentence factual summaries.
-
-Return ONLY raw JSON:
-{"topics":[{"topic":"${topic}","stories":[{"headline":"headline","summary":"summary","source":"outlet","url":"https://url"}]}]}`;
-
-  let messages: any[] = [{ role: "user", content: userMsg }];
-  let data = await callClaude(messages, SYSTEM, maxTokens);
-  let iter = 0;
-
-  while (data.stop_reason === "tool_use" && iter < 10) {
-    iter++;
-    messages = [...messages, { role: "assistant", content: data.content }];
-    const acks = (data.content || [])
-      .filter((b: any) => b.type === "tool_use")
-      .map((b: any) => ({ type: "tool_result", tool_use_id: b.id, content: "" }));
-    if (!acks.length) break;
-    messages = [...messages, { role: "user", content: acks }];
-    data = await callClaude(messages, SYSTEM, maxTokens);
-  }
-
-  if (data.error) return null;
-
-  const txt = (data.content || [])
-    .filter((b: any) => b.type === "text")
-    .map((b: any) => b.text)
-    .join("")
-    .trim();
-  if (!txt) return null;
-
-  const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
-  try {
-    const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
-    const parsed = JSON.parse(clean.slice(s, e + 1));
-    return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
-  } catch {
-    try {
-      const parsed = JSON.parse(repairJson(clean));
-      return Array.isArray(parsed.topics) ? parsed.topics[0] : null;
-    } catch {
-      return null;
-    }
+  // generateTopics batches + limits concurrency internally. Process in chunks so
+  // results are cached incrementally (resilient if the run is cut short).
+  const CHUNK = 15;
+  for (let i = 0; i < misses.length; i += CHUNK) {
+    const slice = misses.slice(i, i + CHUNK);
+    const generated = await generateTopics(slice, today).catch(() => ({}));
+    const entries = Object.entries(generated)
+      .filter(([, content]: any) => content?.stories?.length)
+      .map(([key, content]) => ({ key, content }));
+    if (entries.length) await writeTopicCache(entries, dateKey);
   }
 }
 
-async function generateBriefForUser(topics: string[], today: string): Promise<any[]> {
-  // All topics in parallel — total time = slowest single topic, not sum
-  const results = await Promise.all(
-    topics.map(t => generateTopic(t, today).catch(() => null))
-  );
-  return results.filter(Boolean);
-}
-
-// Concurrency limiter — run up to `limit` tasks at a time
-async function pLimit<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]> {
-  const results: T[] = new Array(tasks.length);
-  let i = 0;
-  async function worker() {
-    while (i < tasks.length) {
-      const idx = i++;
-      results[idx] = await tasks[idx]();
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker));
-  return results;
+// PHASE 2 — assemble a user's brief from the now-warm cache (no generation here)
+async function assembleFromCache(topics: string[], dateKey: string): Promise<any[]> {
+  const keyByTopic: Record<string, string> = {};
+  for (const t of topics) keyByTopic[t] = normalizeTopicKey(t);
+  const cached = await readTopicCache([...new Set(Object.values(keyByTopic))], dateKey);
+  return topics
+    .map(t => { const c = cached[keyByTopic[t]]; return c?.stories?.length ? promoteLeadWithPhoto({ ...c, topic: t }) : null; })
+    .filter(Boolean);
 }
 
 export async function GET(req: NextRequest) {
@@ -154,67 +57,68 @@ export async function GET(req: NextRequest) {
   );
 
   const now = new Date();
+  const today = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  const dateKey = briefDateKey();
   const currentHour = now.getUTCHours();
-  const today = now.toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric", year: "numeric",
-  });
+  const DEFAULT_HOUR = 12; // ~7-8am US Eastern for users who never set a delivery time
 
-  // Generate briefs for ALL users every morning — everyone gets a fresh brief
+  // HOURLY_MODE honors each user's chosen delivery time — but it requires the cron
+  // to run hourly ("0 * * * *"), which needs Vercel Pro. On Hobby (daily cron) we
+  // process everyone in the single daily run. To enable per-user delivery times:
+  //   1) upgrade to Vercel Pro
+  //   2) set the cron schedule in vercel.json to "0 * * * *"
+  //   3) flip HOURLY_MODE to true
+  const HOURLY_MODE = false;
+
   const { data: settings, error } = await supabase
     .from("user_settings")
-    .select("user_id, topics");
+    .select("user_id, topics, delivery_hour_utc");
+  if (error || !settings?.length) return NextResponse.json({ ok: true, generated: 0, hour: currentHour });
 
-  if (error || !settings?.length) {
-    return NextResponse.json({ ok: true, generated: 0, hour: currentHour });
-  }
+  const due = settings.filter((s: any) => {
+    const topics = s.topics as string[];
+    if (!topics?.length) return false;
+    if (!HOURLY_MODE) return true;
+    return (s.delivery_hour_utc ?? DEFAULT_HOUR) === currentHour;
+  });
+  if (!due.length) return NextResponse.json({ ok: true, generated: 0, hour: currentHour, due: 0 });
 
+  // ── PHASE 1: pre-warm every unique topic once ──
+  const allKeys: string[] = [];
+  for (const s of due) for (const t of (s.topics as string[])) allKeys.push(normalizeTopicKey(t));
+  await prewarmTopics(allKeys, today, dateKey);
+
+  // ── PHASE 2: assemble + push per user, in parallel ──
   let generated = 0;
-
-  // Process up to 5 users in parallel to stay within Vercel limits
-  const tasks = settings.map(setting => async () => {
-    try {
+  const CONCURRENCY = 15;
+  for (let i = 0; i < due.length; i += CONCURRENCY) {
+    const chunk = due.slice(i, i + CONCURRENCY);
+    await Promise.allSettled(chunk.map(async (setting: any) => {
       const topics = setting.topics as string[];
-      if (!topics?.length) return;
-
-      const briefTopics = await generateBriefForUser(topics, today);
+      const briefTopics = await assembleFromCache(topics, dateKey);
       if (!briefTopics.length) return;
 
-      const headline = `${briefTopics[0]?.topic || "Morning"} & ${briefTopics.length - 1} more`;
-      const briefData = { headline, topics: briefTopics };
+      const extraCount = briefTopics.length - 1;
+      const headline = extraCount > 0 ? `${briefTopics[0]?.topic} & ${extraCount} more` : briefTopics[0]?.topic || "Morning Brief";
 
-      // Upsert into briefs table
-      await supabase.from("briefs").upsert({
-        user_id: setting.user_id,
-        content: briefData,
-        generated_at: now.toISOString(),
-      }, { onConflict: "user_id" });
+      await supabase.from("briefs").upsert(
+        { user_id: setting.user_id, content: { headline, topics: briefTopics }, generated_at: now.toISOString() },
+        { onConflict: "user_id" }
+      );
 
-      // Send push notification if subscription exists
-      const { data: sub } = await supabase
-        .from("push_subscriptions")
-        .select("endpoint, p256dh, auth")
-        .eq("user_id", setting.user_id)
-        .single();
+      const { data: sub } = await supabase.from("push_subscriptions")
+        .select("endpoint, p256dh, auth").eq("user_id", setting.user_id).single();
 
       if (sub) {
-        const totalStories = briefTopics.reduce(
-          (n: number, t: any) => n + (t.stories?.length || 0), 0
-        );
+        const totalStories = briefTopics.reduce((n: number, t: any) => n + (t.stories?.length || 0), 0);
         await webpush.sendNotification(
           { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-          JSON.stringify({
-            title: "Your Morning Brief is ready ☀️",
-            body: `${totalStories} stories across ${briefTopics.length} topics — tap to read.`,
-            url: "/",
-          })
+          JSON.stringify({ title: "Your Morning Brief is ready", body: `${totalStories} stories across ${briefTopics.length} topics.`, url: "/" })
         ).catch(() => {});
       }
-
       generated++;
-    } catch {}
-  });
+    }));
+  }
 
-  await pLimit(tasks, 5);
-
-  return NextResponse.json({ ok: true, generated, hour: currentHour });
+  return NextResponse.json({ ok: true, generated, hour: currentHour, due: due.length });
 }

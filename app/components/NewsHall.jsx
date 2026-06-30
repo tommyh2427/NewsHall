@@ -186,32 +186,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .fb-num::after{content:'';flex:1;max-width:28px;height:1px;background:var(--accent);}
 .fb h4{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;margin-bottom:12px;color:#fff;letter-spacing:-0.02em;line-height:1.2;}
 .fb p{font-size:0.82rem;color:rgba(255,255,255,0.42);line-height:1.7;font-weight:300;}
-.builder{max-width:1000px;margin:0 auto;padding:64px 48px;background:var(--bg);border-top:1px solid var(--rule);}
-.step-hd{margin-bottom:32px;}
-.step-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:10px;}
+.builder{width:100%;background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding:72px 48px;}
+.builder-inner{max-width:1000px;margin:0 auto;}
+.step-hd{margin-bottom:36px;}
+.step-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(200,16,46,0.18);color:var(--accent);font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:14px;border:1px solid rgba(200,16,46,0.25);}
 .step-n{color:#fff;font-weight:700;}
-.step-h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:800;letter-spacing:-0.03em;color:var(--ink);margin-bottom:6px;}
-.step-sub{font-size:0.86rem;color:var(--ink-3);line-height:1.62;max-width:480px;}
-.search-wrap{position:relative;margin-bottom:16px;}
-.search-wrap input{width:100%;background:#fff;border:2px solid var(--rule);border-radius:10px;padding:14px 130px 14px 46px;font-size:0.92rem;color:var(--ink);outline:none;transition:all 0.15s;}
-.search-wrap input:focus{border-color:var(--ink);}
-.search-wrap input::placeholder{color:#b0b8c4;}
-.search-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
-.add-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;border:none;border-radius:7px;padding:8px 18px;font-weight:700;font-size:0.76rem;cursor:pointer;}
-.sugg-lbl{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;}
-.sugg-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
-.sugg{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1.5px solid var(--rule);border-radius:100px;padding:6px 14px;font-size:0.76rem;font-weight:500;cursor:pointer;transition:all 0.18s cubic-bezier(0.22,1,0.36,1);color:var(--ink-2);}
-.sugg:hover{border-color:var(--accent-2);color:var(--accent-2);background:var(--bg-2);transform:translateY(-1px);}
-.sugg.on{background:var(--ink);border-color:var(--ink);color:#fff;transform:scale(1.02);}
+.step-h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;letter-spacing:-0.04em;color:#fff;margin-bottom:8px;}
+.step-sub{font-size:0.88rem;color:rgba(255,255,255,0.42);line-height:1.65;max-width:480px;font-weight:300;}
+.search-wrap{position:relative;margin-bottom:20px;}
+.search-wrap input{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;padding:15px 140px 15px 48px;font-size:0.93rem;color:#fff;outline:none;transition:all 0.2s;}
+.search-wrap input:focus{border-color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.08);}
+.search-wrap input::placeholder{color:rgba(255,255,255,0.28);}
+.search-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center;color:rgba(255,255,255,0.35);}
+.add-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-weight:700;font-size:0.76rem;cursor:pointer;transition:background 0.15s;}
+.add-btn:hover{background:#e01535;}
+.sugg-lbl{font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:14px;}
+.sugg-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+.sugg{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:7px 16px;font-size:0.76rem;font-weight:500;cursor:pointer;transition:all 0.18s cubic-bezier(0.22,1,0.36,1);color:rgba(255,255,255,0.6);}
+.sugg:hover{border-color:rgba(255,255,255,0.28);color:#fff;background:rgba(255,255,255,0.1);transform:translateY(-1px);}
+.sugg.on{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.02);}
 .sugg:active{transform:scale(0.97);}
-.chips{min-height:48px;background:var(--bg-2);border:1.5px solid var(--rule);border-radius:12px;padding:10px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:7px;}
-.topic-counter{font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-left:auto;padding:3px 10px;border-radius:100px;flex-shrink:0;}
-.topic-counter.ok{color:var(--ink-3);background:var(--bg-2);}
-.topic-counter.warn{color:#d97706;background:#fffbeb;}
-.topic-counter.full{color:var(--accent);background:#fff2f2;font-weight:700;}
-.chips-lbl{font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-4);flex-shrink:0;}
-.chip{display:inline-flex;align-items:center;gap:5px;background:var(--ink);border:1px solid var(--ink);border-radius:7px;padding:4px 10px;font-size:0.74rem;font-weight:600;color:#fff;}
-.chip-x{cursor:pointer;color:rgba(255,255,255,0.38);font-size:0.78rem;transition:color 0.1s;}
+.chips{min-height:52px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px;}
+.topic-counter{font-size:0.56rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-left:auto;padding:3px 10px;border-radius:100px;flex-shrink:0;}
+.topic-counter.ok{color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.07);}
+.topic-counter.warn{color:#fbbf24;background:rgba(251,191,36,0.12);}
+.topic-counter.full{color:var(--accent);background:rgba(200,16,46,0.15);font-weight:700;}
+.chips-lbl{font-size:0.56rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28);flex-shrink:0;}
+.chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 12px;font-size:0.74rem;font-weight:600;color:#fff;}
+.chip-x{cursor:pointer;color:rgba(255,255,255,0.4);font-size:0.82rem;transition:color 0.1s;}
 .chip-x:hover{color:#ff6b6b;}
 .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .sblock{background:#fff;border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;}
@@ -225,9 +227,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .slbl{font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;}
 .sinput{width:100%;background:transparent;border:none;outline:none;font-size:0.88rem;font-weight:500;color:var(--ink);appearance:none;cursor:pointer;}
 .sinput option{background:#fff;}
-.gen-wrap{max-width:1000px;margin:0 auto;padding:0 48px 80px;background:#fff;}
-.gen-panel{background:var(--ink);border-radius:18px;padding:32px 40px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;position:relative;overflow:hidden;}
-.gen-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 100% at 100% 50%,rgba(59,111,212,0.22) 0%,transparent 70%);pointer-events:none;}
+.gen-wrap{width:100%;background:var(--ink);padding:0 48px 80px;}
+.gen-wrap-inner{max-width:1000px;margin:0 auto;}
+.gen-panel{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 40px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;position:relative;overflow:hidden;}
+.gen-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 100% at 100% 50%,rgba(200,16,46,0.1) 0%,transparent 70%);pointer-events:none;}
 .gen-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:4px;}
 .gen-sub{font-size:0.8rem;color:rgba(255,255,255,0.38);}
 .gen-btns{display:flex;gap:8px;position:relative;z-index:1;flex-shrink:0;}
@@ -245,62 +248,151 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .ld-s{font-size:0.8rem;color:var(--ink-3);}
 .ld-steps{margin-top:16px;display:flex;flex-direction:column;gap:5px;}
 .ld-step{font-size:0.66rem;font-weight:500;letter-spacing:0.06em;color:var(--ink-4);}
-.brief-wrap{max-width:1000px;margin:0 auto;padding:0 48px 80px;animation:fu 0.4s ease;}
-.watch-section{background:var(--ink);color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:40px;}
-.watch-hd{font-size:0.52rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.watch-hd::before{content:'';width:14px;height:2px;background:var(--accent);display:block;flex-shrink:0;}
-.watch-items{display:flex;flex-direction:column;gap:0;}
-.watch-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
-.watch-item:last-child{border-bottom:none;padding-bottom:0;}
-.watch-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
-.watch-text{font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.9);flex:1;line-height:1.4;}
-.watch-topic{font-size:0.55rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.35);white-space:nowrap;}
+/* ── SKELETON LOADING ── */
+.sk-wrap{max-width:860px;margin:0 auto;padding:0 48px 100px;animation:fu 0.4s ease;}
+.sk-status{display:flex;align-items:center;gap:10px;padding:14px 18px;margin-bottom:36px;background:var(--ink);border-radius:12px;}
+.sk-status-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+.sk-status-txt{font-size:0.78rem;font-weight:600;color:#fff;letter-spacing:0.01em;}
+.sk-status-sub{font-size:0.78rem;font-weight:400;color:rgba(255,255,255,0.45);}
+.sk{background:linear-gradient(100deg,#e4e8ee 20%,#f6f8fb 48%,#eef1f5 60%,#e4e8ee 80%);background-size:220% 100%;animation:shimmer 1.25s linear infinite;border-radius:7px;display:block;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk-feat-img{position:relative;background:linear-gradient(120deg,#dfe4ec 0%,#eef1f6 50%,#dfe4ec 100%);background-size:220% 100%;animation:shimmer 1.25s linear infinite;display:flex;align-items:center;justify-content:center;}
+.sk-feat-img::after{content:'';width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.55);box-shadow:0 2px 10px rgba(15,23,41,0.06);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'/%3E%3Cpath d='m21 15-5-5L5 21'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;}
+.sk-mast{padding-bottom:24px;margin-bottom:40px;border-bottom:3px solid var(--ink);}
+.sk-kicker{width:130px;height:11px;margin-bottom:16px;border-radius:4px;}
+.sk-hl{width:78%;height:38px;margin-bottom:14px;border-radius:8px;}
+.sk-hl.two{width:52%;}
+.sk-meta{width:200px;height:10px;border-radius:4px;}
+.sk-topic{margin-bottom:60px;}
+.sk-topic-hd{display:flex;align-items:center;justify-content:space-between;border-top:3px solid var(--ink);border-bottom:1px solid rgba(10,15,30,0.14);padding:8px 0 11px;margin-bottom:24px;}
+.sk-topic-name{width:120px;height:11px;border-radius:4px;}
+.sk-topic-count{width:48px;height:9px;border-radius:4px;}
+.sk-feat{border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 4px rgba(15,23,41,0.06),0 4px 20px rgba(15,23,41,0.05);background:#fff;}
+.sk-feat-img{aspect-ratio:16/7;border-radius:0;}
+.sk-feat-body{padding:24px 28px 22px;}
+.sk-feat-hl{width:92%;height:24px;margin-bottom:10px;border-radius:6px;}
+.sk-feat-hl.two{width:60%;margin-bottom:18px;}
+.sk-feat-sum{width:100%;height:12px;margin-bottom:8px;border-radius:4px;}
+.sk-feat-sum.short{width:70%;}
+.sk-card{padding:20px 0;border-bottom:1px solid var(--rule);}
+.sk-card:first-of-type{border-top:1px solid var(--rule);}
+.sk-card-src{width:60px;height:14px;margin-bottom:10px;border-radius:4px;}
+.sk-card-hl{width:88%;height:16px;margin-bottom:9px;border-radius:5px;}
+.sk-card-sum{width:100%;height:11px;margin-bottom:6px;border-radius:4px;}
+.sk-card-sum.short{width:55%;}
+.brief-wrap{max-width:860px;margin:0 auto;padding:0 48px 100px;animation:fu 0.4s ease;}
+/* ── ON THE RADAR — end-of-brief forward look ── */
+.radar{position:relative;overflow:hidden;background:linear-gradient(140deg,#0c1322 0%,#161f3a 100%);border:1px solid rgba(255,255,255,0.09);border-radius:20px;padding:30px 32px;margin:8px 0 8px;animation:fu 0.5s ease both;}
+.radar::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(200,16,46,0.18) 0%,transparent 70%);pointer-events:none;}
+.radar::after{content:'';position:absolute;bottom:-80px;left:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(26,58,107,0.4) 0%,transparent 70%);pointer-events:none;}
+.radar-hd{display:flex;align-items:center;gap:11px;margin-bottom:20px;position:relative;z-index:1;}
+.radar-eyebrow{font-size:0.56rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);}
+.radar-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1;}
+.radar-pulse{width:9px;height:9px;border-radius:50%;background:var(--accent);flex-shrink:0;box-shadow:0 0 0 0 rgba(200,16,46,0.6);animation:radarPulse 2s ease-out infinite;}
+@keyframes radarPulse{0%{box-shadow:0 0 0 0 rgba(200,16,46,0.55)}70%{box-shadow:0 0 0 10px rgba(200,16,46,0)}100%{box-shadow:0 0 0 0 rgba(200,16,46,0)}}
+.radar-list{display:flex;flex-direction:column;position:relative;z-index:1;}
+.radar-item{display:flex;align-items:flex-start;gap:13px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.radar-item:last-child{border-bottom:none;padding-bottom:0;}
+.radar-item:first-child{padding-top:0;}
+.radar-arrow{color:var(--accent);font-size:0.95rem;font-weight:700;flex-shrink:0;line-height:1.5;}
+.radar-text{flex:1;font-size:0.9rem;font-weight:500;color:rgba(255,255,255,0.92);line-height:1.5;}
+.radar-topic{font-size:0.5rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 10px;white-space:nowrap;margin-top:2px;flex-shrink:0;}
 @keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 /* Masthead */
-.bmast{padding:40px 0 28px;margin-bottom:44px;border-bottom:1px solid var(--rule);}
-.bmast-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.bmast-pub{font-size:0.56rem;font-weight:800;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-4);}
-.bmast-date-sm{font-size:0.56rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);}
-.bkicker{font-size:0.56rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
-.bhl{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,3.2rem);font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--ink);}
-.bmeta{font-size:0.6rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);margin-top:10px;}
-.bmast-btns{display:flex;gap:8px;margin-top:18px;}
-.brefresh{background:var(--ink);color:#fff;font-weight:600;font-size:0.7rem;padding:9px 18px;border:none;border-radius:7px;cursor:pointer;}
-.btweak{background:transparent;color:var(--ink-2);font-weight:500;font-size:0.7rem;padding:9px 16px;border:1.5px solid var(--rule);border-radius:7px;cursor:pointer;}
-.btweak:hover{background:var(--bg-2);}
+.bmast{padding:36px 0 24px;margin-bottom:48px;}
+.bmast-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(10,15,30,0.12);}
+.bmast-pub{font-size:0.54rem;font-weight:800;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-4);}
+.bmast-date-sm{font-size:0.54rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);}
+.bkicker{font-size:0.54rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.bhl{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.8vw,3.4rem);font-weight:900;line-height:0.98;letter-spacing:-0.04em;color:var(--ink);}
+.bmeta{font-size:0.58rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);margin-top:12px;}
+.bmast-btns{display:flex;gap:8px;margin-top:20px;border-top:3px solid var(--ink);padding-top:16px;}
+.brefresh{background:var(--ink);color:#fff;font-weight:600;font-size:0.7rem;padding:9px 20px;border:none;border-radius:7px;cursor:pointer;transition:background 0.15s;}
+.brefresh:hover{background:var(--accent);}
+.bshare{background:transparent;color:var(--ink-2);font-weight:600;font-size:0.7rem;padding:9px 16px;border:1.5px solid var(--rule);border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;}
+.bshare:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btweak{background:transparent;color:var(--ink-2);font-weight:500;font-size:0.7rem;padding:9px 16px;border:1.5px solid var(--rule);border-radius:7px;cursor:pointer;transition:all 0.15s;}
+.btweak:hover{background:var(--bg-2);border-color:var(--ink-3);}
 /* Source labels */
 .src-badge{display:inline-flex;align-items:center;border-radius:5px;padding:3px 8px;flex-shrink:0;}
 .src-name{font-size:0.55rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;line-height:1;}
-/* Topic sections */
-.brief-topic-section{margin-bottom:64px;}
-.brief-topic-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
-.brief-topic-name{font-size:0.6rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:10px;}
-.brief-topic-name::before{content:'';width:18px;height:2px;background:var(--accent);display:block;flex-shrink:0;}
-.brief-topic-count{font-size:0.56rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-4);}
-/* Featured story card */
-.brief-featured{display:block;text-decoration:none;border:1px solid var(--rule);border-radius:14px;overflow:hidden;margin-bottom:12px;transition:box-shadow 0.2s,transform 0.2s;background:#fff;}
-.brief-featured:hover{box-shadow:0 8px 32px rgba(15,23,41,0.11);transform:translateY(-2px);}
-.brief-feat-img{aspect-ratio:16/7;position:relative;display:flex;align-items:flex-end;padding:16px 20px;overflow:hidden;}
-.brief-feat-img-over{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(0,0,0,0.6) 100%);}
-.brief-feat-img-meta{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;width:100%;}
-.brief-feat-label{font-size:0.48rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.22);border-radius:4px;padding:3px 8px;}
-.brief-feat-body{padding:20px 22px 18px;background:#fff;}
-.brief-feat-hl{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.2vw,1.6rem);font-weight:800;line-height:1.15;letter-spacing:-0.025em;color:var(--ink);margin-bottom:8px;}
-.brief-feat-sum{font-size:0.82rem;color:var(--ink-3);line-height:1.62;margin-bottom:10px;}
-.brief-feat-ctx{font-size:0.78rem;color:var(--accent-2);line-height:1.55;margin-bottom:14px;font-weight:500;padding-left:12px;border-left:2px solid var(--accent);}
-.brief-feat-read{font-size:0.6rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--accent-2);transition:color 0.15s;}
+/* ── TOPIC SECTIONS — WSJ newspaper style ── */
+.brief-topic-section{margin-bottom:60px;}
+/* WSJ double-rule: thick top + thin bottom with section label between */
+.brief-topic-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  border-top:3px solid var(--ink);
+  border-bottom:1px solid rgba(10,15,30,0.14);
+  padding:6px 0 9px;
+  margin-bottom:24px;
+}
+.brief-topic-name{
+  font-size:0.6rem;font-weight:800;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--ink);
+  display:flex;align-items:center;gap:0;
+}
+.brief-topic-name::before{display:none;}
+.brief-topic-count{font-size:0.52rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-4);}
+/* ── FEATURED STORY — Apple News clean card ── */
+.brief-featured{
+  display:block;text-decoration:none;background:#fff;
+  border-radius:16px;overflow:hidden;margin-bottom:16px;
+  transition:transform 0.2s ease,box-shadow 0.2s ease;
+  box-shadow:0 1px 4px rgba(15,23,41,0.06),0 4px 20px rgba(15,23,41,0.05);
+  border:none;
+}
+.brief-featured:hover{transform:translateY(-3px);box-shadow:0 12px 44px rgba(15,23,41,0.13);}
+.brief-feat-img{aspect-ratio:16/7;position:relative;display:flex;align-items:flex-end;padding:20px 24px;overflow:hidden;}
+.brief-feat-img-over{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(0,0,0,0.72) 100%);}
+.brief-feat-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0;transition:opacity 0.55s ease;}
+.brief-feat-photo.loaded{opacity:1;}
+.brief-feat-img-grad{position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,transparent 28%,rgba(0,0,0,0.74) 100%);}
+.brief-feat-img-meta{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;width:100%;}
+.brief-feat-label{font-size:0.47rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#fff;background:var(--accent);border-radius:4px;padding:3px 9px;}
+.brief-feat-body{padding:24px 28px 22px;background:#fff;}
+.brief-feat-hl{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.35rem,2.4vw,1.85rem);
+  font-weight:800;line-height:1.11;letter-spacing:-0.03em;
+  color:var(--ink);margin-bottom:11px;
+}
+.brief-feat-sum{font-size:0.87rem;color:var(--ink-3);line-height:1.7;margin-bottom:16px;}
+.brief-feat-ctx{display:none;}
+.brief-feat-read{
+  font-size:0.58rem;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--accent);transition:color 0.15s;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.brief-feat-read::after{content:'→';font-size:0.7rem;}
 .brief-featured:hover .brief-feat-read{color:var(--ink);}
-/* Story grid */
-.brief-story-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.brief-story-card{display:flex;flex-direction:column;text-decoration:none;padding:18px 20px;border:1px solid var(--rule);border-radius:12px;background:#fff;transition:box-shadow 0.15s,transform 0.15s;}
-.brief-story-card:hover{box-shadow:0 4px 20px rgba(15,23,41,0.1);transform:translateY(-1px);}
-.brief-story-src{margin-bottom:10px;}
-.brief-story-hl{font-family:'Playfair Display',serif;font-size:0.96rem;font-weight:700;line-height:1.3;letter-spacing:-0.02em;color:var(--ink);margin-bottom:6px;}
-.brief-story-sum{font-size:0.76rem;color:var(--ink-3);line-height:1.55;margin-bottom:6px;flex:1;}
-.brief-story-ctx{font-size:0.72rem;color:var(--accent-2);line-height:1.5;margin-bottom:12px;font-weight:500;padding-left:10px;border-left:2px solid var(--accent);}
-.brief-story-read{font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-2);margin-top:auto;}
+/* ── SECONDARY STORIES — newspaper column list ── */
+/* Secondary stories — clean newspaper-column text grid (consistent, no mismatched images) */
+.brief-story-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 36px;}
+.brief-story-card{
+  display:flex;flex-direction:column;text-decoration:none;
+  padding:20px 0 22px;border-top:1px solid var(--rule);
+  background:transparent;transition:none;
+}
+.brief-story-card:hover .brief-story-hl{color:var(--accent);}
+.brief-story-thumb{display:none;}
+.brief-story-src{margin-bottom:9px;}
+.brief-story-hl{
+  font-family:'Playfair Display',serif;
+  font-size:1.12rem;font-weight:800;line-height:1.22;
+  letter-spacing:-0.025em;color:var(--ink);margin-bottom:8px;
+  transition:color 0.15s;
+}
+.brief-story-sum{font-size:0.84rem;color:var(--ink-3);line-height:1.62;flex:1;}
+.brief-story-ctx{display:none;}
+.brief-story-read{display:none;}
 /* Sources footer */
-.srcfooter{margin-top:8px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;font-size:0.6rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-4);line-height:2;}
+.srcfooter{
+  margin-top:48px;padding:16px 0;
+  border-top:1px solid var(--rule);
+  font-size:0.58rem;font-weight:500;letter-spacing:0.05em;
+  text-transform:uppercase;color:var(--ink-4);line-height:2;
+  background:transparent;border-radius:0;border-left:none;border-right:none;border-bottom:none;
+}
 .srcfooter strong{color:var(--ink-2);}
 .err-box{padding:28px 0;}
 .err-msg{color:#e8654a;font-size:0.88rem;font-weight:600;margin-bottom:8px;}
@@ -473,7 +565,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 /* ── ONBOARDING MODAL ── */
 .ob-over{position:fixed;inset:0;background:rgba(10,15,30,0.75);z-index:600;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);animation:fu 0.25s ease;}
 .ob-box{background:#fff;border-radius:22px;padding:44px;width:min(480px,94vw);position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.22);animation:mpop 0.28s cubic-bezier(0.22,1,0.36,1);}
-.ob-icon{font-size:2.8rem;margin-bottom:16px;line-height:1;}
+.ob-icon{width:52px;height:52px;border-radius:14px;background:var(--ink);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
 .ob-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--ink);letter-spacing:-0.03em;margin-bottom:6px;}
 .ob-sub{font-size:0.88rem;color:var(--ink-3);line-height:1.65;margin-bottom:28px;}
 .ob-time-label{font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;display:block;}
@@ -522,7 +614,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
  .features{grid-template-columns:1fr;}
  .fb{border-right:none;border-bottom:1px solid rgba(255,255,255,0.07);}
  .fb:last-child{border-bottom:none;}
- .builder,.gen-wrap,.brief-wrap,.dashboard,.editor-panel{padding-left:22px;padding-right:22px;}
+ .builder,.gen-wrap{padding-left:20px;padding-right:20px;}
+ .brief-wrap,.sk-wrap,.dashboard,.editor-panel{padding-left:20px;padding-right:20px;}
  .topbar{padding:0 22px;}
  .dashboard-hd{flex-direction:column;align-items:flex-start;gap:12px;}
  .dashboard-hd-r{align-items:flex-start;}
@@ -532,7 +625,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
  .pillar{border-bottom:1px solid var(--rule);}
  .sgrid{grid-template-columns:1fr 1fr;}
  .gen-panel{grid-template-columns:1fr;gap:16px;}
- .brief-story-grid{grid-template-columns:1fr;}
  .tg-stories,.tg-stories.n1,.tg-stories.n2,.tg-stories.n3,.tg-stories.n4,.tg-stories.n5,.tg-stories.n6,.tg-stories.n7,.tg-stories.n8,.tg-stories.n9,.tg-stories.n10{grid-template-columns:1fr 1fr;}
  .wx-page,.scores-page,.markets-page,.daily-page{padding:20px;}
  .wx-card-top{grid-template-columns:auto 1fr;}
@@ -545,8 +637,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
  .loading{padding:56px 20px;}
  .no-brief-inner{padding:40px 24px;}
  .saved-brief-bar{padding:10px 22px;}
- .brief-story-card{padding:14px 16px;}
- .brief-feat-body{padding:16px 16px 14px;}
+ .brief-story-grid{grid-template-columns:1fr;gap:22px;}
+ .brief-feat-img{aspect-ratio:3/2;}
+ .brief-feat-body{padding:18px 20px 16px;}
  .bmast{padding:28px 0 20px;}
  .bhl{font-size:clamp(1.4rem,6vw,3.2rem);}
  .dashboard-title{font-size:clamp(1.2rem,5vw,2.8rem);}
@@ -756,6 +849,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brief-refresh-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.76rem;font-weight:700;cursor:pointer;flex-shrink:0;margin-top:4px;}
 .brief-refresh-btn:hover{background:var(--accent);}
 .brief-refresh-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.brief-share-btn{background:transparent;color:var(--ink-2);border:1.5px solid var(--rule);border-radius:8px;padding:10px 16px;font-size:0.76rem;font-weight:700;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;}
+.brief-share-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
 /* ── STALE NOTICE ── */
 .stale-notice{max-width:1000px;margin:0 auto;padding:0 22px;}
 .stale-notice-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);}
@@ -812,81 +907,185 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .ptr-arrow{font-size:1.1rem;display:inline-block;transition:transform 0.2s;}
 .ptr-arrow.ready{transform:rotate(180deg);}
 /* ── LANDING SLIDES ── */
+/* Scroll animations */
+.anim{opacity:0;transform:translateY(36px);transition:opacity 0.75s cubic-bezier(0.22,1,0.36,1),transform 0.75s cubic-bezier(0.22,1,0.36,1);}
+.anim.in-view{opacity:1;transform:none;}
+.anim-d1{transition-delay:0.1s;}.anim-d2{transition-delay:0.2s;}.anim-d3{transition-delay:0.3s;}.anim-d4{transition-delay:0.4s;}.anim-d5{transition-delay:0.5s;}
+
 .ls{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px 80px;text-align:center;position:relative;overflow:hidden;}
-.ls-1{background:var(--ink);text-align:left;}
-.ls-2{background:var(--ink);}
-.ls-3{background:#fff;border-top:1px solid var(--rule);}
+.ls-1{background:var(--ink);min-height:100dvh;justify-content:center;}
+.ls-2{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);}
+.ls-3{background:#0d1220;border-top:1px solid rgba(255,255,255,0.06);}
 
 /* ── SLIDE 1: HERO ── */
-.ls1-inner{width:100%;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:48px;align-items:center;}
-.ls1-hl{font-family:'Playfair Display',serif;font-size:clamp(3.6rem,10vw,6.2rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.9;margin-bottom:24px;}
+.ls1-grid{position:absolute;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(to right,rgba(255,255,255,0.045) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.045) 1px,transparent 1px);background-size:62px 62px;-webkit-mask-image:radial-gradient(ellipse 75% 60% at 50% 32%,#000 45%,transparent 88%);mask-image:radial-gradient(ellipse 75% 60% at 50% 32%,#000 45%,transparent 88%);}
+.ls1-lamp{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:0;width:min(520px,80vw);height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0.7;box-shadow:0 0 70px 10px rgba(200,16,46,0.45);}
+.ls1-orb{position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;}
+.ls1-orb-1{width:620px;height:620px;background:radial-gradient(circle,rgba(200,16,46,0.4) 0%,transparent 70%);top:-140px;right:-120px;animation:orbFloat 16s ease-in-out infinite;}
+.ls1-orb-2{width:540px;height:540px;background:radial-gradient(circle,rgba(56,84,235,0.42) 0%,transparent 70%);bottom:-100px;left:-100px;animation:orbFloat 20s ease-in-out infinite reverse;}
+.ls1-orb-3{width:420px;height:420px;background:radial-gradient(circle,rgba(150,44,210,0.34) 0%,transparent 70%);top:35%;left:42%;animation:orbFloat 24s ease-in-out infinite;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6%,-5%) scale(1.12)}}
+.ls1-inner{width:100%;max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:0;position:relative;z-index:1;}
+.ls1-eyebrow{font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:28px;}
+.ls1-hl{font-family:'Playfair Display',serif;font-size:clamp(4rem,11vw,7rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.92;margin-bottom:28px;text-align:center;}
 .ls1-hl em{color:var(--accent);font-style:italic;}
-.ls1-sub{font-size:1.05rem;color:rgba(255,255,255,0.5);line-height:1.7;max-width:340px;margin:0 0 36px;font-weight:300;}
-.ls1-btns{display:flex;gap:12px;flex-wrap:wrap;}
-.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:15px 28px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;white-space:nowrap;}
-.ls1-btn-p:hover{background:#e01535;}
-.ls1-btn-g{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.2);border-radius:12px;padding:15px 28px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;}
-.ls1-btn-g:hover{background:rgba(255,255,255,0.15);}
-.ls1-sources{display:flex;align-items:center;gap:8px;margin-top:28px;flex-wrap:wrap;}
-.ls1-src-label{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
-.ls1-src-pill{font-size:0.58rem;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.38);background:rgba(255,255,255,0.07);border-radius:4px;padding:2px 7px;}
-/* Mockup */
-.ls1-mockup{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:18px;overflow:hidden;width:100%;max-width:480px;margin:0 auto;}
-.ls1-mk-bar{background:rgba(255,255,255,0.06);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);}
-.ls1-mk-dots{display:flex;gap:5px;}
-.ls1-mk-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.15);}
-.ls1-mk-label{font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.25);}
-.ls1-mk-body{padding:16px;}
-.ls1-mk-topic{font-size:0.48rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.ls1-mk-topic::before{content:'';width:16px;height:2px;background:var(--accent);flex-shrink:0;}
-.ls1-mk-feat{border-radius:12px;overflow:hidden;margin-bottom:10px;background:linear-gradient(135deg,#1a3a6b,#0a1628);}
-.ls1-mk-img{aspect-ratio:16/7;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,0.7) 100%),url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=480&q=70');background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:12px 14px;}
-.ls1-mk-feat-hl{font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:800;color:#fff;line-height:1.25;letter-spacing:-0.02em;}
-.ls1-mk-feat-sum{font-size:0.56rem;color:rgba(255,255,255,0.65);line-height:1.5;padding:8px 14px 10px;}
-.ls1-mk-stories{display:flex;flex-direction:column;gap:7px;}
-.ls1-mk-story{background:rgba(255,255,255,0.05);border-radius:8px;padding:9px 12px;border-left:2px solid rgba(200,16,46,0.4);}
-.ls1-mk-story-hl{font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.35;margin-bottom:2px;}
-.ls1-mk-story-src{font-size:0.46rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);}
-.ls1-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;}
-.ls1-scroll-line{width:1px;height:32px;background:rgba(255,255,255,0.25);animation:lsScroll 2s ease-in-out infinite;}
-.ls1-scroll-label{font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:4px;}
-@keyframes lsScroll{0%,100%{transform:scaleY(1);opacity:0.3}50%{transform:scaleY(0.55);opacity:0.9}}
-@media(min-width:860px){
-  .ls-1{text-align:left;}
-  .ls1-inner{grid-template-columns:1fr 1fr;}
-  .ls1-mockup{margin:0;}
+.ls1-sub{font-size:1.1rem;color:rgba(255,255,255,0.48);line-height:1.72;max-width:420px;margin:0 0 40px;font-weight:300;text-align:center;}
+.ls1-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
+.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:16px 32px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;}
+.ls1-btn-p:hover{background:#e01535;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,16,46,0.4);}
+.ls1-btn-g{background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:16px 32px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.ls1-btn-g:hover{background:rgba(255,255,255,0.13);}
+.ls1-sources{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;}
+.ls1-src-label{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.22);}
+.ls1-src-pill{font-size:0.58rem;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.32);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:3px 8px;}
+/* Marquee */
+.ls1-marquee-wrap{position:absolute;bottom:0;left:0;right:0;border-top:1px solid rgba(255,255,255,0.07);overflow:hidden;padding:14px 0;background:rgba(255,255,255,0.02);}
+.ls1-marquee-track{display:flex;gap:32px;width:max-content;animation:marquee 30s linear infinite;}
+.ls1-marquee-track:hover{animation-play-state:paused;}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ls1-marquee-item{font-size:0.58rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.22);white-space:nowrap;}
+.ls1-marquee-dot{color:var(--accent);margin-right:-16px;}
+/* Scroll indicator */
+.ls1-scroll{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;}
+.ls1-scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(255,255,255,0.4),transparent);animation:lsScroll 2.2s ease-in-out infinite;}
+.ls1-scroll-label{font-size:0.46rem;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+@keyframes lsScroll{0%,100%{opacity:0.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(0.6)}}
+
+/* ── HERO PHONE MOCKUP ── */
+.ls1-text{display:flex;flex-direction:column;align-items:center;text-align:center;}
+.hero-phone{justify-self:center;width:290px;max-width:78vw;background:#11172a;border-radius:44px;padding:9px;box-shadow:0 50px 120px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.07);position:relative;}
+.hero-phone::before{content:'';position:absolute;top:9px;left:50%;transform:translateX(-50%);width:108px;height:22px;background:#11172a;border-radius:0 0 14px 14px;z-index:3;}
+.hp-screen{background:#fff;border-radius:36px;overflow:hidden;height:580px;display:flex;flex-direction:column;}
+.hp-top{padding:38px 18px 14px;background:var(--ink);}
+.hp-kicker{font-size:0.44rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.hp-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:0.95;}
+.hp-meta{font-size:0.42rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:8px;}
+.hp-body{flex:1;padding:14px 14px 0;background:#fff;overflow:hidden;}
+.hp-sec{display:flex;align-items:center;justify-content:space-between;border-top:2.5px solid var(--ink);padding:5px 0 6px;border-bottom:1px solid rgba(10,15,30,0.12);margin-bottom:11px;}
+.hp-sec-name{font-size:0.46rem;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink);}
+.hp-sec-ct{font-size:0.4rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);}
+.hp-feat{border-radius:11px;overflow:hidden;box-shadow:0 2px 10px rgba(15,23,41,0.08);margin-bottom:12px;}
+.hp-feat-img{aspect-ratio:16/8;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:8px;}
+.hp-feat-pill{font-size:0.36rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#fff;background:var(--accent);border-radius:3px;padding:2px 6px;}
+.hp-feat-body{padding:9px 11px 11px;}
+.hp-feat-hl{font-family:'Playfair Display',serif;font-size:0.72rem;font-weight:800;color:var(--ink);line-height:1.12;letter-spacing:-0.02em;margin-bottom:5px;}
+.hp-feat-src{font-size:0.4rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);}
+.hp-story{padding:9px 0;border-bottom:1px solid rgba(10,15,30,0.08);}
+.hp-story-hl{font-family:'Playfair Display',serif;font-size:0.62rem;font-weight:700;color:var(--ink);line-height:1.2;letter-spacing:-0.01em;margin-bottom:4px;}
+.hp-story-src{font-size:0.38rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-4);}
+@media(min-width:900px){
+  .ls1-inner{max-width:1140px;display:grid;grid-template-columns:1.05fr 0.95fr;gap:48px;align-items:center;}
+  .ls1-text{align-items:flex-start;text-align:left;}
+  .ls1-text .ls1-hl,.ls1-text .ls1-sub{text-align:left;}
+  .ls1-text .ls1-btns,.ls1-text .ls1-sources{justify-content:flex-start;}
 }
+@media(max-width:899px){.hero-phone{margin-top:8px;}.ls1-scroll{display:none;}}
+
+/* ── STATS BAND (Sunday-style big numbers) ── */
+.ls-stats{min-height:auto;background:var(--ink);padding:88px 32px;border-top:1px solid rgba(255,255,255,0.06);}
+.ls-stats-inner{width:100%;max-width:1040px;margin:0 auto;}
+.ls-stats-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:48px;text-align:center;}
+.ls-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+.stat-big{text-align:left;padding:0 8px;}
+.stat-num{font-family:'Inter',sans-serif;font-size:clamp(2.6rem,5vw,4rem);font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1;margin-bottom:12px;}
+.stat-num em{color:var(--accent);font-style:normal;}
+.stat-lbl{font-size:0.84rem;color:rgba(255,255,255,0.5);line-height:1.45;font-weight:400;}
+@media(max-width:760px){.ls-stats-grid{grid-template-columns:1fr 1fr;gap:40px 24px;}.ls-stats{padding:64px 24px;}}
+
+/* ── LIVE HEADLINES WALL ── */
+.ls-wall{position:relative;overflow:hidden;background:var(--ink);padding:90px 32px;border-top:1px solid rgba(255,255,255,0.06);}
+.ls-wall-head{max-width:1140px;margin:0 auto 44px;text-align:center;position:relative;z-index:1;}
+.ls-wall-live{display:inline-flex;align-items:center;gap:8px;font-size:0.58rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+.ls-wall-live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(200,16,46,0.6);animation:radarPulse 1.8s ease-out infinite;}
+.ls-wall-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,4.6vw,3.4rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.04;margin-bottom:14px;}
+.ls-wall-hl em{color:var(--accent);font-style:italic;}
+.ls-wall-sub{font-size:1rem;color:rgba(255,255,255,0.45);line-height:1.65;max-width:480px;margin:0 auto;font-weight:300;}
+.ls-wall-cols{position:relative;z-index:1;max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;height:440px;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 14%,#000 86%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 14%,#000 86%,transparent 100%);}
+.wall-col{overflow:hidden;}
+.wall-track{display:flex;flex-direction:column;gap:16px;}
+.wall-track.up{animation:wallUp 34s linear infinite;}
+.wall-track.down{animation:wallDown 40s linear infinite;}
+.wall-track.up2{animation:wallUp 46s linear infinite;}
+@keyframes wallUp{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes wallDown{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+.wall-card{background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.09);border-radius:13px;padding:16px 18px;transition:background 0.2s,border-color 0.2s;}
+.wall-card:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);}
+.wall-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.wall-src{font-size:0.56rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#fff;border-radius:4px;padding:3px 8px;line-height:1;}
+.wall-time{font-size:0.58rem;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.3);}
+.wall-hl{font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:700;color:rgba(255,255,255,0.92);line-height:1.28;letter-spacing:-0.01em;}
+@media(max-width:760px){.ls-wall-cols{grid-template-columns:1fr;height:400px;}.ls-wall-cols .wall-col:nth-child(3){display:none;}.ls-wall{padding:64px 22px;}}
+
+/* ── FULL-BLEED PHOTO STATEMENT (Sunday-style) ── */
+/* ── GRADIENT-MESH STATEMENT (modern AI-site look) ── */
+.ls-statement{position:relative;overflow:hidden;background:#070710;display:flex;align-items:center;justify-content:center;text-align:center;padding:150px 32px;min-height:86vh;}
+.ls-statement::before{content:'';position:absolute;inset:-25%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 38% 46% at 18% 28%, rgba(200,16,46,0.55) 0%, transparent 62%),
+    radial-gradient(ellipse 42% 52% at 82% 22%, rgba(56,84,235,0.5) 0%, transparent 62%),
+    radial-gradient(ellipse 48% 50% at 65% 82%, rgba(150,44,210,0.45) 0%, transparent 62%),
+    radial-gradient(ellipse 40% 46% at 28% 78%, rgba(255,92,46,0.4) 0%, transparent 62%);
+  filter:blur(70px);animation:meshMove 20s ease-in-out infinite;}
+@keyframes meshMove{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4%,-3%) scale(1.1)}66%{transform:translate(-3%,4%) scale(1.06)}}
+.ls-statement::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 90% 70% at 50% 50%, transparent 30%, rgba(7,7,16,0.65) 100%);}
+.ls-statement-inner{position:relative;z-index:1;max-width:920px;margin:0 auto;}
+.ls-statement-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);backdrop-filter:blur(12px);border-radius:100px;padding:8px 18px;font-size:0.62rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.85);margin-bottom:34px;}
+.ls-statement-badge-dot{width:7px;height:7px;border-radius:50%;background:#3effa0;box-shadow:0 0 10px #3effa0;}
+.ls-statement-hl{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,8vw,6rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.96;margin-bottom:30px;}
+.ls-statement-hl em{font-style:italic;background:linear-gradient(120deg,#ff5a2e,#c8102e,#9c2cd2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.ls-statement-sub{font-size:1.15rem;color:rgba(255,255,255,0.72);line-height:1.7;max-width:600px;margin:0 auto;font-weight:300;}
+@media(max-width:760px){.ls-statement{padding:100px 24px;min-height:auto;}}
 
 /* ── SLIDE 2: WHY ── */
 .ls2-inner{width:100%;max-width:1000px;}
-.ls2-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:14px;}
-.ls2-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1;margin-bottom:56px;}
+.ls2-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+.ls2-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.05;margin-bottom:56px;}
 .ls2-hl em{color:var(--accent);font-style:italic;}
-.ls2-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-.ls2-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:36px 32px;text-align:left;transition:background 0.2s;}
-.ls2-card:hover{background:rgba(255,255,255,0.07);}
-.ls2-card:first-child{border-radius:16px 0 0 0;}
-.ls2-card:nth-child(2){border-radius:0 16px 0 0;}
-.ls2-card:nth-child(3){border-radius:0 0 0 16px;}
-.ls2-card:last-child{border-radius:0 0 16px 0;}
-.ls2-icon{font-size:1.5rem;margin-bottom:16px;display:block;}
-.ls2-card-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px;}
-.ls2-card-text{font-size:0.8rem;color:rgba(255,255,255,0.48);line-height:1.68;}
-@media(max-width:600px){.ls2-grid{grid-template-columns:1fr;}.ls2-card:first-child,.ls2-card:nth-child(2),.ls2-card:nth-child(3),.ls2-card:last-child{border-radius:12px;}}
+.ls2-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.ls2-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-left:3px solid var(--accent);border-radius:12px;padding:32px 28px;text-align:left;transition:background 0.2s,transform 0.2s;}
+.ls2-card:hover{background:rgba(255,255,255,0.06);transform:translateY(-2px);}
+.ls2-card-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--accent);letter-spacing:-0.04em;line-height:1;margin-bottom:14px;opacity:0.7;}
+.ls2-card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px;}
+.ls2-card-text{font-size:0.8rem;color:rgba(255,255,255,0.45);line-height:1.7;}
+@media(max-width:600px){.ls2-grid{grid-template-columns:1fr;}}
 
 /* ── SLIDE 3: HOW ── */
 .ls3-inner{width:100%;max-width:1000px;}
-.ls3-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
-.ls3-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:var(--ink);letter-spacing:-0.04em;line-height:1;margin-bottom:56px;}
+.ls3-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+.ls3-hl{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.05;margin-bottom:56px;}
 .ls3-steps{display:grid;grid-template-columns:1fr;gap:16px;width:100%;margin-bottom:48px;}
-.ls3-step{display:flex;align-items:flex-start;gap:20px;background:var(--bg-2);border:1px solid var(--rule);border-radius:16px;padding:28px 28px;text-align:left;transition:transform 0.2s,box-shadow 0.2s;}
-.ls3-step:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(10,15,30,0.08);}
-.ls3-num{width:48px;height:48px;border-radius:14px;background:var(--ink);color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ls3-step-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:4px;}
-.ls3-step-text{font-size:0.82rem;color:var(--ink-3);line-height:1.65;}
-.ls3-cta{background:var(--ink);color:#fff;border:none;border-radius:12px;padding:16px 36px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;}
-.ls3-cta:hover{background:var(--accent);}
+.ls3-step{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px 28px;text-align:left;transition:background 0.2s,transform 0.2s;}
+.ls3-step:hover{background:rgba(255,255,255,0.07);transform:translateY(-2px);}
+.ls3-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--accent);letter-spacing:-0.05em;line-height:1;margin-bottom:16px;opacity:0.6;}
+.ls3-step-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:#fff;letter-spacing:-0.02em;margin-bottom:6px;}
+.ls3-step-text{font-size:0.82rem;color:rgba(255,255,255,0.45);line-height:1.68;}
+.ls3-cta{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:16px 36px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;}
+.ls3-cta:hover{background:#e01535;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,16,46,0.35);}
 @media(min-width:700px){.ls3-steps{grid-template-columns:repeat(3,1fr);}}
+
+/* ── POST-BRIEF SIGNUP CTA (logged-out) ── */
+.brief-cta{background:var(--ink);border-radius:20px;padding:52px 48px;margin:48px 0 0;position:relative;overflow:hidden;text-align:center;animation:fu 0.5s ease 0.3s both;}
+.brief-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(26,58,107,0.45) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 100% 0%,rgba(200,16,46,0.06) 0%,transparent 55%);pointer-events:none;}
+.brief-cta-inner{position:relative;z-index:1;}
+.brief-cta-eyebrow{font-size:0.62rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.brief-cta-eyebrow::before,.brief-cta-eyebrow::after{content:'';width:20px;height:2px;background:var(--accent);display:block;}
+.brief-cta-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.05;margin-bottom:12px;}
+.brief-cta-title em{color:var(--accent);font-style:italic;}
+.brief-cta-sub{font-size:0.92rem;color:rgba(255,255,255,0.42);line-height:1.72;max-width:420px;margin:0 auto 28px;font-weight:300;}
+.brief-cta-bullets{display:flex;flex-direction:column;gap:6px;max-width:340px;margin:0 auto 28px;text-align:left;}
+.brief-cta-bullet{display:flex;align-items:center;gap:10px;font-size:0.82rem;color:rgba(255,255,255,0.6);}
+.brief-cta-bullet::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.brief-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+.brief-cta-btn-p{background:var(--accent);color:#fff;font-weight:700;font-size:0.95rem;padding:16px 32px;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;letter-spacing:0.01em;position:relative;overflow:hidden;}
+.brief-cta-btn-p::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform 0.5s ease;}
+.brief-cta-btn-p:hover{background:#e01535;transform:translateY(-1px);box-shadow:0 8px 24px rgba(200,16,46,0.35);}
+.brief-cta-btn-p:hover::after{transform:translateX(100%);}
+.brief-cta-btn-s{background:transparent;color:rgba(255,255,255,0.5);font-weight:500;font-size:0.95rem;padding:16px 24px;border:1px solid rgba(255,255,255,0.15);border-radius:10px;cursor:pointer;transition:all 0.2s;}
+.brief-cta-btn-s:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.82);}
+.brief-cta-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:4px;}
+.brief-cta-chip{font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.11);color:rgba(255,255,255,0.4);padding:5px 11px;border-radius:5px;}
+.brief-cta-note{font-size:0.68rem;color:rgba(255,255,255,0.22);margin-top:16px;letter-spacing:0.03em;}
+@media(max-width:500px){.brief-cta{padding:36px 22px;}.brief-cta-btns{flex-direction:column;align-items:center;}.brief-cta-btn-p,.brief-cta-btn-s{width:100%;max-width:300px;}}
 `;
 
 export default function NewsHall() {
@@ -915,22 +1114,42 @@ export default function NewsHall() {
    return ()=>subscription.unsubscribe();
  },[]);
 
+ useEffect(()=>{
+   if(user) return;
+   const obs = new IntersectionObserver(
+     entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); }),
+     { threshold:0.1, rootMargin:'0px 0px -40px 0px' }
+   );
+   document.querySelectorAll('.anim').forEach(el => obs.observe(el));
+   return () => obs.disconnect();
+ },[user]);
+
  const loadOgImages = (briefData) => {
-   const items = (briefData?.topics||[]).map(tg=>({url:tg.stories?.[0]?.url||"",topic:tg.topic||""}));
+   // Only the lead story of each topic shows a photo, so only fetch those
+   const items = [];
+   for (const tg of (briefData?.topics||[])) {
+     const lead = tg.stories?.[0];
+     if (lead?.url && String(lead.url).startsWith("http")) items.push({url:lead.url, topic:tg.topic||""});
+   }
    if (!items.length) return;
    fetch("/api/og-images",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({urls:items})})
      .then(r=>r.json()).then(({images})=>setOgImages(images||{})).catch(()=>{});
  };
 
  const loadUserData = async (u) => {
-   // Load saved preferences
-   const prefRes = await fetch('/api/preferences');
-   const prefs = await prefRes.json();
+   // Fetch all three independent reads in parallel (was 3 serial round-trips)
+   const [prefs, briefRes, settingsRes] = await Promise.all([
+     fetch('/api/preferences').then(r=>r.json()).catch(()=>null),
+     supabase.from("briefs").select("content,generated_at").eq("user_id",u.id).single(),
+     supabase.from("user_settings").select("topics,delivery_time").eq("user_id",u.id).single(),
+   ]);
+   const savedBrief = briefRes?.data;
+   const userSettings = settingsRes?.data;
+
+   // Apply saved preferences
    if(prefs?.topics?.length) setTopics(prefs.topics);
    if(prefs?.settings) setSettings(s=>({...s,...prefs.settings}));
 
-   // Load saved brief from Supabase
-   const {data:savedBrief} = await supabase.from("briefs").select("content,generated_at").eq("user_id",u.id).single();
    if(savedBrief?.content) {
      setBrief(savedBrief.content);
      setPhase("done");
@@ -962,8 +1181,7 @@ export default function NewsHall() {
      } catch(_) {}
    }
 
-   // Load delivery time setting
-   const {data:userSettings} = await supabase.from("user_settings").select("topics,delivery_time").eq("user_id",u.id).single();
+   // Apply delivery time + topics from user_settings (fetched in parallel above)
    if(userSettings?.topics?.length) setTopics(userSettings.topics);
    if(userSettings?.delivery_time) setDeliveryTime(userSettings.delivery_time);
 
@@ -1062,6 +1280,25 @@ export default function NewsHall() {
    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
    const rawData = window.atob(base64);
    return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+ };
+
+ // Saves delivery time preference to Supabase — no push permission needed.
+ // Used by the Profile "Save settings" button.
+ const saveDeliveryTime = async () => {
+   if(!user) return;
+   try {
+     const [h, m] = deliveryTime.split(":").map(Number);
+     const utcOffset = new Date().getTimezoneOffset();
+     const deliveryHourUtc = ((h * 60 + (m||0) + utcOffset) / 60 + 24) % 24 | 0;
+     const now = new Date().toISOString();
+     await supabase.from("user_settings").upsert(
+       { user_id: user.id, delivery_time: deliveryTime, delivery_hour_utc: deliveryHourUtc, topics, updated_at: now },
+       { onConflict: "user_id" }
+     );
+     showToast("Saved — your brief will generate at " + deliveryTime + " each morning.");
+   } catch(e) {
+     showToast("Could not save — please try again.");
+   }
  };
 
  const saveSettings = async () => {
@@ -1285,16 +1522,31 @@ export default function NewsHall() {
  },[briefMarkets]);
 
  // News
- const MAX_TOPICS = 5;
+ const MAX_TOPICS = 10;
  const addTopic = name=>{
    const v=(name||input).trim();
    if(!v||topics.includes(v))return;
-   if(topics.length>=MAX_TOPICS){showToast("Free plan is limited to 10 topics — remove one to add another");return;}
+   if(topics.length>=MAX_TOPICS){showToast("Maximum 10 topics — remove one to add another");return;}
    setTopics(p=>[...p,v]);setInput("");
  };
  const rmTopic = t=>setTopics(p=>p.filter(x=>x!==t));
  const togSugg = n=>topics.includes(n)?rmTopic(n):addTopic(n);
- const showToast= msg=>{setToast(msg);setTimeout(()=>setToast(""),4000);};
+ const showToast= (msg,dur=4000)=>{setToast(msg);setTimeout(()=>setToast(""),dur);};
+ const shareBrief = async () => {
+   const url = (typeof window!=="undefined" ? window.location.origin : "https://newshall.app");
+   const data = {
+     title: "NewsHall — Your Morning Brief",
+     text: "I get my morning news on NewsHall — my topics, trusted sources, one quick brief. No noise, no opinions.",
+     url,
+   };
+   try {
+     if (typeof navigator!=="undefined" && navigator.share) { await navigator.share(data); }
+     else { await navigator.clipboard.writeText(url); showToast("Link copied — share it anywhere!"); }
+   } catch(e) {
+     if (e && e.name === "AbortError") return; // user dismissed the share sheet
+     try { await navigator.clipboard.writeText(url); showToast("Link copied!"); } catch {}
+   }
+ };
  const SOURCE_COLORS = {
    "ap": "#c8102e", "associated press": "#c8102e", "ap news": "#c8102e",
    "reuters": "#f60", "bbc": "#b80000", "bbc news": "#b80000",
@@ -1452,48 +1704,104 @@ export default function NewsHall() {
 
  // Client-side topic images — always available instantly, no API needed
  const CLIENT_TOPIC_IMAGES = {
-   "world news":      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80",
-   "us politics":     "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=80",
-   "politics":        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=900&q=80",
-   "tech & ai":       "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80",
-   "technology":      "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80",
-   "markets":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
-   "stock market":    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
-   "business":        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80",
-   "nba":             "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=80",
-   "nfl":             "https://images.unsplash.com/photo-1567459169568-e1b872a93ec0?w=900&q=80",
-   "mlb":             "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=900&q=80",
-   "nhl":             "https://images.unsplash.com/photo-1580420919917-b3e0e0b8943c?w=900&q=80",
-   "sports":          "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
-   "soccer":          "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=80",
-   "formula 1":       "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80",
-   "formula one":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80",
-   "health":          "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=80",
-   "health & wellness":"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&q=80",
-   "science":         "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=80",
-   "climate":         "https://images.unsplash.com/photo-1569163139599-0f4517e36f51?w=900&q=80",
-   "entertainment":   "https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=900&q=80",
-   "film & tv":       "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=900&q=80",
-   "music":           "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80",
-   "crypto":          "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=900&q=80",
-   "real estate":     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=900&q=80",
-   "travel":          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=900&q=80",
-   "fashion & style": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=900&q=80",
-   "food & dining":   "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80",
-   "personal finance":"https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=900&q=80",
-   "mental health":   "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&q=80",
-   "mma / ufc":       "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
-   "mma":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
-   "ufc":             "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
-   "golf":            "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=900&q=80",
-   "tennis":          "https://images.unsplash.com/photo-1542144582-1ba00456b5e3?w=900&q=80",
-   "education":       "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80",
-   "auto & evs":      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80",
-   "gaming":          "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=900&q=80",
-   "space":           "https://images.unsplash.com/photo-1446776709462-d6b525c57bd3?w=900&q=80",
-   "economy":         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+   // World / Politics
+   "world news":       "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=80",
+   "us politics":      "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=900&q=80",
+   "politics":         "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=900&q=80",
+   // Tech
+   "tech & ai":        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80",
+   "technology":       "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80",
+   "gaming":           "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=900&q=80",
+   "auto & evs":       "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=900&q=80",
+   "startups":         "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=900&q=80",
+   // Business / Finance
+   "stock market":     "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+   "markets":          "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+   "business":         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80",
+   "crypto":           "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=900&q=80",
+   "personal finance": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=900&q=80",
+   "real estate":      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=900&q=80",
+   "economy":          "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80",
+   "deals & m&a":      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80",
+   "women in business":"https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=900&q=80",
+   // Science / Health
+   "science":          "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=80",
+   "climate":          "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=900&q=80",
+   "space":            "https://images.unsplash.com/photo-1446776709462-d6b525c57bd3?w=900&q=80",
+   "health & wellness":"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80",
+   "health":           "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80",
+   "mental health":    "https://images.unsplash.com/photo-1499728603263-13726abce5fd?w=900&q=80",
+   "nutrition":        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&q=80",
+   "fitness":          "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=80",
+   // Sports — every ID verified 200 OK
+   "sports":           "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
+   "nba":              "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=80",
+   "nfl":              "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=900&q=80",
+   "mlb":              "https://images.unsplash.com/photo-1529768167801-9173d94c2a42?w=900&q=80",
+   "nhl":              "https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=900&q=80",
+   "soccer":           "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=80",
+   "golf":             "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=900&q=80",
+   "tennis":           "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=900&q=80",
+   "formula 1":        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80",
+   "formula one":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80",
+   "mma / ufc":        "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
+   "mma":              "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
+   "ufc":              "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=900&q=80",
+   "wnba":             "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=80",
+   // Entertainment — every ID verified 200 OK
+   "entertainment":    "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&q=80",
+   "film & tv":        "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=900&q=80",
+   "music":            "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80",
+   "celebrity news":   "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=900&q=80",
+   "books":            "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&q=80",
+   "fashion & style":  "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&q=80",
+   "beauty":           "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=900&q=80",
+   // Lifestyle
+   "travel":           "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=900&q=80",
+   "food & dining":    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80",
+   "education":        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80",
+   "parenting":        "https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=900&q=80",
+   "home & design":    "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=900&q=80",
+   "relationships":    "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80",
  };
- const getTopicImage = (topic) => CLIENT_TOPIC_IMAGES[(topic||"").toLowerCase().trim()] || null;
+
+ // Category keyword → image. Catches niche/custom topics (farming, space, etc.)
+ // that have no exact curated entry, so they show a relevant photo not a gradient.
+ const TOPIC_KEYWORD_IMAGES = [
+   { kw:["farm","agricultur","crop","livestock","ranch","harvest","dairy","grain"], src:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&q=80" },
+   { kw:["space","nasa","astronom","rocket","satellite","galaxy","mars","spacex","cosmos"], src:"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=900&q=80" },
+   { kw:["energy","oil","gas ","solar","wind power","nuclear","power grid","renewable","petroleum"], src:"https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=900&q=80" },
+   { kw:["election","campaign","senate","congress","ballot","primary","governor","parliament"], src:"https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=900&q=80" },
+   { kw:["ai","artificial intelligence","machine learning","chatgpt","openai","llm","robot"], src:"https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80" },
+   { kw:["weather","storm","hurricane","tornado","forecast","flood"], src:"https://images.unsplash.com/photo-1592210454359-9043f067919b?w=900&q=80" },
+ ];
+
+ const getTopicImage = (topic) => {
+   const key = (topic||"").toLowerCase().trim();
+   // Curated Unsplash fallback by topic
+   if (CLIENT_TOPIC_IMAGES[key]) return { type:"img", src: CLIENT_TOPIC_IMAGES[key] };
+   // Keyword match — catches "2025 NBA Playoffs" → nba image, etc.
+   for (const [k, src] of Object.entries(CLIENT_TOPIC_IMAGES)) {
+     if (key.includes(k) || k.includes(key)) return { type:"img", src };
+   }
+   // Category keyword match — catches niche topics (farming, space, energy…)
+   for (const { kw, src } of TOPIC_KEYWORD_IMAGES) {
+     if (kw.some(w => key.includes(w))) return { type:"img", src };
+   }
+   // Unknown topic — gradient
+   return { type:"gradient", css: getTopicGradient(key) };
+ };
+
+ // Lead story image: real article photo if we have one, else curated/gradient by topic
+ const resolveLeadImage = (url, topic) => {
+   if (url && ogImages[url]) return { type:"img", src: ogImages[url] };
+   return getTopicImage(topic);
+ };
+ // Secondary thumbnail: real article photo if available, else a clean topic gradient
+ const resolveThumb = (url, topic) => {
+   if (url && ogImages[url]) return { type:"img", src: ogImages[url] };
+   return { type:"gradient", css: getTopicGradient(topic) };
+ };
 
  // Source abbreviations + brand colors — no external API needed, always renders instantly
  const SOURCE_META = {
@@ -1668,21 +1976,6 @@ export default function NewsHall() {
    if(!topics.length){showToast("Add at least one topic first");return;}
    if(user) setTab("brief");
 
-   // Instant cache: if a brief was generated in the last 30 min for the same topics, show it immediately
-   try {
-     const cached = localStorage.getItem("nh_pending_brief");
-     if(cached) {
-       const {brief:cb, topics:ct, ts} = JSON.parse(cached);
-       const sameTopics = ct && ct.length===topics.length && ct.every((t,i)=>t===topics[i]);
-       if(cb && sameTopics && Date.now()-ts < 30*60*1000) {
-         setBrief(cb); setPhase("done"); setSavedBriefMeta({generated_at:new Date(ts).toISOString()});
-         loadOgImages(cb); setBriefIsStale(false);
-         showToast("Showing your latest brief");
-         return; // no API call needed
-       }
-     }
-   } catch(_) {}
-
    // Stale-while-revalidate: if we already have a brief, keep showing it while we refresh in background
    const isRefresh = phase==="done" && brief && !brief.error;
 
@@ -1700,16 +1993,19 @@ export default function NewsHall() {
    }
    // For refresh: keep existing brief visible — user can keep reading while we fetch
 
+   // Hard 90s timeout — loading screen can never get permanently stuck
+   const abortCtrl = new AbortController();
+   const timeoutId = setTimeout(()=>abortCtrl.abort(),90000);
    try{
-     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,today})});
-     if(!res.ok||!res.body)throw new Error(`HTTP ${res.status}`);
+     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,today}),signal:abortCtrl.signal});
+     if(!res.ok||!res.body)throw new Error(`Server error ${res.status} — try again`);
      const reader=res.body.getReader();
      const decoder=new TextDecoder();
      let buf="";
-     // Collect all incoming topics; for refresh we swap all at once at the end
      let incomingBrief={topics:[],headline:"Your Morning Brief"};
      let scrolled=false;
-     while(true){
+     let fatalErr=null;
+     outer:while(true){
        const{done,value}=await reader.read();
        if(done)break;
        buf+=decoder.decode(value,{stream:true});
@@ -1717,44 +2013,44 @@ export default function NewsHall() {
        buf=lines.pop()||"";
        for(const line of lines){
          if(!line.startsWith("data: "))continue;
-         try{
-           const msg=JSON.parse(line.slice(6));
-           if(msg.type==="topic"){
-             incomingBrief={...incomingBrief,topics:[...incomingBrief.topics,msg.topic]};
-             setStreamedCount(c=>c+1);
-             if(!isRefresh){
-               // For first gen, show topics as they trickle in
-               setBrief({...incomingBrief});
-               setPhase("done");
-               if(!scrolled){scrolled=true;setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);}
-             }
-           }else if(msg.type==="done"){
-             incomingBrief={...incomingBrief,headline:msg.headline};
-             // Always swap in the complete brief on done
+         let msg;
+         try{ msg=JSON.parse(line.slice(6)); }catch{ continue; } // skip malformed lines only
+         if(msg.type==="topic"){
+           incomingBrief={...incomingBrief,topics:[...incomingBrief.topics,msg.topic]};
+           setStreamedCount(c=>c+1);
+           if(!isRefresh){
              setBrief({...incomingBrief});
-             if(isRefresh) setPhase("done");
-             setIsStreaming(false);
-             setOgImages({});
-             saveUserData(incomingBrief,topics);
-             loadOgImages(incomingBrief);
-             try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:incomingBrief,topics,ts:Date.now()}));}catch(_){}
-             setCooldown(15);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);
-             if(isRefresh) showToast("Brief updated with today's news");
-           }else if(msg.type==="error"){
-             throw new Error(msg.message);
+             setPhase("done");
+             if(!scrolled){scrolled=true;setTimeout(()=>briefRef.current?.scrollIntoView({behavior:"smooth",block:"start"}),100);}
            }
-         }catch(_){}
+         }else if(msg.type==="done"){
+           incomingBrief={...incomingBrief,headline:msg.headline};
+           setBrief({...incomingBrief});
+           setPhase("done");
+           setIsStreaming(false);
+           saveUserData(incomingBrief,topics);
+           loadOgImages(incomingBrief);
+           try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:incomingBrief,topics,ts:Date.now()}));}catch(_){}
+           setCooldown(15);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);
+           if(isRefresh) showToast("Brief updated");
+           break outer;
+         }else if(msg.type==="error"){
+           fatalErr=msg.message; break outer;
+         }
        }
      }
+     clearTimeout(timeoutId);
+     if(fatalErr) throw new Error(fatalErr);
      setIsStreaming(false);
    }catch(err){
+     clearTimeout(timeoutId);
      setIsStreaming(false);
-     if(!isRefresh){
-       setBrief({error:true,raw:String(err.message||err)});
-       setPhase("done");
-     }else{
-       showToast("Refresh failed — try again");
-     }
+     const rawMsg=err?.name==="AbortError"?"Request timed out — try again":String(err.message||err);
+     // rate_limit: prefix means Groq hit its daily token cap
+     const isRateLimit=rawMsg.startsWith("rate_limit:");
+     const friendlyMsg=isRateLimit?rawMsg.slice(11):rawMsg;
+     if(!isRefresh){ setBrief({error:true,raw:friendlyMsg}); setPhase("done"); }
+     else showToast(isRateLimit?friendlyMsg:"Refresh failed — try again", isRateLimit?8000:4000);
    }
  };
 
@@ -1863,15 +2159,44 @@ export default function NewsHall() {
        }
      </div>
      {phase==="loading"&&(
-       <div className="loading">
-         <div className="ld-orbs"><div className="ld-orb"/><div className="ld-orb"/><div className="ld-orb"/></div>
-         <div className="ld-h">Building your Morning Brief</div>
-         <div className="ld-s">Scanning live sources across {topics.length} topic{topics.length>1?"s":""}...</div>
-         <div className="ld-bar-wrap"><div className="ld-bar"/></div>
-         <div className="ld-topics">
-           {topics.map((t,i)=>{const si=steps.length;const done=i<si-1;const scan=i===si-1||(!done&&i===0&&steps.length===0);return(<span key={t} className={`ld-topic-pill${scan?" scanning":done?" done":""}`} style={{animationDelay:`${i*0.1}s`}}><span className="ld-pill-dot"/>{t}</span>);})}
+       <div className="sk-wrap">
+         <div className="sk-status">
+           <div className="sk-status-spin"/>
+           <span className="sk-status-txt">Building your brief</span>
+           <span className="sk-status-sub">· scanning live sources across {topics.length} topic{topics.length!==1?"s":""}</span>
          </div>
-         <div className="ld-steps">{steps.map((s,i)=><div key={i} className="ld-step">✓ {s}</div>)}</div>
+         <div className="sk-mast">
+           <span className="sk sk-kicker"/>
+           <span className="sk sk-hl"/>
+           <span className="sk sk-hl two"/>
+           <span className="sk sk-meta"/>
+         </div>
+         {Array.from({length:Math.min(Math.max(topics.length,2),3)}).map((_,ti)=>(
+           <div className="sk-topic" key={ti}>
+             <div className="sk-topic-hd">
+               <span className="sk sk-topic-name"/>
+               <span className="sk sk-topic-count"/>
+             </div>
+             <div className="sk-feat">
+               <span className="sk sk-feat-img"/>
+               <div className="sk-feat-body">
+                 <span className="sk sk-feat-hl"/>
+                 <span className="sk sk-feat-hl two"/>
+                 <span className="sk sk-feat-sum"/>
+                 <span className="sk sk-feat-sum"/>
+                 <span className="sk sk-feat-sum short"/>
+               </div>
+             </div>
+             {Array.from({length:2}).map((__,si)=>(
+               <div className="sk-card" key={si}>
+                 <span className="sk sk-card-src"/>
+                 <span className="sk sk-card-hl"/>
+                 <span className="sk sk-card-sum"/>
+                 <span className="sk sk-card-sum short"/>
+               </div>
+             ))}
+           </div>
+         ))}
        </div>
      )}
      {phase==="done"&&brief&&!brief.error&&(
@@ -1881,7 +2206,10 @@ export default function NewsHall() {
            <div className="brief-tab-title">{brief.headline||"Your Morning Brief"}</div>
            <div className="brief-tab-sub">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}):today}{getReadingTime(brief)?" · "+getReadingTime(brief):""}</div>
          </div>
-         <button className="brief-refresh-btn" onClick={generate} disabled={isStreaming||cooldown>0}>{cooldown>0?`${cooldown}s`:"Refresh"}</button>
+         <div style={{display:"flex",gap:8,flexShrink:0,marginTop:4}}>
+           <button className="brief-share-btn" onClick={shareBrief}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"/></svg>Share</button>
+           <button className="brief-refresh-btn" onClick={generate} disabled={isStreaming||cooldown>0}>{cooldown>0?`${cooldown}s`:"Refresh"}</button>
+         </div>
        </div>
      )}
      {isStreaming&&phase==="done"&&(
@@ -1924,9 +2252,10 @@ export default function NewsHall() {
                      </div>
                      {featured&&(
                        <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
-                         {(()=>{const tk=tg.topic.toLowerCase().trim();const apiImg=ogImages[tk]&&!failedOgImages.has(tk)?ogImages[tk]:null;const fallbackImg=getTopicImage(tg.topic);const imgSrc=apiImg||fallbackImg;return(
-                         <div className="brief-feat-img" style={imgSrc?{backgroundImage:`linear-gradient(to bottom,transparent 25%,rgba(0,0,0,0.75) 100%),url(${imgSrc})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:gradient}}>
-                           {apiImg&&<img src={apiImg} alt="" style={{display:"none"}} onError={()=>markOgFailed(tk)}/>}
+                         {(()=>{const real=featured.url&&ogImages[featured.url];const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(
+                         <div className="brief-feat-img" style={baseStyle}>
+                           {real&&<img className="brief-feat-photo" src={real} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.style.display="none";}}/>}
+                           <div className="brief-feat-img-grad"/>
                            <div className="brief-feat-img-meta">
                              {featured.source&&<SourceLogo source={featured.source} dark/>}
                              <span className="brief-feat-label">Lead story</span>
@@ -1950,7 +2279,6 @@ export default function NewsHall() {
                                {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
                                <div className="brief-story-hl">{clean(st.headline)}</div>
                                {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
-                               <span className="brief-story-read">Read →</span>
                              </a>
                            );
                          })}
@@ -1960,6 +2288,23 @@ export default function NewsHall() {
                  );
                })}
              </div>
+             {getWatchItems(brief).length>0&&(
+               <div className="radar">
+                 <div className="radar-hd">
+                   <span className="radar-pulse"/>
+                   <span className="radar-title">What to watch</span>
+                 </div>
+                 <div className="radar-list">
+                   {getWatchItems(brief).map((item,i)=>(
+                     <div key={i} className="radar-item">
+                       <span className="radar-arrow">→</span>
+                       <span className="radar-text">{item.text}</span>
+                       <span className="radar-topic">{item.topic}</span>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             )}
              {brief.topics?.some(tg=>tg.stories?.some(s=>s.source))&&(
                <div className="srcfooter"><strong>Sources: </strong>{[...new Set(brief.topics.flatMap(tg=>(tg.stories||[]).map(s=>s.source)).filter(Boolean))].join(" · ")}</div>
              )}
@@ -1992,7 +2337,7 @@ export default function NewsHall() {
          <div className="topics-page-sub">Choose what you want to wake up to every morning.</div>
        </div>
        <div className="search-wrap">
-         <span className="search-ico"></span>
+         <span className="search-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-3.8-3.8"/></svg></span>
          <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTopic()} placeholder="Search topic"/>
          <button className="add-btn" onClick={()=>addTopic()} disabled={topics.length>=MAX_TOPICS} style={{opacity:topics.length>=MAX_TOPICS?0.4:1,cursor:topics.length>=MAX_TOPICS?"not-allowed":"pointer"}}>Add</button>
        </div>
@@ -2007,12 +2352,12 @@ export default function NewsHall() {
            : topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)
          }
          {topics.length>0&&(
-           <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=4?"warn":"ok"}`}>{topics.length}/5</span>
+           <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=8?"warn":"ok"}`}>{topics.length}/10</span>
          )}
        </div>
        {topics.length>=MAX_TOPICS&&(
          <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fff2f2",border:"1px solid #fca5a5",borderRadius:6,marginTop:6}}>
-           <span style={{fontSize:"0.78rem",color:"#dc2626"}}>5 topic limit reached.</span>
+           <span style={{fontSize:"0.78rem",color:"#dc2626"}}>You've reached the 10 topic limit.</span>
            <span style={{fontSize:"0.78rem",color:"#6b7280"}}>Remove one to add another.</span>
          </div>
        )}
@@ -2059,7 +2404,7 @@ export default function NewsHall() {
            }
          </div>
        </div>
-       <button className="profile-save-btn" onClick={saveSettings}>Save settings</button>
+       <button className="profile-save-btn" onClick={saveDeliveryTime}>Save settings</button>
        <button className="profile-signout" onClick={signOut}>Sign out</button>
      </div>
    )}
@@ -2082,64 +2427,149 @@ export default function NewsHall() {
  <>
  {/* SLIDE 1: HERO */}
  <div className="ls ls-1">
-   <div className="hero-blob hero-blob-1"/><div className="hero-blob hero-blob-2"/>
+   <div className="ls1-grid"/><div className="ls1-lamp"/>
+   <div className="ls1-orb ls1-orb-1"/><div className="ls1-orb ls1-orb-2"/><div className="ls1-orb ls1-orb-3"/>
    <div className="ls1-inner">
-     <div>
-       <h1 className="ls1-hl">News<br/>without<br/>the <em>noise.</em></h1>
-       <p className="ls1-sub">Your topics. Trusted sources. One sharp brief, every morning.</p>
-       <div className="ls1-btns">
+     <div className="ls1-text">
+       <div className="ls1-eyebrow anim">PERSONALIZED · MORNING · BRIEF</div>
+       <h1 className="ls1-hl anim anim-d1">News without<br/>the <em>noise.</em></h1>
+       <p className="ls1-sub anim anim-d2">Your topics. Trusted sources. One sharp brief, every morning.</p>
+       <div className="ls1-btns anim anim-d3">
          <button className="ls1-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Get started free</button>
          <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
        </div>
-       <div className="ls1-sources">
+       <div className="ls1-sources anim anim-d4">
          <span className="ls1-src-label">Sources include</span>
-         {["AP","Reuters","BBC","WSJ","Bloomberg","NPR"].map(s=><span key={s} className="ls1-src-pill">{s}</span>)}
+         {["AP","Reuters","BBC","NPR","WSJ","Bloomberg"].map(s=><span key={s} className="ls1-src-pill">{s}</span>)}
        </div>
      </div>
-     <div className="ls1-mockup">
-       <div className="ls1-mk-bar">
-         <div className="ls1-mk-dots"><div className="ls1-mk-dot"/><div className="ls1-mk-dot"/><div className="ls1-mk-dot"/></div>
-         <span className="ls1-mk-label">Morning Brief · Wednesday</span>
-       </div>
-       <div className="ls1-mk-body">
-         <div className="ls1-mk-topic">World News <span style={{marginLeft:"auto",fontSize:"0.44rem",color:"rgba(255,255,255,0.3)"}}>4 STORIES</span></div>
-         <div className="ls1-mk-feat">
-           <div className="ls1-mk-img">
-             <div style={{width:"100%"}}>
-               <div className="ls1-mk-feat-hl">Xi and Putin Sign Joint Declaration,<br/>Pledging 'Multipolar World' Partnership</div>
+     <div className="hero-phone anim anim-d2">
+       <div className="hp-screen">
+         <div className="hp-top">
+           <div className="hp-kicker">Your Morning Brief</div>
+           <div className="hp-title">Good morning.</div>
+           <div className="hp-meta">3 topics · 2 min read</div>
+         </div>
+         <div className="hp-body">
+           <div className="hp-sec"><span className="hp-sec-name">World News</span><span className="hp-sec-ct">4 stories</span></div>
+           <div className="hp-feat">
+             <div className="hp-feat-img" style={{backgroundImage:"linear-gradient(to bottom,transparent 30%,rgba(0,0,0,0.7) 100%),url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&q=70)"}}>
+               <span className="hp-feat-pill">Lead</span>
+             </div>
+             <div className="hp-feat-body">
+               <div className="hp-feat-hl">Global leaders reach landmark trade and climate deal</div>
+               <div className="hp-feat-src">Reuters</div>
              </div>
            </div>
-           <div className="ls1-mk-feat-sum">Russian President Putin met Xi Jinping in Beijing, signing a bilateral friendship treaty and issuing a joint statement warning against a return to the "law of the jungle."</div>
-         </div>
-         <div className="ls1-mk-stories">
-           <div className="ls1-mk-story">
-             <div className="ls1-mk-story-hl">Senate Confirms 49 Trump Nominees in Single Bloc Vote</div>
-             <div className="ls1-mk-story-src">AP · US Politics</div>
-           </div>
-           <div className="ls1-mk-story">
-             <div className="ls1-mk-story-hl">Knicks Erase 22-Point Deficit, Beat Cavaliers 115–104 in OT</div>
-             <div className="ls1-mk-story-src">ESPN · NBA</div>
-           </div>
+           <div className="hp-story"><div className="hp-story-hl">Fed holds rates steady, signals two cuts before year-end</div><div className="hp-story-src">AP · Markets</div></div>
+           <div className="hp-story"><div className="hp-story-hl">Thunder beat Celtics to take 3–1 series lead</div><div className="hp-story-src">ESPN · NBA</div></div>
          </div>
        </div>
      </div>
    </div>
+   <div className="ls1-marquee-wrap">
+     <div className="ls1-marquee-track">
+       {[...SUGGESTIONS,...SUGGESTIONS].map((s,i)=>(
+         <span key={i} className="ls1-marquee-item">{s.name}<span className="ls1-marquee-dot"> ·</span></span>
+       ))}
+     </div>
+   </div>
    <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
+ </div>
+ {/* STATS BAND */}
+ <div className="ls-stats">
+   <div className="ls-stats-inner">
+     <div className="ls-stats-eyebrow anim">The numbers</div>
+     <div className="ls-stats-grid">
+       {[
+         {n:<>500<em>+</em></>,l:"Trusted sources scanned every morning"},
+         {n:<>10</>,l:"Topics — you pick exactly what matters to you"},
+         {n:<>60<em>s</em></>,l:"To read and walk away fully informed"},
+         {n:<>0</>,l:"Opinions, hot takes, or spin. Just the facts."},
+       ].map((s,i)=>(
+         <div className={`stat-big anim anim-d${i+1}`} key={i}>
+           <div className="stat-num">{s.n}</div>
+           <div className="stat-lbl">{s.l}</div>
+         </div>
+       ))}
+     </div>
+   </div>
+ </div>
+ {/* LIVE HEADLINES WALL */}
+ <div className="ls-wall">
+   <div className="ls-wall-head">
+     <div className="ls-wall-live anim"><span className="ls-wall-live-dot"/>Live right now</div>
+     <h2 className="ls-wall-hl anim anim-d1">The world's newsrooms,<br/><em>distilled.</em></h2>
+     <p className="ls-wall-sub anim anim-d2">Thousands of stories cross the wire every hour. We read them so you don't have to — and hand you only what matters.</p>
+   </div>
+   {(()=>{
+     const C={AP:"#e0383a",Reuters:"#ff8000",BBC:"#bb1919",Bloomberg:"#1f6fd6",NPR:"#2e6bb8","The Verge":"#6c3ce0",ESPN:"#cc0000"};
+     const cols=[
+       {dir:"up",items:[
+         {s:"Reuters",t:"2m",h:"Fed holds rates steady, signals two cuts before year-end"},
+         {s:"AP",t:"7m",h:"Global leaders reach landmark trade and climate deal"},
+         {s:"Bloomberg",t:"12m",h:"Markets steady as tech earnings beat estimates"},
+         {s:"BBC",t:"18m",h:"Scientists map deepest section of the ocean floor"},
+         {s:"NPR",t:"25m",h:"Renewables overtake coal in the US power mix"},
+       ]},
+       {dir:"down",items:[
+         {s:"AP",t:"4m",h:"Housing starts rise for a third straight month"},
+         {s:"Reuters",t:"9m",h:"EU finalizes new AI safety framework"},
+         {s:"The Verge",t:"15m",h:"SpaceX completes record 18th booster reflight"},
+         {s:"BBC",t:"21m",h:"WHO reports sharp decline in global measles cases"},
+         {s:"Bloomberg",t:"30m",h:"Quarterly GDP revised up to 3.1%"},
+       ]},
+       {dir:"up2",items:[
+         {s:"Bloomberg",t:"3m",h:"Nvidia clinches AI chip deals with Korean giants"},
+         {s:"ESPN",t:"8m",h:"Orioles climb back into the AL playoff race"},
+         {s:"NPR",t:"14m",h:"New study links sleep quality to heart health"},
+         {s:"AP",t:"19m",h:"Wildfire containment reaches 60% in California"},
+         {s:"Reuters",t:"28m",h:"Dollar firms ahead of key inflation data"},
+       ]},
+     ];
+     return(
+     <div className="ls-wall-cols anim anim-d2">
+       {cols.map((col,ci)=>(
+         <div className="wall-col" key={ci}>
+           <div className={`wall-track ${col.dir}`}>
+             {[...col.items,...col.items].map((it,i)=>(
+               <a key={i} className="wall-card" href="#builder" onClick={e=>{e.preventDefault();document.getElementById("builder")?.scrollIntoView({behavior:"smooth"});}}>
+                 <div className="wall-card-top">
+                   <span className="wall-src" style={{background:C[it.s]||"#444"}}>{it.s}</span>
+                   <span className="wall-time">{it.t} ago</span>
+                 </div>
+                 <div className="wall-hl">{it.h}</div>
+               </a>
+             ))}
+           </div>
+         </div>
+       ))}
+     </div>
+     );
+   })()}
+ </div>
+ {/* FULL-BLEED PHOTO STATEMENT */}
+ <div className="ls-statement">
+   <div className="ls-statement-inner">
+     <div className="ls-statement-badge anim"><span className="ls-statement-badge-dot"/>Why we built it</div>
+     <h2 className="ls-statement-hl anim anim-d1">Mornings used to mean<br/><em>doomscrolling.</em></h2>
+     <p className="ls-statement-sub anim anim-d2">Twelve open tabs, three paywalls, and a dozen hot takes before your coffee's even cool. NewsHall replaces all of it with one clean brief — just what happened, built for your topics, ready before you wake up.</p>
+   </div>
  </div>
  {/* SLIDE 2: WHY */}
  <div className="ls ls-2">
    <div className="ls2-inner">
-     <div className="ls2-eyebrow">Why NewsHall</div>
-     <h2 className="ls2-hl">News that informs,<br/>not <em>inflames.</em></h2>
+     <div className="ls2-eyebrow anim">WHY NEWSHALL</div>
+     <h2 className="ls2-hl anim anim-d1">News that informs,<br/>not <em>inflames.</em></h2>
      <div className="ls2-grid">
        {[
-         {icon:"📰",title:"Straight-news sources only",text:"We pull from AP, Reuters, BBC, NPR, WSJ, Bloomberg and more. No opinion sites, no outrage farms."},
-         {icon:"🔗",title:"Every story linked & cited",text:"Every headline links straight to the original article. No paywalls, no dead ends, no summaries without receipts."},
-         {icon:"⚡",title:"Built fresh every morning",text:"Your brief is scanned and written for your exact topics. Nobody else gets yours. It's ready before you wake up."},
-         {icon:"🎯",title:"Your topics, not an algorithm's",text:"You pick what you wake up to. World news, NBA, personal finance, Formula 1 — as specific as you want."},
-       ].map(c=>(
-         <div className="ls2-card" key={c.title}>
-           <span className="ls2-icon">{c.icon}</span>
+         {n:"01",title:"Straight-news sources only",text:"We pull from AP, Reuters, BBC, NPR, WSJ, Bloomberg and more. No opinion sites, no outrage farms."},
+         {n:"02",title:"Every story linked & cited",text:"Every headline links straight to the original article. No paywalls, no dead ends, no summaries without receipts."},
+         {n:"03",title:"Built fresh every morning",text:"Your brief is scanned and written for your exact topics. Nobody else gets yours. It's ready before you wake up."},
+         {n:"04",title:"Your topics, not an algorithm's",text:"You pick what you wake up to. World news, NBA, personal finance, Formula 1 — as specific as you want."},
+       ].map((c,i)=>(
+         <div className={`ls2-card anim anim-d${i+1}`} key={c.title}>
+           <div className="ls2-card-num">{c.n}</div>
            <div className="ls2-card-title">{c.title}</div>
            <div className="ls2-card-text">{c.text}</div>
          </div>
@@ -2150,32 +2580,34 @@ export default function NewsHall() {
  {/* SLIDE 3: HOW + CTA */}
  <div className="ls ls-3">
    <div className="ls3-inner">
-     <div className="ls3-eyebrow">How it works</div>
-     <h2 className="ls3-hl">Ready in 60 seconds</h2>
+     <div className="ls3-eyebrow anim">HOW IT WORKS</div>
+     <h2 className="ls3-hl anim anim-d1">Ready in 60 seconds.</h2>
      <div className="ls3-steps">
        {[
-         {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche. Up to 5 topics free."},
+         {n:"01",title:"Pick your topics",text:"Choose from 50+ categories or type anything — a team, a stock, a niche. Up to 10 topics."},
          {n:"02",title:"We do the reading",text:"Every morning we scan hundreds of sources, filter by relevance, and write your brief from scratch."},
          {n:"03",title:"Wake up informed",text:"Your brief is waiting when you open the app — or delivered by push notification at your chosen time."},
-       ].map(s=>(
-         <div className="ls3-step" key={s.n}>
+       ].map((s,i)=>(
+         <div className={`ls3-step anim anim-d${i+2}`} key={s.n}>
            <div className="ls3-num">{s.n}</div>
-           <div><div className="ls3-step-title">{s.title}</div><div className="ls3-step-text">{s.text}</div></div>
+           <div className="ls3-step-title">{s.title}</div>
+           <div className="ls3-step-text">{s.text}</div>
          </div>
        ))}
      </div>
-     <button className="ls3-cta" onClick={()=>document.getElementById("builder")?.scrollIntoView({behavior:"smooth"})}>Try it free →</button>
+     <button className="ls3-cta anim anim-d5" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Try it free →</button>
    </div>
  </div>
  {/* LOGGED-OUT BUILDER */}
  <div id="builder" className="builder" ref={builderRef}>
+ <div className="builder-inner">
    <div className="step-hd">
      <div className="step-tag"><span className="step-n">01</span> Choose topics</div>
      <h2 className="step-h2">What do you want to wake up to?</h2>
      <p className="step-sub">Pick from popular categories, or type anything as broad or specific as you want.</p>
    </div>
    <div className="search-wrap">
-     <span className="search-ico"></span>
+     <span className="search-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-3.8-3.8"/></svg></span>
      <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTopic()} placeholder="Search topic"/>
      <button className="add-btn" onClick={()=>addTopic()} disabled={topics.length>=MAX_TOPICS} style={{opacity:topics.length>=MAX_TOPICS?0.4:1,cursor:topics.length>=MAX_TOPICS?"not-allowed":"pointer"}}>Add topic</button>
    </div>
@@ -2190,17 +2622,19 @@ export default function NewsHall() {
        : topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)
      }
      {topics.length>0&&(
-       <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=4?"warn":"ok"}`}>{topics.length}/5</span>
+       <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=8?"warn":"ok"}`}>{topics.length}/10</span>
      )}
    </div>
    {topics.length>=MAX_TOPICS&&(
      <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fff2f2",border:"1px solid #fca5a5",borderRadius:6,marginTop:6}}>
-       <span style={{fontSize:"0.78rem",color:"#dc2626"}}>You've reached the 5 topic limit on the free plan.</span>
+       <span style={{fontSize:"0.78rem",color:"#dc2626"}}>You've reached the 10 topic limit.</span>
        <span style={{fontSize:"0.78rem",color:"#6b7280"}}>Remove a topic to add a different one.</span>
      </div>
    )}
  </div>
+ </div>
  <div className="gen-wrap">
+ <div className="gen-wrap-inner">
    <div className="gen-panel">
      <div>
        <div className="gen-title">Ready to preview?</div>
@@ -2211,16 +2645,46 @@ export default function NewsHall() {
      </div>
    </div>
  </div>
+ </div>
  {phase==="loading"&&(
-   <div className="loading">
-     <div className="ld-orbs"><div className="ld-orb"/><div className="ld-orb"/><div className="ld-orb"/></div>
-     <div className="ld-h">Building your Morning Brief</div>
-     <div className="ld-s">Scanning live sources across {topics.length} topic{topics.length>1?"s":""}...</div>
-     <div className="ld-bar-wrap"><div className="ld-bar"/></div>
-     <div className="ld-topics">
-       {topics.map((t,i)=>{const si=steps.length;const done=i<si-1;const scan=i===si-1||(!done&&i===0&&steps.length===0);return(<span key={t} className={`ld-topic-pill${scan?" scanning":done?" done":""}`} style={{animationDelay:`${i*0.1}s`}}><span className="ld-pill-dot"/>{t}</span>);})}
+   <div className="sk-wrap">
+     <div className="sk-status">
+       <div className="sk-status-spin"/>
+       <span className="sk-status-txt">Building your brief</span>
+       <span className="sk-status-sub">· scanning live sources across {topics.length} topic{topics.length!==1?"s":""}</span>
      </div>
-     <div className="ld-steps">{steps.map((s,i)=><div key={i} className="ld-step">✓ {s}</div>)}</div>
+     <div className="sk-mast">
+       <span className="sk sk-kicker"/>
+       <span className="sk sk-hl"/>
+       <span className="sk sk-hl two"/>
+       <span className="sk sk-meta"/>
+     </div>
+     {Array.from({length:Math.min(Math.max(topics.length,2),3)}).map((_,ti)=>(
+       <div className="sk-topic" key={ti}>
+         <div className="sk-topic-hd">
+           <span className="sk sk-topic-name"/>
+           <span className="sk sk-topic-count"/>
+         </div>
+         <div className="sk-feat">
+           <span className="sk sk-feat-img"/>
+           <div className="sk-feat-body">
+             <span className="sk sk-feat-hl"/>
+             <span className="sk sk-feat-hl two"/>
+             <span className="sk sk-feat-sum"/>
+             <span className="sk sk-feat-sum"/>
+             <span className="sk sk-feat-sum short"/>
+           </div>
+         </div>
+         {Array.from({length:2}).map((__,si)=>(
+           <div className="sk-card" key={si}>
+             <span className="sk sk-card-src"/>
+             <span className="sk sk-card-hl"/>
+             <span className="sk sk-card-sum"/>
+             <span className="sk sk-card-sum short"/>
+           </div>
+         ))}
+       </div>
+     ))}
    </div>
  )}
  {phase==="done"&&brief&&(
@@ -2255,24 +2719,9 @@ export default function NewsHall() {
            <div className="bmast-btns">
              <button className="btweak" onClick={()=>builderRef.current?.scrollIntoView({behavior:"smooth",block:"start"})}>Edit topics</button>
              <button className="brefresh" onClick={generate}>Refresh brief</button>
+             <button className="bshare" onClick={shareBrief}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"/></svg>Share</button>
            </div>
          </div>
-         {getWatchItems(brief).length>0&&(
-           <div className="watch-section">
-             <div className="watch-hd">What to Watch</div>
-             <div className="watch-items">
-               {getWatchItems(brief).map((item,i)=>(
-                 <div key={i} className="watch-item">
-                   <span className="watch-dot"/>
-                   <div>
-                     <span className="watch-text">{item.text}</span>
-                     <span className="watch-topic">{item.topic}</span>
-                   </div>
-                 </div>
-               ))}
-             </div>
-           </div>
-         )}
          <div>
            {(brief.topics||[]).map((tg,ti)=>{
              const stories=Array.isArray(tg.stories)?tg.stories:[];
@@ -2288,13 +2737,16 @@ export default function NewsHall() {
                  </div>
                  {featured&&(
                    <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
-                     <div className="brief-feat-img" style={ogImages[tg.topic.toLowerCase().trim()]?{backgroundImage:`linear-gradient(to bottom,transparent 30%,rgba(0,0,0,0.72) 100%),url(${ogImages[tg.topic.toLowerCase().trim()]})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:gradient}}>
-                       <div className="brief-feat-img-over" style={ogImages[tg.topic.toLowerCase().trim()]?{display:"none"}:{}}/>
+                     {(()=>{const real=featured.url&&ogImages[featured.url];const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(<>
+                     <div className="brief-feat-img" style={baseStyle}>
+                       {real&&<img className="brief-feat-photo" src={real} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.style.display="none";}}/>}
+                       <div className="brief-feat-img-grad"/>
                        <div className="brief-feat-img-meta">
                          {featured.source&&<SourceLogo source={featured.source} dark/>}
                          <span className="brief-feat-label">Lead story</span>
                        </div>
                      </div>
+                     </>);})()}
                      <div className="brief-feat-body">
                        <div className="brief-feat-hl">{clean(featured.headline)}</div>
                        {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
@@ -2312,7 +2764,6 @@ export default function NewsHall() {
                            {st.source&&<div className="brief-story-src"><SourceLogo source={st.source}/></div>}
                            <div className="brief-story-hl">{clean(st.headline)}</div>
                            {st.summary&&<div className="brief-story-sum">{clean(st.summary)}</div>}
-                           <span className="brief-story-read">Read →</span>
                          </a>
                        );
                      })}
@@ -2322,9 +2773,48 @@ export default function NewsHall() {
              );
            })}
          </div>
+         {getWatchItems(brief).length>0&&(
+           <div className="radar">
+             <div className="radar-hd">
+               <span className="radar-pulse"/>
+               <span className="radar-title">What to watch</span>
+             </div>
+             <div className="radar-list">
+               {getWatchItems(brief).map((item,i)=>(
+                 <div key={i} className="radar-item">
+                   <span className="radar-arrow">→</span>
+                   <span className="radar-text">{item.text}</span>
+                   <span className="radar-topic">{item.topic}</span>
+                 </div>
+               ))}
+             </div>
+           </div>
+         )}
          {brief.topics?.some(tg=>tg.stories?.some(s=>s.source))&&(
            <div className="srcfooter"><strong>Sources: </strong>{[...new Set(brief.topics.flatMap(tg=>(tg.stories||[]).map(s=>s.source)).filter(Boolean))].join(" · ")}</div>
          )}
+         <div className="brief-cta">
+           <div className="brief-cta-inner">
+             <div className="brief-cta-eyebrow">Your brief is ready</div>
+             <div className="brief-cta-title">Get it <em>every morning.</em><br/>Automatically.</div>
+             <div className="brief-cta-sub">Save your topics and wake up to a fresh personalized brief — free, every morning, before you open the app.</div>
+             <div className="brief-cta-bullets">
+               <div className="brief-cta-bullet">Your {topics.length} topic{topics.length!==1?"s":""} saved automatically</div>
+               <div className="brief-cta-bullet">Fresh brief generated every morning at your chosen time</div>
+               <div className="brief-cta-bullet">Push notification when it's ready</div>
+             </div>
+             <div className="brief-cta-btns">
+               <button className="brief-cta-btn-p" onClick={()=>{setAuthModal('signup');setAuthError('');}}>Save my brief — it's free</button>
+               <button className="brief-cta-btn-s" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
+             </div>
+             {topics.length>0&&(
+               <div className="brief-cta-chips">
+                 {topics.map((t,i)=><span key={i} className="brief-cta-chip">{t}</span>)}
+               </div>
+             )}
+             <div className="brief-cta-note">No credit card required · Takes 30 seconds</div>
+           </div>
+         </div>
        </>
      )}
    </div>
@@ -2335,7 +2825,7 @@ export default function NewsHall() {
  {showOnboarding&&user&&(
    <div className="ob-over" onClick={e=>e.target===e.currentTarget&&setShowOnboarding(false)}>
      <div className="ob-box">
-       <div className="ob-icon">☀️</div>
+       <div className="ob-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
        <div className="ob-title">Set up your morning brief</div>
        <div className="ob-sub">Pick a time and we'll automatically generate and deliver your personalized brief every morning — no need to open the app.</div>
        {pushStatus==="denied"&&<div className="ob-denied">Notifications blocked. Enable them in your browser settings, then try again.</div>}
@@ -2343,7 +2833,7 @@ export default function NewsHall() {
        <input className="ob-time-input" type="time" value={deliveryTime} onChange={e=>setDeliveryTime(e.target.value)}/>
        {topics.length>0&&(
          <>
-           <label className="ob-time-label">Your topics ({topics.length}/5)</label>
+           <label className="ob-time-label">Your topics ({topics.length}/10)</label>
            <div className="ob-topics-preview">
              {topics.map(t=><span key={t} className="ob-topic-chip">{t}</span>)}
            </div>
@@ -2362,7 +2852,7 @@ export default function NewsHall() {
    <div className="nuo">
      <div className="nuo-top">
        <div className="nuo-logo">NewsHall</div>
-       <div className="nuo-step">{topics.length}/5 topics</div>
+       <div className="nuo-step">{topics.length}/10 topics</div>
      </div>
      <div className="nuo-hd">
        <div className="nuo-eyebrow">Welcome</div>
@@ -2371,7 +2861,7 @@ export default function NewsHall() {
      </div>
      <div className="nuo-body">
        <div className="nuo-search-wrap">
-         <span className="nuo-search-ico">🔍</span>
+         <span className="nuo-search-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-3.8-3.8"/></svg></span>
          <input
            className="nuo-search"
            value={input}

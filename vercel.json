@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/generate-briefs",
-      "schedule": "0 6 * * *"
+      "schedule": "0 11 * * *"
     }
   ],
   "functions": {

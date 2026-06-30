@@ -1,136 +1,98 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  normalizeTopicKey, briefDateKey, readTopicCache, writeTopicCache,
+  fetchArticlesForTopics, generateTopics, fallbackBrief, promoteLeadWithPhoto,
+  isRateLimited,
+} from "@/app/lib/news-pipeline";
 
 export const maxDuration = 300;
 
-const GEMINI_API = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+const MAX_TOPICS = 10;
 
-function repairJson(txt: string): string {
-  const s = txt.indexOf("{");
-  if (s === -1) return txt;
-  let fragment = txt.slice(s);
-  let opens: string[] = [];
-  let inStr = false, escaped = false;
-  for (const ch of fragment) {
-    if (escaped) { escaped = false; continue; }
-    if (ch === "\\") { escaped = true; continue; }
-    if (ch === '"') { inStr = !inStr; continue; }
-    if (inStr) continue;
-    if (ch === "{" || ch === "[") opens.push(ch);
-    if (ch === "}" || ch === "]") opens.pop();
-  }
-  if (inStr) fragment += '"';
-  for (let i = opens.length - 1; i >= 0; i--) fragment += opens[i] === "{" ? "}" : "]";
-  return fragment;
-}
-
-const SYSTEM = `You are NewsHall's chief briefing editor. Use Google Search to find today's top stories and return structured JSON.
-
-SOURCE RULES:
-- General/politics: AP, Reuters, BBC, NPR, PBS, ABC News, CBS News, NBC News, WSJ, Bloomberg, Axios, C-SPAN only
-- NEVER use: CNN, MSNBC, Fox News, Breitbart, Daily Wire, HuffPost, Salon, Vox, National Review, Newsmax, OAN
-- Business/markets: WSJ, Bloomberg, Reuters, CNBC, Financial Times
-- Tech: The Verge, Ars Technica, Wired, TechCrunch, Reuters
-- Sports: ESPN, AP, The Athletic, CBS Sports
-- Health/science: Reuters, AP, BBC, Nature, Harvard Health
-
-STORY RULES:
-- Only stories from the last 24 hours with real significance
-- 2-4 stories per topic, most impactful first
-- Facts only — no opinion, no framing language like "slams" or "blasts"
-- "summary": 1-2 factual sentences of what happened
-- "watch_for": 1-3 short items (max 12 words) for concrete upcoming events — votes, games, deadlines only. Omit if nothing concrete.
-
-Output ONLY valid JSON, no markdown fences, no explanation.`;
-
-async function generateAllTopics(topics: string[], today: string, attempt = 0): Promise<any[]> {
-  const topicList = topics.map(t => `"${t}"`).join(", ");
-
-  const userMsg = `Today is ${today}. Search Google News for today's top stories for each of these topics: ${topicList}
-
-Output ONLY this JSON — one object per topic in the same order as requested:
-{"topics":[{"topic":"Topic Name","stories":[{"headline":"factual headline","summary":"1-2 sentences of facts","source":"outlet name","url":"https://..."}],"watch_for":["upcoming event"]}]}
-
-2-4 stories per topic. Omit watch_for if nothing concrete is upcoming.`;
-
-  const res = await fetch(`${GEMINI_API}?key=${process.env.GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM }] },
-      contents: [{ role: "user", parts: [{ text: userMsg }] }],
-      tools: [{ googleSearch: {} }],
-      generationConfig: {
-        maxOutputTokens: 4000,
-        temperature: 0.1,
-      },
-    }),
-  });
-
-  if (res.status === 429 && attempt < 3) {
-    await sleep((attempt + 1) * 3000);
-    return generateAllTopics(topics, today, attempt + 1);
-  }
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Gemini API error ${res.status}: ${err.slice(0, 300)}`);
-  }
-
-  const data = await res.json();
-  const txt = (data.candidates?.[0]?.content?.parts || [])
-    .map((p: any) => p.text || "")
-    .join("")
-    .trim();
-
-  if (!txt) return [];
-
-  const clean = txt.replace(/```[a-z]*/gi, "").replace(/```/g, "").trim();
-
-  const normalize = (raw: any[]): any[] =>
-    raw.map((t, i) => ({ ...t, topic: topics[i] || t.topic }));
-
-  try {
-    const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
-    if (s === -1 || e === -1) return [];
-    const parsed = JSON.parse(clean.slice(s, e + 1));
-    return Array.isArray(parsed.topics) ? normalize(parsed.topics) : [];
-  } catch {
-    try {
-      const parsed = JSON.parse(repairJson(clean));
-      return Array.isArray(parsed.topics) ? normalize(parsed.topics) : [];
-    } catch {
-      return [];
-    }
-  }
-}
-
+// ── Live brief generation ────────────────────────────────────────────────────
+// Cache-aside: serve cached topics instantly, generate only the misses, cache
+// them for everyone else, and always fall back to an RSS-only brief if the AI
+// is unavailable so a brief never fully fails.
 export async function POST(req: NextRequest) {
-  const { topics, today } = await req.json();
-  if (!topics?.length) return NextResponse.json({ error: "No topics provided" }, { status: 400 });
+  const body = await req.json();
+  if (!body?.topics?.length) return NextResponse.json({ error: "No topics" }, { status: 400 });
+
+  // Hard server-side cap so one request can't generate an unbounded number of topics
+  const topics = (body.topics as string[]).slice(0, MAX_TOPICS);
+  const today = body.today;
+
+  // IP-based rate limit — blocks abuse loops, ignores real usage (best-effort)
+  const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim()
+    || req.headers.get("x-real-ip") || "unknown";
+  if (await isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests — please wait a moment." }, { status: 429 });
+  }
 
   const encoder = new TextEncoder();
-
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (payload: object) => {
+      const send = (payload: object) =>
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
-      };
 
       try {
-        const allTopics = await generateAllTopics(topics, today);
+        const dateKey = briefDateKey();
+        const keyByTopic: Record<string, string> = {};
+        for (const t of topics) keyByTopic[t] = normalizeTopicKey(t);
+
+        // 1. Shared cache — topics already generated today by anyone
+        const cached = await readTopicCache([...new Set(Object.values(keyByTopic))], dateKey);
+        const misses = topics.filter((t: string) => !cached[keyByTopic[t]]);
+
+        const generated: Record<string, any> = {};
+        if (misses.length) {
+          // 2. Generate the misses with the shared pipeline (identical to cron)
+          const fresh = await generateTopics(misses, today);
+          for (const [topic, content] of Object.entries(fresh)) {
+            if (content?.stories?.length) generated[keyByTopic[topic]] = content;
+          }
+
+          // 3. Cache the real AI results for everyone else today
+          await writeTopicCache(
+            Object.entries(generated).map(([key, content]) => ({ key, content })),
+            dateKey
+          );
+
+          // 4. Any miss the AI didn't cover → RSS-only fallback (not cached)
+          const uncovered = misses.filter((t: string) => !generated[keyByTopic[t]]);
+          if (uncovered.length) {
+            const articles = await fetchArticlesForTopics(uncovered);
+            const fb = fallbackBrief(uncovered, articles);
+            fb.forEach((tg: any, i: number) => {
+              const requested = uncovered[i];
+              if (requested) generated[keyByTopic[requested]] = { ...tg, _fallback: true };
+            });
+          }
+        }
+
+        // 5. Assemble in the user's requested order; lead = a photo-fetchable story
+        const allTopics: any[] = [];
+        for (const t of topics) {
+          const content = generated[keyByTopic[t]] ?? cached[keyByTopic[t]];
+          if (content?.stories?.length) {
+            const { _fallback, ...clean } = content;
+            allTopics.push(promoteLeadWithPhoto({ ...clean, topic: t }));
+          }
+        }
 
         if (!allTopics.length) {
-          send({ type: "error", message: "No topics could be generated" });
+          send({ type: "error", message: "Could not generate brief" });
         } else {
-          for (const topic of allTopics) {
-            send({ type: "topic", topic });
-          }
-          const headline = `${allTopics[0]?.topic || "Morning"} & ${allTopics.length - 1} more stories`;
-          send({ type: "done", headline });
+          for (const topic of allTopics) send({ type: "topic", topic });
+          const extraCount = allTopics.length - 1;
+          send({
+            type: "done",
+            headline: extraCount > 0
+              ? `${allTopics[0]?.topic || "Morning"} & ${extraCount} more topic${extraCount !== 1 ? "s" : ""}`
+              : (allTopics[0]?.topic || "Morning Brief"),
+          });
         }
       } catch (err: any) {
-        send({ type: "error", message: err?.message || "Failed to generate brief" });
+        send({ type: "error", message: err?.message || "Failed" });
       } finally {
         controller.close();
       }
