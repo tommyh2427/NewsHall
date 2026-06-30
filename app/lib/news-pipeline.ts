@@ -380,14 +380,57 @@ export async function fetchOgImage(rawUrl: string): Promise<string | null> {
   } catch { return null; }
 }
 
-// Promote a photo-fetchable lead, then resolve + bake its real article photo
-async function attachLeadImage(topic: any): Promise<any> {
+// ── AI image fallback (when no real article photo exists) ────────────────────
+// Generates a clean editorial illustration of the TOPIC (abstract/conceptual —
+// never a fabricated photo of real people or events, so it stays honest), hosts
+// it in Supabase Storage, and reuses it forever (generate once per topic).
+function topicImagePath(topic: string): string {
+  return (normalizeTopicKey(topic).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "general") + ".png";
+}
+
+async function geminiGenerateImage(topic: string): Promise<Buffer | null> {
+  const gKey = process.env.GEMINI_API_KEY;
+  if (!gKey) return null;
+  const prompt = `A clean, minimalist editorial illustration representing the news subject "${topic}". Deep navy and charcoal background, soft cinematic lighting, premium magazine-cover aesthetic, conceptual and abstract. Absolutely no text, no words, no logos, no watermarks, no real or identifiable people's faces.`;
+  try {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${gKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseModalities: ["IMAGE"] } }),
+      signal: AbortSignal.timeout ? AbortSignal.timeout(45000) : undefined,
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const part = (d.candidates?.[0]?.content?.parts || []).find((p: any) => p.inlineData?.data);
+    return part ? Buffer.from(part.inlineData.data, "base64") : null;
+  } catch { return null; }
+}
+
+async function getOrCreateTopicImage(topic: string): Promise<string | null> {
+  const sb = supa();
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!sb || !baseUrl) return null;
+  const path = topicImagePath(topic);
+  const publicUrl = `${baseUrl}/storage/v1/object/public/topic-images/${path}`;
+  // Reuse if we've already made this topic's image (generate once, reuse forever)
+  try { const head = await fetch(publicUrl, { method: "HEAD" }); if (head.ok) return publicUrl; } catch {}
+  // Generate + upload
+  const png = await geminiGenerateImage(topic);
+  if (!png) return null;
+  try {
+    const { error } = await sb.storage.from("topic-images").upload(path, png, { contentType: "image/png", upsert: true });
+    return error ? null : publicUrl;
+  } catch { return null; }
+}
+
+// Resolve the lead image: real article photo first, AI topic image as fallback.
+async function attachLeadImage(topic: any, topicName: string): Promise<any> {
   promoteLeadWithPhoto(topic);
   const lead = topic?.stories?.[0];
-  if (lead?.url) {
-    const img = await fetchOgImage(lead.url);
-    if (img) topic.leadImage = img;
-  }
+  let img: string | null = null;
+  if (lead?.url) img = await fetchOgImage(lead.url);     // real photo
+  if (!img) img = await getOrCreateTopicImage(topicName); // AI illustration fallback
+  if (img) topic.leadImage = img;
   return topic;
 }
 
@@ -633,7 +676,7 @@ async function generateBatch(topics: string[], today: string): Promise<Record<st
 
   // Resolve + bake each topic's lead photo server-side so it's cached with the
   // brief — no client scraping, no image swap, consistent every load.
-  await Promise.all(Object.keys(out).map(async key => { out[key] = await attachLeadImage(out[key]); }));
+  await Promise.all(Object.keys(out).map(async key => { out[key] = await attachLeadImage(out[key], key); }));
 
   return out;
 }
