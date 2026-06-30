@@ -1125,9 +1125,11 @@ export default function NewsHall() {
  },[user]);
 
  const loadOgImages = (briefData) => {
-   // Only the lead story of each topic shows a photo, so only fetch those
+   // Lead photo is now baked server-side (tg.leadImage). Only client-scrape for
+   // older cached briefs that predate that — skip any topic that already has one.
    const items = [];
    for (const tg of (briefData?.topics||[])) {
+     if (tg.leadImage) continue;
      const lead = tg.stories?.[0];
      if (lead?.url && String(lead.url).startsWith("http")) items.push({url:lead.url, topic:tg.topic||""});
    }
@@ -2252,7 +2254,7 @@ export default function NewsHall() {
                      </div>
                      {featured&&(
                        <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
-                         {(()=>{const real=featured.url&&ogImages[featured.url];const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(
+                         {(()=>{const real=tg.leadImage||(featured.url&&ogImages[featured.url]);const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(
                          <div className="brief-feat-img" style={baseStyle}>
                            {real&&<img className="brief-feat-photo" src={real} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.style.display="none";}}/>}
                            <div className="brief-feat-img-grad"/>
@@ -2737,7 +2739,7 @@ export default function NewsHall() {
                  </div>
                  {featured&&(
                    <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
-                     {(()=>{const real=featured.url&&ogImages[featured.url];const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(<>
+                     {(()=>{const real=tg.leadImage||(featured.url&&ogImages[featured.url]);const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(<>
                      <div className="brief-feat-img" style={baseStyle}>
                        {real&&<img className="brief-feat-photo" src={real} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.style.display="none";}}/>}
                        <div className="brief-feat-img-grad"/>
