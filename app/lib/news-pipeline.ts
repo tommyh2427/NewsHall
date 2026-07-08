@@ -11,6 +11,7 @@ export interface Article {
   description: string;
   pubDate: string;
   source: string;
+  image?: string; // real article photo (provided directly by GNews — no scraping)
 }
 
 // ── Cache ────────────────────────────────────────────────────────────────────
@@ -204,6 +205,38 @@ export async function fetchFeed(url: string): Promise<Article[]> {
   } catch { return []; }
 }
 
+// ── GNews search (real article URLs + real article PHOTOS, no scraping) ──────
+// GNews indexes articles and returns each one's image directly, so nothing can
+// block us. Activates automatically when GNEWS_API_KEY is set; no-op otherwise.
+export async function fetchGNews(topic: string): Promise<Article[]> {
+  const key = process.env.GNEWS_API_KEY;
+  if (!key) return [];
+  try {
+    const res = await fetch(
+      `https://gnews.io/api/v4/search?q=${encodeURIComponent(topic)}&lang=en&country=us&max=10&sortby=publishedAt&apikey=${key}`,
+      { signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const cutoff = Date.now() - 36 * 60 * 60 * 1000;
+    return (data.articles || [])
+      .map((a: any) => ({
+        title: (a.title || "").trim(),
+        link: a.url || "",
+        description: (a.description || "").replace(/<[^>]+>/g, "").slice(0, 150),
+        pubDate: a.publishedAt || "",
+        source: a.source?.name || "News",
+        image: a.image || undefined,
+      }))
+      .filter((a: Article) =>
+        a.title && a.link &&
+        new Date(a.pubDate || 0).getTime() >= cutoff &&
+        !BLOCKED_DOMAINS.test(a.link) &&
+        !BLOCKED_SOURCES.test(a.source.trim())
+      );
+  } catch { return []; }
+}
+
 // ── Quality pipeline ─────────────────────────────────────────────────────────
 export function capBySource(articles: Article[], maxPerSource = 4): Article[] {
   const counts: Record<string, number> = {};
@@ -296,7 +329,10 @@ function isPhotoFetchable(u: string): boolean {
 export function promoteLeadWithPhoto(topic: any): any {
   const stories = Array.isArray(topic?.stories) ? topic.stories : [];
   if (stories.length < 2) return topic;
-  const idx = stories.findIndex((s: any) => isPhotoFetchable(s?.url));
+  // Best lead: a story that already carries its real photo (GNews); otherwise
+  // one whose URL we can scrape a photo from.
+  let idx = stories.findIndex((s: any) => s?.image);
+  if (idx === -1) idx = stories.findIndex((s: any) => isPhotoFetchable(s?.url));
   if (idx > 0) {
     const lead = stories[idx];
     topic.stories = [lead, ...stories.filter((_: any, i: number) => i !== idx)];
@@ -425,13 +461,15 @@ async function getOrCreateTopicImage(topic: string): Promise<string | null> {
   } catch { return null; }
 }
 
-// Resolve the lead image: real article photo first, AI topic image as fallback.
+// Resolve the lead image — REAL photos only (no AI art):
+// 1. the article's own photo from GNews (instant, unblockable)
+// 2. scraped og:image from the article page
+// 3. nothing → client shows the curated topic photo
 async function attachLeadImage(topic: any, topicName: string): Promise<any> {
   promoteLeadWithPhoto(topic);
   const lead = topic?.stories?.[0];
-  let img: string | null = null;
-  if (lead?.url) img = await fetchOgImage(lead.url);     // real photo
-  if (!img) img = await getOrCreateTopicImage(topicName); // AI illustration fallback
+  let img: string | null = lead?.image || null;
+  if (!img && lead?.url) img = await fetchOgImage(lead.url);
   if (img) topic.leadImage = img;
   return topic;
 }
@@ -446,16 +484,25 @@ export async function fetchArticlesForTopics(topics: string[]): Promise<Record<s
     topicFeedMap[topic] = feeds;
     feeds.forEach(f => feedUrls.add(f));
   }
-  const feedResults = await Promise.all(
-    [...feedUrls].map(async url => ({ url, articles: await fetchFeed(url) }))
-  );
+  // RSS feeds + GNews (when key set) in parallel. GNews articles carry direct
+  // URLs and real photos, so they're preferred where they overlap.
+  const [feedResults, gnewsResults] = await Promise.all([
+    Promise.all([...feedUrls].map(async url => ({ url, articles: await fetchFeed(url) }))),
+    Promise.all(topics.map(async t => ({ topic: t, articles: await fetchGNews(t) }))),
+  ]);
   const feedMap: Record<string, Article[]> = {};
   for (const { url, articles } of feedResults) feedMap[url] = articles;
+  const gnewsMap: Record<string, Article[]> = {};
+  for (const { topic, articles } of gnewsResults) gnewsMap[topic] = articles;
 
   const byTopic: Record<string, Article[]> = {};
   for (const topic of topics) {
     const seen = new Set<string>();
     const all: Article[] = [];
+    // GNews first (direct URLs + images), then RSS
+    for (const a of gnewsMap[topic] || []) {
+      if (!seen.has(a.link)) { seen.add(a.link); all.push(a); }
+    }
     for (const url of topicFeedMap[topic]) {
       for (const a of feedMap[url] || []) {
         if (!seen.has(a.link)) { seen.add(a.link); all.push(a); }
@@ -589,7 +636,7 @@ function validateStories(stories: any[], articles: Article[]): any[] {
     if (!s?.headline) continue;
     s.headline = sanitizeHeadline(s.headline, s.source);
     const exact = byUrl.get(normUrl(s.url || ""));
-    if (exact) { out.push({ ...s, url: exact.link, source: s.source || exact.source }); continue; }
+    if (exact) { out.push({ ...s, url: exact.link, source: s.source || exact.source, image: exact.image }); continue; }
     // Repair: find the source article whose title best matches the headline
     const sw = titleWords(s.headline);
     let best: Article | null = null, bestShared = 0;
@@ -601,7 +648,7 @@ function validateStories(stories: any[], articles: Article[]): any[] {
         best = a; bestShared = shared;
       }
     }
-    if (best) out.push({ ...s, url: best.link, source: best.source });
+    if (best) out.push({ ...s, url: best.link, source: best.source, image: best.image });
     // else: unverifiable URL — drop it rather than ship a hallucinated link
   }
   return out;
