@@ -185,7 +185,9 @@ export function parseRSS(xml: string, feedUrl: string): Article[] {
     }
     if (BLOCKED_DOMAINS.test(link) || BLOCKED_SOURCES.test(source.trim())) continue;
 
-    const description = get("description").replace(/<[^>]+>/g,"").slice(0, 150);
+    // Google News "descriptions" are just the headline repeated with the publisher
+    // glued on — feeding that to the AI produces duplicated headlines. Drop them.
+    const description = isGoogleNews ? "" : get("description").replace(/<[^>]+>/g,"").slice(0, 150);
     articles.push({ title, link, description, pubDate: pub, source });
   }
   return articles;
@@ -511,6 +513,7 @@ RULES:
 - Sentence 2-3: Key details — exact stakes, who is affected and how, what happens next or by when.
 - BANNED phrases: "this event matters", "this could impact", "raising questions", "the overall market", "steps can be taken", "advisors recommend", "experts say"
 - Use exact URLs from the list. Never invent URLs. Facts only. No opinion.
+- Headlines: write ONE clean headline per story. Never repeat the headline text, never append the publisher/outlet name, never copy dash-separated suffixes from the source title.
 - "watch_for": For EACH topic, add 1-2 forward-looking items written so a casual reader instantly gets it. Each item = the upcoming event PLUS a few words of plain-English context on what it is and why it matters. 12-22 words. Always spell out acronyms and names. Examples: "Fed interest-rate decision Wednesday — a cut would lower borrowing costs on mortgages and credit cards", "G7 summit Friday, where leaders of the world's seven largest advanced economies meet to discuss trade and Ukraine aid". If nothing concrete is upcoming for a topic, use an empty array.
 - Respond ONLY with valid JSON:
 {"topics":[{"topic":"Topic Name","stories":[{"headline":"string","summary":"string","source":"string","url":"string"}],"watch_for":["short upcoming item"]}]}`;
@@ -546,6 +549,34 @@ function normUrl(u: string): string {
   } catch { return (u || "").toLowerCase().replace(/[?#].*$/, "").replace(/\/+$/, ""); }
 }
 
+// Clean a headline: collapse "Headline — Headline Publisher" duplication (a
+// Google News artifact the AI sometimes copies) and strip trailing source names.
+export function sanitizeHeadline(raw: string, source?: string): string {
+  let t = (raw || "").replace(/\s+/g, " ").trim();
+  const norm = (x: string) => x.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+  // Collapse duplicated halves around a dash separator, repeat until stable
+  for (let pass = 0; pass < 3; pass++) {
+    let changed = false;
+    for (const sep of [" — ", " – ", " - "]) {
+      const i = t.indexOf(sep);
+      if (i > 10) {
+        const a = t.slice(0, i).trim(), b = t.slice(i + sep.length).trim();
+        const na = norm(a), nb = norm(b);
+        if (na && nb && (nb.startsWith(na) || na.startsWith(nb))) {
+          t = na.length <= nb.length ? a : b; changed = true; break;
+        }
+      }
+    }
+    if (!changed) break;
+  }
+  // Strip a trailing publisher name ("... The College Fix", "... WPRI.com")
+  if (source) {
+    const ns = norm(source), nt = norm(t);
+    if (ns && nt.endsWith(" " + ns)) t = t.slice(0, t.toLowerCase().lastIndexOf(source.toLowerCase())).replace(/[\s\-–—|:]+$/, "").trim();
+  }
+  return t;
+}
+
 // Guard against AI URL hallucination: every story's URL must trace back to a real
 // article we actually showed Groq. If the URL matches one, keep it. If not, repair
 // by matching the headline to a source article and using ITS real URL + source.
@@ -556,6 +587,7 @@ function validateStories(stories: any[], articles: Article[]): any[] {
   const out: any[] = [];
   for (const s of stories) {
     if (!s?.headline) continue;
+    s.headline = sanitizeHeadline(s.headline, s.source);
     const exact = byUrl.get(normUrl(s.url || ""));
     if (exact) { out.push({ ...s, url: exact.link, source: s.source || exact.source }); continue; }
     // Repair: find the source article whose title best matches the headline

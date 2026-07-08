@@ -928,12 +928,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .ls1-inner{width:100%;max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:0;position:relative;z-index:1;}
 .ls1-eyebrow{font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:28px;}
 .ls1-hl{font-family:'Playfair Display',serif;font-size:clamp(4rem,11vw,7rem);font-weight:900;color:#fff;letter-spacing:-0.05em;line-height:0.92;margin-bottom:28px;text-align:center;}
-.ls1-hl em{color:var(--accent);font-style:italic;}
+.ls1-hl em{font-style:italic;background:linear-gradient(100deg,#ff5a2e 0%,#e0233e 35%,#b44bf0 75%,#5b7cfa 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:gradShift 7s ease-in-out infinite;}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* Aurora band — newsbang-style flowing color wave along the hero base */
+.ls1-aurora{position:absolute;left:-10%;right:-10%;bottom:-22%;height:56%;z-index:0;pointer-events:none;filter:blur(58px);opacity:0.6;
+  background:
+    radial-gradient(ellipse 42% 58% at 22% 78%, rgba(150,60,235,0.75) 0%, transparent 62%),
+    radial-gradient(ellipse 46% 60% at 50% 92%, rgba(56,84,235,0.6) 0%, transparent 64%),
+    radial-gradient(ellipse 40% 55% at 78% 76%, rgba(35,190,190,0.55) 0%, transparent 62%),
+    radial-gradient(ellipse 34% 44% at 36% 96%, rgba(224,35,62,0.5) 0%, transparent 60%);
+  animation:auroraFlow 16s ease-in-out infinite;}
+@keyframes auroraFlow{0%,100%{transform:translateX(0) scaleY(1)}33%{transform:translateX(3.5%) scaleY(1.12)}66%{transform:translateX(-3%) scaleY(0.95)}}
 .ls1-sub{font-size:1.1rem;color:rgba(255,255,255,0.48);line-height:1.72;max-width:420px;margin:0 0 40px;font-weight:300;text-align:center;}
 .ls1-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
-.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:16px 32px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;}
+.ls1-btn-p{background:var(--accent);color:#fff;border:none;border-radius:100px;padding:16px 32px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;}
 .ls1-btn-p:hover{background:#e01535;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,16,46,0.4);}
-.ls1-btn-g{background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:16px 32px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.ls1-btn-g{background:rgba(255,255,255,0.06);color:#fff;border:1.5px solid rgba(255,255,255,0.22);border-radius:100px;backdrop-filter:blur(8px);padding:16px 32px;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
 .ls1-btn-g:hover{background:rgba(255,255,255,0.13);}
 .ls1-sources{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;}
 .ls1-src-label{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.22);}
@@ -1947,7 +1957,24 @@ export default function NewsHall() {
    );
  };
 
- const clean = t=>(t||"").replace(/\*\*(.*?)\*\*/g,"$1").replace(/\*(.*?)\*/g,"$1").replace(/`([^`]+)`/g,"$1").replace(/^[-*]\s*/,"").trim();
+ const clean = t=>{
+   let s=(t||"").replace(/\*\*(.*?)\*\*/g,"$1").replace(/\*(.*?)\*/g,"$1").replace(/`([^`]+)`/g,"$1").replace(/^[-*]\s*/,"").replace(/\s+/g," ").trim();
+   // Collapse "Headline — Headline Publisher" duplication (Google News artifact)
+   const norm=x=>x.toLowerCase().replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ").trim();
+   for(let p=0;p<3;p++){
+     let changed=false;
+     for(const sep of [" — "," – "," - "]){
+       const i=s.indexOf(sep);
+       if(i>10){
+         const a=s.slice(0,i).trim(),b=s.slice(i+sep.length).trim();
+         const na=norm(a),nb=norm(b);
+         if(na&&nb&&(nb.startsWith(na)||na.startsWith(nb))){s=na.length<=nb.length?a:b;changed=true;break;}
+       }
+     }
+     if(!changed)break;
+   }
+   return s;
+ };
 
  const getReadingTime = (briefData) => {
    if(!briefData?.topics) return null;
@@ -2429,7 +2456,7 @@ export default function NewsHall() {
  <>
  {/* SLIDE 1: HERO */}
  <div className="ls ls-1">
-   <div className="ls1-grid"/><div className="ls1-lamp"/>
+   <div className="ls1-grid"/><div className="ls1-lamp"/><div className="ls1-aurora"/>
    <div className="ls1-orb ls1-orb-1"/><div className="ls1-orb ls1-orb-2"/><div className="ls1-orb ls1-orb-3"/>
    <div className="ls1-inner">
      <div className="ls1-text">
