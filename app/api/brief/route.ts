@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import {
-  normalizeTopicKey, briefDateKey, readTopicCache, writeTopicCache,
+  normalizeTopicKey, previousWindowKey, briefDateKey, readTopicCacheKeys, writeTopicCache,
   fetchArticlesForTopics, generateTopics, fallbackBrief, promoteLeadWithPhoto,
   isRateLimited,
 } from "@/app/lib/news-pipeline";
 
+export const runtime = "nodejs";
 export const maxDuration = 300;
 
 const MAX_TOPICS = 10;
@@ -36,35 +37,44 @@ export async function POST(req: NextRequest) {
 
       try {
         const dateKey = briefDateKey();
-        const keyByTopic: Record<string, string> = {};
-        for (const t of topics) keyByTopic[t] = normalizeTopicKey(t);
+        const curKey: Record<string, string> = {};
+        const prevKey: Record<string, string> = {};
+        for (const t of topics) { curKey[t] = normalizeTopicKey(t); prevKey[t] = previousWindowKey(t); }
 
-        // 1. Shared cache — topics already generated today by anyone
-        const cached = await readTopicCache([...new Set(Object.values(keyByTopic))], dateKey);
-        const misses = topics.filter((t: string) => !cached[keyByTopic[t]]);
+        // 1. Shared cache — look up BOTH the current and previous window in one query.
+        const lookup = [...new Set([...Object.values(curKey), ...Object.values(prevKey)])];
+        const rows = await readTopicCacheKeys(lookup);
 
-        const generated: Record<string, any> = {};
-        if (misses.length) {
-          // 2. Generate the misses with the shared pipeline (identical to cron)
-          const fresh = await generateTopics(misses, today);
-          for (const [topic, content] of Object.entries(fresh)) {
-            if (content?.stories?.length) generated[keyByTopic[topic]] = content;
+        // Classify each topic: fresh hit (current window), stale hit (previous window —
+        // serve now, refresh in background), or a true miss (must generate now).
+        const ready: Record<string, any> = {};   // topic -> content to serve this request
+        const staleTopics: string[] = [];         // served stale; regenerate in after()
+        const missTopics: string[] = [];          // no cache at all
+        for (const t of topics) {
+          if (rows[curKey[t]]) ready[t] = rows[curKey[t]];
+          else if (rows[prevKey[t]]) { ready[t] = rows[prevKey[t]]; staleTopics.push(t); }
+          else missTopics.push(t);
+        }
+
+        if (missTopics.length) {
+          // 2. Generate true misses with the shared pipeline (identical to cron)
+          const fresh = await generateTopics(missTopics, today);
+          const writes: { key: string; content: any }[] = [];
+          for (const t of missTopics) {
+            const content = fresh[t];
+            if (content?.stories?.length) { ready[t] = content; writes.push({ key: curKey[t], content }); }
           }
-
-          // 3. Cache the real AI results for everyone else today
-          await writeTopicCache(
-            Object.entries(generated).map(([key, content]) => ({ key, content })),
-            dateKey
-          );
+          // 3. Cache the real AI results for everyone else this window
+          if (writes.length) await writeTopicCache(writes, dateKey);
 
           // 4. Any miss the AI didn't cover → RSS-only fallback (not cached)
-          const uncovered = misses.filter((t: string) => !generated[keyByTopic[t]]);
+          const uncovered = missTopics.filter((t: string) => !ready[t]);
           if (uncovered.length) {
             const articles = await fetchArticlesForTopics(uncovered);
             const fb = fallbackBrief(uncovered, articles);
             fb.forEach((tg: any, i: number) => {
               const requested = uncovered[i];
-              if (requested) generated[keyByTopic[requested]] = { ...tg, _fallback: true };
+              if (requested) ready[requested] = { ...tg, _fallback: true };
             });
           }
         }
@@ -72,11 +82,26 @@ export async function POST(req: NextRequest) {
         // 5. Assemble in the user's requested order; lead = a photo-fetchable story
         const allTopics: any[] = [];
         for (const t of topics) {
-          const content = generated[keyByTopic[t]] ?? cached[keyByTopic[t]];
+          const content = ready[t];
           if (content?.stories?.length) {
             const { _fallback, ...clean } = content;
             allTopics.push(promoteLeadWithPhoto({ ...clean, topic: t }));
           }
+        }
+
+        // 6. Stale-while-revalidate: topics served from the previous window get
+        // regenerated for the current window in the background, so the next visitor
+        // (and this user's next load) is fully fresh — nobody waits at a boundary.
+        if (staleTopics.length) {
+          after(async () => {
+            try {
+              const fresh = await generateTopics(staleTopics, today);
+              const writes = Object.entries(fresh)
+                .filter(([, c]: any) => c?.stories?.length)
+                .map(([t, content]) => ({ key: curKey[t], content }));
+              if (writes.length) await writeTopicCache(writes, dateKey);
+            } catch { /* next request will retry */ }
+          });
         }
 
         if (!allTopics.length) {

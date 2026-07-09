@@ -15,20 +15,29 @@ export interface Article {
 }
 
 // ── Cache ────────────────────────────────────────────────────────────────────
-// Intraday freshness slot: which 6-hour block of the ET day we're in (0/6/12/18).
-// Folded into the cache key so a topic regenerates ~4× a day instead of being
-// frozen at its first-of-day snapshot. Opening the app at 8pm now pulls evening
-// news, not the 7am version. Cost stays bounded (shared cache × unique topics).
-export function cacheSlot(): string {
-  const hourET = Number(
-    new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "2-digit", hour12: false }).format(new Date())
-  );
-  return String(Math.floor((hourET % 24) / 6) * 6);
+// Intraday freshness window: a monotonic 6-hour block id (UTC-epoch based),
+// folded into the cache key so a topic regenerates ~4× a day instead of being
+// frozen at its first-of-day snapshot. Opening the app in the evening now pulls
+// evening news, not the 7am version. Monotonic ids make "previous window" simply
+// id-1 with no day-boundary math — used for the stale-while-revalidate fallback
+// so a user is never forced to wait for a cold generation at a window boundary.
+const WINDOW_MS = 6 * 60 * 60 * 1000;
+export function cacheWindow(): number {
+  return Math.floor(Date.now() / WINDOW_MS);
+}
+
+function topicKeyForWindow(topic: string, window: number): string {
+  return `${topic.toLowerCase().trim().replace(/\s+/g, " ")}#${window}`;
 }
 
 export function normalizeTopicKey(topic: string): string {
-  // Slot suffix keeps each 6h window's brief separate in the shared cache.
-  return `${topic.toLowerCase().trim().replace(/\s+/g, " ")}#${cacheSlot()}`;
+  return topicKeyForWindow(topic, cacheWindow());
+}
+
+// The same topic's key for the PREVIOUS 6h window — served instantly (≤6h old)
+// while the current window regenerates in the background.
+export function previousWindowKey(topic: string): string {
+  return topicKeyForWindow(topic, cacheWindow() - 1);
 }
 
 export function briefDateKey(): string {
@@ -56,6 +65,29 @@ export async function readTopicCache(keys: string[], dateKey: string): Promise<R
     if (error || !data) return {};
     const map: Record<string, any> = {};
     for (const row of data) map[row.topic_key] = row.content;
+    return map;
+  } catch { return {}; }
+}
+
+// Read arbitrary cache keys (which already embed their window) across the last
+// couple of days — used for stale-while-revalidate, where we look up both the
+// current-window and previous-window keys in one round-trip. Returns newest row
+// per key. Not filtered to a single brief_date so a previous window that spans
+// midnight is still found.
+export async function readTopicCacheKeys(keys: string[]): Promise<Record<string, any>> {
+  const sb = supa();
+  if (!sb || !keys.length) return {};
+  try {
+    const since = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const { data, error } = await sb
+      .from("topic_briefs")
+      .select("topic_key, content, generated_at")
+      .in("topic_key", keys)
+      .gte("brief_date", since)
+      .order("generated_at", { ascending: false });
+    if (error || !data) return {};
+    const map: Record<string, any> = {};
+    for (const row of data) if (!(row.topic_key in map)) map[row.topic_key] = row.content; // newest wins
     return map;
   } catch { return {}; }
 }
