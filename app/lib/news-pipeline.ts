@@ -621,14 +621,14 @@ SUMMARY RULES (this is where quality lives — follow exactly):
 EXAMPLE (kill the padding):
 BAD:  "The Chicago Cubs beat the Baltimore Orioles 9-7 on July 8, 2026, as reported by ESPN. The game was played at Wrigley Field. The Cubs' win improved their record."
 GOOD: "The Cubs beat the Orioles 9-7 at Wrigley Field." — one clean sentence; drop the dateline, the attribution, and the obvious closer. Only add a second sentence if the source gives real detail (a decisive inning, a standings shift, an injury), never to fill space.
-- Use exact URLs from the list. Never invent URLs. Facts only. No opinion.
+- SOURCING: Do NOT write URLs. For each story set "id" to the [N] number shown before the article you summarized. Only summarize articles from the list — never invent a story. Facts only, no opinion.
 - Headlines: write ONE clean headline per story. Never repeat the headline text, never append the publisher/outlet name, never copy dash-separated suffixes from the source title.
 - "watch_for": For EACH topic, add 1-2 forward-looking items written so a casual reader instantly gets it. 15-28 words. Every item MUST include: (1) the SPECIFIC named event — never a vague placeholder, (2) WHEN it happens — the exact date or day, or the narrowest window you can state, (3) a few words of plain-English context on what it is and why it matters. Always spell out acronyms and names.
   BANNED (too vague — never write these): "the next major tournament", "an upcoming election", "the next meeting", "later this month", "a key report soon". If you can't name the actual event and its date, DO NOT include the item.
   GOOD: "The Open Championship, golf's oldest major, runs July 17-20 at Royal Portrush in Northern Ireland — the year's final men's major.", "Fed interest-rate decision Wednesday, July 30 — a cut would lower borrowing costs on mortgages and credit cards.", "PGA FedEx Cup playoffs begin August 7, a three-tournament series deciding the season champion and a $25M prize."
   If nothing concrete and dated is upcoming for a topic, use an empty array rather than a vague guess.
 - Respond ONLY with valid JSON:
-{"topics":[{"topic":"Topic Name","stories":[{"headline":"string","summary":"string","source":"string","url":"string"}],"watch_for":["short upcoming item"]}]}`;
+{"topics":[{"topic":"Topic Name","stories":[{"headline":"string","summary":"string","source":"string","id":number}],"watch_for":["short upcoming item"]}]}`;
 
 // ── Unified AI generation ────────────────────────────────────────────────────
 // Fetches + cleans articles for the given topics, then asks Groq to select and
@@ -729,17 +729,33 @@ export function sanitizeHeadline(raw: string, source?: string): string {
 // article we actually showed Groq. If the URL matches one, keep it. If not, repair
 // by matching the headline to a source article and using ITS real URL + source.
 // If neither works, drop the story (never ship a fabricated link).
+// Attach a REAL source article (url/source/image) to each model-written story.
+// The model never emits URLs — it references a source by its [N] id — so a URL
+// can't be hallucinated. `articles` is the exact list shown to the model, in the
+// same order, so id N maps to articles[N-1]. Bad/missing ids fall back to URL or
+// headline matching; anything still unverifiable is dropped, never shipped.
 function validateStories(stories: any[], articles: Article[]): any[] {
   if (!Array.isArray(stories) || !articles.length) return [];
   const byUrl = new Map(articles.map(a => [normUrl(a.link), a]));
   const out: any[] = [];
   for (const s of stories) {
     if (!s?.headline) continue;
-    s.headline = sanitizeHeadline(s.headline, s.source);
-    const exact = byUrl.get(normUrl(s.url || ""));
-    if (exact) { out.push({ ...s, url: exact.link, source: s.source || exact.source, image: exact.image }); continue; }
-    // Repair: find the source article whose title best matches the headline
-    const sw = titleWords(s.headline);
+    // Strip the model's routing fields so they never leak into the brief.
+    const { id, source_id, url, ...rest } = s;
+    rest.headline = sanitizeHeadline(rest.headline, rest.source);
+
+    // 1. Preferred: resolve the [N] id to its exact source article.
+    const idx = Number(id ?? source_id);
+    if (Number.isInteger(idx) && idx >= 1 && idx <= articles.length) {
+      const a = articles[idx - 1];
+      out.push({ ...rest, url: a.link, source: rest.source || a.source, image: a.image });
+      continue;
+    }
+    // 2. Fallback: the model emitted a URL that matches a shown article exactly.
+    const exact = byUrl.get(normUrl(url || ""));
+    if (exact) { out.push({ ...rest, url: exact.link, source: rest.source || exact.source, image: exact.image }); continue; }
+    // 3. Last resort: match the source article by headline word overlap.
+    const sw = titleWords(rest.headline);
     let best: Article | null = null, bestShared = 0;
     for (const a of articles) {
       const aw = titleWords(a.title);
@@ -749,8 +765,8 @@ function validateStories(stories: any[], articles: Article[]): any[] {
         best = a; bestShared = shared;
       }
     }
-    if (best) out.push({ ...s, url: best.link, source: best.source, image: best.image });
-    // else: unverifiable URL — drop it rather than ship a hallucinated link
+    if (best) out.push({ ...rest, url: best.link, source: best.source, image: best.image });
+    // else: unverifiable — drop it rather than ship a hallucinated link
   }
   return out;
 }
