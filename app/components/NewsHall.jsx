@@ -350,6 +350,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .brief-feat-img-meta{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;width:100%;}
 .brief-feat-label{font-size:0.47rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#fff;background:var(--accent);border-radius:4px;padding:3px 9px;}
 .brief-feat-body{padding:24px 28px 22px;background:#fff;}
+/* Text-first editorial lead — used when no real article photo exists.
+   Gradient accent bar + bigger serif headline; intentional, never "blank". */
+.brief-featured.no-photo::before{content:'';display:block;height:5px;background:linear-gradient(90deg,var(--accent) 0%,#e0233e 40%,#b44bf0 100%);}
+.brief-featured.no-photo .brief-feat-body{padding:26px 30px 24px;}
+.brief-featured.no-photo .brief-feat-hl{font-size:clamp(1.55rem,2.9vw,2.2rem);line-height:1.08;}
+.brief-feat-topmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;}
 .brief-feat-hl{
   font-family:'Playfair Display',serif;
   font-size:clamp(1.35rem,2.4vw,1.85rem);
@@ -2279,25 +2285,31 @@ export default function NewsHall() {
                        <span className="brief-topic-name">{tg.topic}</span>
                        <span className="brief-topic-count">{stories.length} {stories.length===1?"story":"stories"}</span>
                      </div>
-                     {featured&&(
-                       <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
-                         {(()=>{const real=tg.leadImage||(featured.url&&ogImages[featured.url]);const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(
-                         <div className="brief-feat-img" style={baseStyle}>
-                           {real&&<img className="brief-feat-photo" src={real} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.style.display="none";}}/>}
+                     {featured&&(()=>{const leadImg=tg.leadImage||(featured.url&&ogImages[featured.url])||null;return(
+                       <a className={`brief-featured${leadImg?"":" no-photo"}`} href={fUrl} target="_blank" rel="noopener noreferrer">
+                         {leadImg&&(
+                         <div className="brief-feat-img" style={{background:getTopicGradient(tg.topic)}}>
+                           <img className="brief-feat-photo" src={leadImg} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.closest(".brief-featured")?.classList.add("no-photo");e.currentTarget.parentElement.style.display="none";}}/>
                            <div className="brief-feat-img-grad"/>
                            <div className="brief-feat-img-meta">
                              {featured.source&&<SourceLogo source={featured.source} dark/>}
                              <span className="brief-feat-label">Lead story</span>
                            </div>
                          </div>
-                         );})()}
+                         )}
                          <div className="brief-feat-body">
+                           {!leadImg&&(
+                             <div className="brief-feat-topmeta">
+                               {featured.source&&<SourceLogo source={featured.source}/>}
+                               <span className="brief-feat-label">Lead story</span>
+                             </div>
+                           )}
                            <div className="brief-feat-hl">{clean(featured.headline)}</div>
                            {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
                            <span className="brief-feat-read">Read full story →</span>
                          </div>
                        </a>
-                     )}
+                     );})()}
                      {rest.length>0&&(
                        <div className="brief-story-grid">
                          {rest.map((st,si)=>{
@@ -2764,25 +2776,31 @@ export default function NewsHall() {
                    <span className="brief-topic-name">{tg.topic}</span>
                    <span className="brief-topic-count">{stories.length} {stories.length===1?"story":"stories"}</span>
                  </div>
-                 {featured&&(
-                   <a className="brief-featured" href={fUrl} target="_blank" rel="noopener noreferrer">
-                     {(()=>{const real=tg.leadImage||(featured.url&&ogImages[featured.url]);const base=getTopicImage(tg.topic);const baseStyle=base.type==="img"?{backgroundImage:`url(${base.src})`,backgroundSize:"cover",backgroundPosition:"center"}:{background:base.css};return(<>
-                     <div className="brief-feat-img" style={baseStyle}>
-                       {real&&<img className="brief-feat-photo" src={real} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.style.display="none";}}/>}
+                 {featured&&(()=>{const leadImg=tg.leadImage||(featured.url&&ogImages[featured.url])||null;return(
+                   <a className={`brief-featured${leadImg?"":" no-photo"}`} href={fUrl} target="_blank" rel="noopener noreferrer">
+                     {leadImg&&(
+                     <div className="brief-feat-img" style={{background:getTopicGradient(tg.topic)}}>
+                       <img className="brief-feat-photo" src={leadImg} alt="" loading="lazy" onLoad={e=>e.currentTarget.classList.add("loaded")} onError={e=>{e.currentTarget.closest(".brief-featured")?.classList.add("no-photo");e.currentTarget.parentElement.style.display="none";}}/>
                        <div className="brief-feat-img-grad"/>
                        <div className="brief-feat-img-meta">
                          {featured.source&&<SourceLogo source={featured.source} dark/>}
                          <span className="brief-feat-label">Lead story</span>
                        </div>
                      </div>
-                     </>);})()}
+                     )}
                      <div className="brief-feat-body">
+                       {!leadImg&&(
+                         <div className="brief-feat-topmeta">
+                           {featured.source&&<SourceLogo source={featured.source}/>}
+                           <span className="brief-feat-label">Lead story</span>
+                         </div>
+                       )}
                        <div className="brief-feat-hl">{clean(featured.headline)}</div>
                        {featured.summary&&<div className="brief-feat-sum">{clean(featured.summary)}</div>}
                        <span className="brief-feat-read">Read full story →</span>
                      </div>
                    </a>
-                 )}
+                 );})()}
                  {rest.length>0&&(
                    <div className="brief-story-grid">
                      {rest.map((st,si)=>{
