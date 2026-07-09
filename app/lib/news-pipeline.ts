@@ -599,8 +599,44 @@ RULES:
 // Public entry point: generate any number of topics, automatically split into
 // small batches so a single Groq response can never truncate. Batches run with
 // limited concurrency. Results keyed by the EXACT topic strings passed in.
+// In-flight coalescing: if another concurrent request is already generating a
+// topic in this same cache slot, join its result instead of re-fetching + re-
+// generating. Cheap, dependency-free protection against a cache stampede when a
+// new slot opens (keyed by normalizeTopicKey, which already includes the slot).
+// Best-effort within a warm instance — the cron path is separately stampede-safe.
+const inflightTopics = new Map<string, Promise<Record<string, any>>>();
+
 export async function generateTopics(topics: string[], today: string): Promise<Record<string, any>> {
   if (!topics.length) return {};
+  const out: Record<string, any> = {};
+  const fresh: string[] = [];
+  const joined: Promise<void>[] = [];
+
+  for (const t of topics) {
+    const existing = inflightTopics.get(normalizeTopicKey(t));
+    if (existing) joined.push(existing.then(m => { if (m[t] !== undefined) out[t] = m[t]; }).catch(() => {}));
+    else fresh.push(t);
+  }
+
+  if (fresh.length) {
+    const genPromise = generateFresh(fresh, today);
+    // Register a per-topic slice so concurrent callers can coalesce onto this work,
+    // then self-clean once settled so the map never grows unbounded or goes stale.
+    for (const t of fresh) {
+      const k = normalizeTopicKey(t);
+      const slice = genPromise.then(m => ({ [t]: m[t] }));
+      inflightTopics.set(k, slice);
+      void slice.finally(() => { if (inflightTopics.get(k) === slice) inflightTopics.delete(k); });
+    }
+    Object.assign(out, await genPromise);
+  }
+
+  await Promise.all(joined);
+  return out;
+}
+
+// Actual batched generation (no coalescing) — wrapped by generateTopics above.
+async function generateFresh(topics: string[], today: string): Promise<Record<string, any>> {
   const BATCH = 5;        // max topics per Groq call — keeps responses well within limits
   const CONCURRENCY = 3;  // batches in flight at once
   const batches: string[][] = [];
