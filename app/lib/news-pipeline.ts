@@ -4,6 +4,7 @@
 // the two can never drift — whichever generates a topic first caches the exact
 // same high-quality result for everyone.
 import { createClient } from "@supabase/supabase-js";
+import { XMLParser } from "fast-xml-parser";
 
 export interface Article {
   title: string;
@@ -201,29 +202,97 @@ export function sourceName(url: string): string {
   catch { return "News"; }
 }
 
+// A real XML parser (not regex): handles CDATA, HTML entities, namespaced tags
+// (content:encoded, media:content, dc:date) and both RSS (<item>) AND Atom
+// (<entry>) feeds — several sources (e.g. The Verge) are Atom-only and returned
+// nothing under the old <item>-only regex. It also lets us pull feed-provided
+// article photos (media:content / media:thumbnail / enclosure) so more briefs get
+// a real image without scraping.
+const xmlParser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "@_",
+  textNodeName: "#text",
+  trimValues: true,
+  processEntities: true,
+  // Never resolve external/DOCTYPE entities — closes off XXE entirely.
+  htmlEntities: true,
+});
+
+// Coerce a parsed node (string | {#text} | {@_...}) to plain text.
+function xmlText(v: any): string {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (typeof v === "number") return String(v);
+  if (Array.isArray(v)) return xmlText(v[0]);
+  if (typeof v === "object") return xmlText(v["#text"]);
+  return "";
+}
+const asArray = <T,>(v: T | T[] | undefined): T[] => (v == null ? [] : Array.isArray(v) ? v : [v]);
+
+// Decode leftover HTML entities (incl. numeric) that survive in double-encoded
+// feeds, e.g. "Google&#8217;s" → "Google's". Safe no-op on clean text.
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => { try { return String.fromCodePoint(parseInt(h, 16)); } catch { return _; } })
+    .replace(/&#(\d+);/g, (_, d) => { try { return String.fromCodePoint(parseInt(d, 10)); } catch { return _; } })
+    .replace(/&nbsp;/gi, " ").replace(/&(?:rsquo|lsquo|#8217|#8216);/gi, "'")
+    .replace(/&(?:rdquo|ldquo);/gi, '"').replace(/&(?:mdash|ndash);/gi, "—")
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, "&");
+}
+
+// BBC feed thumbnails come at a tiny fixed width (…/standard/240/…). Bump to a
+// usable size via BBC's ichef path template so a lead photo isn't a blurry thumb.
+function upgradeImageUrl(url: string): string {
+  return url.replace(/(ichef\.bbci\.co\.uk\/(?:ace\/standard|news)\/)\d+\//, "$1800/");
+}
+
+// Pull a real image URL from an item's media/enclosure fields, skipping logos.
+function itemImage(item: any): string | undefined {
+  const candidates: string[] = [];
+  for (const mc of asArray(item["media:content"])) if (mc?.["@_url"]) candidates.push(mc["@_url"]);
+  for (const mt of asArray(item["media:thumbnail"])) if (mt?.["@_url"]) candidates.push(mt["@_url"]);
+  for (const en of asArray(item["enclosure"]))
+    if (en?.["@_url"] && /^image\//i.test(en?.["@_type"] || "") ) candidates.push(en["@_url"]);
+  for (const en of asArray(item["enclosure"]))
+    if (en?.["@_url"] && /\.(jpe?g|png|webp)(\?|$)/i.test(en["@_url"])) candidates.push(en["@_url"]);
+  const found = candidates.find(u => u && !isUselessImage(u));
+  return found ? upgradeImageUrl(found) : undefined;
+}
+
+// Atom <link> can be an array of {@_href,@_rel}; prefer rel="alternate"/no rel.
+function atomLink(entry: any): string {
+  const links = asArray(entry.link);
+  const alt = links.find((l: any) => l?.["@_rel"] === "alternate" || (l && !l["@_rel"]));
+  return (alt || links[0])?.["@_href"] || xmlText(entry.link) || "";
+}
+
 export function parseRSS(xml: string, feedUrl: string): Article[] {
-  const articles: Article[] = [];
-  const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/g;
   const cutoff = Date.now() - 24 * 60 * 60 * 1000;
   const isGoogleNews = feedUrl.includes("news.google.com");
-  let m;
-  while ((m = itemRegex.exec(xml)) !== null) {
-    const block = m[1];
-    const get = (tag: string) => {
-      const r = new RegExp(`<${tag}[^>]*>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?<\\/${tag}>`, "i");
-      return block.match(r)?.[1]?.trim()
-        .replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">")
-        .replace(/&quot;/g,'"').replace(/&#39;/g,"'") || "";
-    };
-    const link = get("link") || block.match(/<link[^>]*href="([^"]+)"/i)?.[1]?.trim() || "";
-    let title = get("title");
-    const pub = get("pubDate") || get("dc:date");
-    if (!title || !link) continue;
+  const feedSource = sourceName(feedUrl);
+
+  let doc: any;
+  try { doc = xmlParser.parse(xml); } catch { return []; }
+
+  // RSS: rss.channel.item[]  |  Atom: feed.entry[]  |  RDF: rdf:RDF.item[]
+  const channel = doc?.rss?.channel ?? doc?.["rdf:RDF"] ?? doc?.channel;
+  const isAtom = !!doc?.feed;
+  const items: any[] = isAtom ? asArray(doc.feed.entry) : asArray(channel?.item);
+
+  const articles: Article[] = [];
+  for (const item of items) {
+    let title = decodeEntities(xmlText(item.title).trim());
+    const link = (isAtom ? atomLink(item) : xmlText(item.link).trim())
+      || xmlText(item.guid).trim();
+    if (!title || !link || !link.startsWith("http")) continue;
     if (/espn\.com\/.*\/(game|scores|gamecast|recap)\//i.test(link)) continue;
+
+    const pub = xmlText(item.pubDate) || xmlText(item["dc:date"]) || xmlText(item.published) || xmlText(item.updated);
     const pubMs = pub ? new Date(pub).getTime() : Date.now();
     if (pubMs < cutoff) continue;
 
-    let source = sourceName(feedUrl);
+    let source = feedSource;
     if (isGoogleNews) {
       const sep = title.lastIndexOf(" - ");
       if (sep > 20) { source = title.slice(sep + 3).trim(); title = title.slice(0, sep).trim(); }
@@ -232,8 +301,12 @@ export function parseRSS(xml: string, feedUrl: string): Article[] {
 
     // Google News "descriptions" are just the headline repeated with the publisher
     // glued on — feeding that to the AI produces duplicated headlines. Drop them.
-    const description = isGoogleNews ? "" : get("description").replace(/<[^>]+>/g,"").slice(0, 400);
-    articles.push({ title, link, description, pubDate: pub, source });
+    // Otherwise prefer the richer content:encoded body over the short summary.
+    const rawDesc = isGoogleNews ? ""
+      : xmlText(item["content:encoded"]) || xmlText(item.description) || xmlText(item.summary) || xmlText(item.content);
+    const description = decodeEntities(rawDesc.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim().slice(0, 400);
+
+    articles.push({ title, link, description, pubDate: pub, source, image: itemImage(item) });
   }
   return articles;
 }
