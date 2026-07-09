@@ -226,7 +226,8 @@ export async function fetchGNews(topic: string): Promise<Article[]> {
         description: (a.description || "").replace(/<[^>]+>/g, "").slice(0, 150),
         pubDate: a.publishedAt || "",
         source: a.source?.name || "News",
-        image: a.image || undefined,
+        // Drop logo/branded "images" so they don't ship as a fake photo
+        image: (a.image && !isUselessImage(a.image)) ? a.image : undefined,
       }))
       .filter((a: Article) =>
         a.title && a.link &&
