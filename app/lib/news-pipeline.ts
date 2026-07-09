@@ -562,7 +562,10 @@ RULES:
 - BANNED phrases: "this event matters", "this could impact", "raising questions", "the overall market", "steps can be taken", "advisors recommend", "experts say"
 - Use exact URLs from the list. Never invent URLs. Facts only. No opinion.
 - Headlines: write ONE clean headline per story. Never repeat the headline text, never append the publisher/outlet name, never copy dash-separated suffixes from the source title.
-- "watch_for": For EACH topic, add 1-2 forward-looking items written so a casual reader instantly gets it. Each item = the upcoming event PLUS a few words of plain-English context on what it is and why it matters. 12-22 words. Always spell out acronyms and names. Examples: "Fed interest-rate decision Wednesday — a cut would lower borrowing costs on mortgages and credit cards", "G7 summit Friday, where leaders of the world's seven largest advanced economies meet to discuss trade and Ukraine aid". If nothing concrete is upcoming for a topic, use an empty array.
+- "watch_for": For EACH topic, add 1-2 forward-looking items written so a casual reader instantly gets it. 15-28 words. Every item MUST include: (1) the SPECIFIC named event — never a vague placeholder, (2) WHEN it happens — the exact date or day, or the narrowest window you can state, (3) a few words of plain-English context on what it is and why it matters. Always spell out acronyms and names.
+  BANNED (too vague — never write these): "the next major tournament", "an upcoming election", "the next meeting", "later this month", "a key report soon". If you can't name the actual event and its date, DO NOT include the item.
+  GOOD: "The Open Championship, golf's oldest major, runs July 17-20 at Royal Portrush in Northern Ireland — the year's final men's major.", "Fed interest-rate decision Wednesday, July 30 — a cut would lower borrowing costs on mortgages and credit cards.", "PGA FedEx Cup playoffs begin August 7, a three-tournament series deciding the season champion and a $25M prize."
+  If nothing concrete and dated is upcoming for a topic, use an empty array rather than a vague guess.
 - Respond ONLY with valid JSON:
 {"topics":[{"topic":"Topic Name","stories":[{"headline":"string","summary":"string","source":"string","url":"string"}],"watch_for":["short upcoming item"]}]}`;
 
