@@ -200,7 +200,7 @@ export function parseRSS(xml: string, feedUrl: string): Article[] {
 
     // Google News "descriptions" are just the headline repeated with the publisher
     // glued on — feeding that to the AI produces duplicated headlines. Drop them.
-    const description = isGoogleNews ? "" : get("description").replace(/<[^>]+>/g,"").slice(0, 150);
+    const description = isGoogleNews ? "" : get("description").replace(/<[^>]+>/g,"").slice(0, 400);
     articles.push({ title, link, description, pubDate: pub, source });
   }
   return articles;
@@ -235,7 +235,7 @@ export async function fetchGNews(topic: string): Promise<Article[]> {
       .map((a: any) => ({
         title: (a.title || "").trim(),
         link: a.url || "",
-        description: (a.description || "").replace(/<[^>]+>/g, "").slice(0, 150),
+        description: (a.description || "").replace(/<[^>]+>/g, "").slice(0, 400),
         pubDate: a.publishedAt || "",
         source: a.source?.name || "News",
         // Drop logo/branded "images" so they don't ship as a fake photo
@@ -577,12 +577,18 @@ function repairJson(txt: string): string {
 
 const SYSTEM_PROMPT = `You are a senior news editor at a wire service. Select the 2-4 most newsworthy stories per topic.
 
-SUMMARY GOAL: Give the reader the full picture in 2-3 sentences so they don't need to click. Be specific — names, numbers, places, dates. Someone who only reads the summary should walk away fully informed.
+SUMMARY GOAL: In 1-3 TIGHT sentences, tell the reader what happened and the specifics that matter. PULL THE SPECIFICS FROM THE "Details" TEXT under each article — that's where the real facts are (numbers, names, causes, consequences). The summary must go beyond the headline using those details. If an article has no Details and the headline is all you have, one honest sentence is fine — but whenever Details exist, mine them for the concrete facts. Fewer strong sentences beat padded ones. Never pad, never invent facts that aren't in the source.
 
-RULES:
-- Sentence 1: What happened — specific names, numbers, places, dates.
-- Sentence 2-3: Key details — exact stakes, who is affected and how, what happens next or by when.
-- BANNED phrases: "this event matters", "this could impact", "raising questions", "the overall market", "steps can be taken", "advisors recommend", "experts say"
+SUMMARY RULES (this is where quality lives — follow exactly):
+- NO attribution, NO dateline. Never write "as reported by X", "according to Y", the outlet's name, or "on July 9, 2026". The source and date are shown separately. Open with the news itself.
+- NO filler closing sentence. Never end on an obvious or empty statement. These closers (and anything like them) are BANNED: "improved their record", "expecting large crowds", "a major venue in the area", "sheds light on", "brings new challenges and rewards", "marks a significant development", "the process is open to residents", "will take place throughout the summer".
+- Every sentence must contain a concrete anchor — a number, name, place, score, dollar figure, or specific next step. A sentence with no new specific gets CUT, not softened.
+- Do not restate the headline in different words. Add what the headline leaves out.
+- BANNED phrases: "this event matters", "this could impact", "raising questions", "the overall market", "steps can be taken", "advisors recommend", "experts say".
+
+EXAMPLE (kill the padding):
+BAD:  "The Chicago Cubs beat the Baltimore Orioles 9-7 on July 8, 2026, as reported by ESPN. The game was played at Wrigley Field. The Cubs' win improved their record."
+GOOD: "The Cubs beat the Orioles 9-7 at Wrigley Field." — one clean sentence; drop the dateline, the attribution, and the obvious closer. Only add a second sentence if the source gives real detail (a decisive inning, a standings shift, an injury), never to fill space.
 - Use exact URLs from the list. Never invent URLs. Facts only. No opinion.
 - Headlines: write ONE clean headline per story. Never repeat the headline text, never append the publisher/outlet name, never copy dash-separated suffixes from the source title.
 - "watch_for": For EACH topic, add 1-2 forward-looking items written so a casual reader instantly gets it. 15-28 words. Every item MUST include: (1) the SPECIFIC named event — never a vague placeholder, (2) WHEN it happens — the exact date or day, or the narrowest window you can state, (3) a few words of plain-English context on what it is and why it matters. Always spell out acronyms and names.
@@ -779,7 +785,7 @@ async function generateBatch(topics: string[], today: string): Promise<Record<st
     const sampled = sampleBySource(articlesByTopic[topic] || [], 6);
     shownByTopic[topic] = sampled;
     const lines = sampled.map((a, i) =>
-      `[${i + 1}] (${a.source}) ${a.title}${a.description ? " — " + a.description.slice(0, 120) : ""}\n   URL: ${a.link}`
+      `[${i + 1}] (${a.source}) ${a.title}${a.description ? "\n   Details: " + a.description.slice(0, 350) : ""}\n   URL: ${a.link}`
     ).join("\n");
     return `TOPIC: ${topic}\n${lines || "No articles found"}`;
   }).join("\n\n---\n\n");
