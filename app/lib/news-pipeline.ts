@@ -15,8 +15,20 @@ export interface Article {
 }
 
 // ── Cache ────────────────────────────────────────────────────────────────────
+// Intraday freshness slot: which 6-hour block of the ET day we're in (0/6/12/18).
+// Folded into the cache key so a topic regenerates ~4× a day instead of being
+// frozen at its first-of-day snapshot. Opening the app at 8pm now pulls evening
+// news, not the 7am version. Cost stays bounded (shared cache × unique topics).
+export function cacheSlot(): string {
+  const hourET = Number(
+    new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "2-digit", hour12: false }).format(new Date())
+  );
+  return String(Math.floor((hourET % 24) / 6) * 6);
+}
+
 export function normalizeTopicKey(topic: string): string {
-  return topic.toLowerCase().trim().replace(/\s+/g, " ");
+  // Slot suffix keeps each 6h window's brief separate in the shared cache.
+  return `${topic.toLowerCase().trim().replace(/\s+/g, " ")}#${cacheSlot()}`;
 }
 
 export function briefDateKey(): string {
@@ -160,7 +172,7 @@ export function sourceName(url: string): string {
 export function parseRSS(xml: string, feedUrl: string): Article[] {
   const articles: Article[] = [];
   const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/g;
-  const cutoff = Date.now() - 36 * 60 * 60 * 1000;
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
   const isGoogleNews = feedUrl.includes("news.google.com");
   let m;
   while ((m = itemRegex.exec(xml)) !== null) {
@@ -218,7 +230,7 @@ export async function fetchGNews(topic: string): Promise<Article[]> {
     );
     if (!res.ok) return [];
     const data = await res.json();
-    const cutoff = Date.now() - 36 * 60 * 60 * 1000;
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     return (data.articles || [])
       .map((a: any) => ({
         title: (a.title || "").trim(),
@@ -289,12 +301,23 @@ function dedupeStories(articles: Article[]): Article[] {
   return kept.map(k => k.a);
 }
 
+// Freshness tier: 0 = last 8h, 1 = last 18h, 2 = older. Recency dominates source
+// prestige so today's news always leads; within a tier we still prefer the wires.
+function freshnessTier(pubDate: string): number {
+  const ageH = (Date.now() - new Date(pubDate || 0).getTime()) / 3.6e6;
+  if (ageH <= 8) return 0;
+  if (ageH <= 18) return 1;
+  return 2;
+}
+
 export function cleanArticles(articles: Article[]): Article[] {
   const filtered = articles.filter(a => !isJunk(a));
   const deduped = dedupeStories(filtered);
   return deduped.sort((x, y) => {
+    const t = freshnessTier(x.pubDate) - freshnessTier(y.pubDate);
+    if (t !== 0) return t;                                   // newer tier first
     const r = sourceRank(x.source) - sourceRank(y.source);
-    if (r !== 0) return r;
+    if (r !== 0) return r;                                   // then better source
     return new Date(y.pubDate || 0).getTime() - new Date(x.pubDate || 0).getTime();
   });
 }
