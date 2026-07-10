@@ -1730,6 +1730,8 @@ export default function NewsHall() {
      ):(
        <>
          <div className="bmast">
+           <div className="bmast-glow" aria-hidden="true"/>
+           <div className="bmast-grid" aria-hidden="true"/>
            <div className="bmast-top">
              <span className="bmast-pub">NewsHall</span>
              <span className="bmast-date-sm">{today}</span>
