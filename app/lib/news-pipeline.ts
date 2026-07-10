@@ -316,9 +316,11 @@ export async function fetchFeed(url: string): Promise<Article[]> {
       headers: { "User-Agent": "NewsHall/1.0 RSS Reader", "Accept": "application/rss+xml,application/xml,text/xml" },
       signal: AbortSignal.timeout ? AbortSignal.timeout(6000) : undefined,
     });
-    if (!res.ok) return [];
+    // Non-fatal: a dead feed just contributes no articles (others + GNews cover
+    // it). Log it so a real outage is visible instead of silently degrading.
+    if (!res.ok) { logWarn(`feed ${sourceName(url)} http ${res.status}`); return []; }
     return parseRSS(await res.text(), url);
-  } catch { return []; }
+  } catch (e) { logWarn(`feed ${sourceName(url)} unreachable`, e); return []; }
 }
 
 // ── GNews search (real article URLs + real article PHOTOS, no scraping) ──────
@@ -332,7 +334,9 @@ export async function fetchGNews(topic: string): Promise<Article[]> {
       `https://gnews.io/api/v4/search?q=${encodeURIComponent(topic)}&lang=en&country=us&max=10&sortby=publishedAt&apikey=${key}`,
       { signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }
     );
-    if (!res.ok) return [];
+    // 429 = free-tier daily quota exhausted (lose real photos + direct URLs for
+    // the rest of the day) — worth seeing in logs, not silently degrading.
+    if (!res.ok) { logWarn(`gnews http ${res.status}${res.status === 429 ? " (daily quota exhausted)" : ""}`); return []; }
     const data = await res.json();
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     return (data.articles || [])
@@ -351,7 +355,7 @@ export async function fetchGNews(topic: string): Promise<Article[]> {
         !BLOCKED_DOMAINS.test(a.link) &&
         !BLOCKED_SOURCES.test(a.source.trim())
       );
-  } catch { return []; }
+  } catch (e) { logWarn("gnews unreachable", e); return []; }
 }
 
 // ── Quality pipeline ─────────────────────────────────────────────────────────
