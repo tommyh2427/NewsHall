@@ -88,6 +88,25 @@ export default function NewsHall() {
  const [isStreaming, setIsStreaming] = useState(false); // true while SSE stream is open
  const [streamedCount, setStreamedCount] = useState(0); // topics received so far
 
+ // Landing-page chrome: glass nav on scroll + top scroll-progress bar.
+ // Progress width is written straight to the DOM (ref) so scrolling never re-renders.
+ const [lpScrolled, setLpScrolled] = useState(false);
+ const lpProgressRef = useRef(null);
+ useEffect(()=>{
+   const onScroll=()=>{
+     const y=window.scrollY;
+     setLpScrolled(prev=>{const next=y>24;return next===prev?prev:next;});
+     const el=lpProgressRef.current;
+     if(el){
+       const max=document.documentElement.scrollHeight-window.innerHeight;
+       el.style.width=max>0?`${Math.min(100,(y/max)*100)}%`:"0%";
+     }
+   };
+   onScroll();
+   window.addEventListener('scroll',onScroll,{passive:true});
+   return()=>window.removeEventListener('scroll',onScroll);
+ },[]);
+
  useEffect(()=>{
    supabase.auth.getUser().then(({data:{user}})=>setUser(user??null));
    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,session)=>{
@@ -1123,11 +1142,18 @@ export default function NewsHall() {
  return (<>
  <style>{CSS}</style>
 
- <div className="topbar">
+ <div className={`topbar${!user?" lp":""}${!user&&lpScrolled?" scrolled":""}`}>
    <div className="tb-wordmark">
      <div className="tb-title">NewsHall</div>
      <div className="tb-edition">Morning Intelligence</div>
    </div>
+   {!user&&(
+     <nav className="lp-nav">
+       {[["#live","Live"],["#why","Why"],["#how","How it works"]].map(([href,label])=>(
+         <a key={href} href={href} onClick={e=>{e.preventDefault();document.querySelector(href)?.scrollIntoView({behavior:"smooth"});}}>{label}</a>
+       ))}
+     </nav>
+   )}
    <div className="tb-auth">
      {user ? (
        <>
@@ -1141,6 +1167,7 @@ export default function NewsHall() {
        </>
      )}
    </div>
+   {!user&&<div className="lp-progress" ref={lpProgressRef}/>}
  </div>
 
  {/* ── OFFLINE BANNER ── */}
@@ -1437,6 +1464,23 @@ export default function NewsHall() {
  <div className="ls ls-1">
    <div className="ls1-grid"/><div className="ls1-lamp"/><div className="ls1-aurora"/>
    <div className="ls1-orb ls1-orb-1"/><div className="ls1-orb ls1-orb-2"/><div className="ls1-orb ls1-orb-3"/>
+   {/* Flowing gradient ribbons (newsbang-style) — pure SVG+CSS, drifts slowly */}
+   <div className="ls1-wave" aria-hidden="true">
+     <svg viewBox="0 0 1440 420" preserveAspectRatio="none">
+       <defs>
+         <linearGradient id="lswg" x1="0" y1="0" x2="1" y2="0">
+           <stop offset="0" stopColor="#3b62f6"/>
+           <stop offset="0.45" stopColor="#8b3df0"/>
+           <stop offset="1" stopColor="#e0233e"/>
+         </linearGradient>
+       </defs>
+       {[0,1,2,3,4,5,6,7].map(i=>{
+         const y=150+i*26, a=54-i*4;
+         const d=`M0,${y} C240,${y-a} 480,${y+a} 720,${y} S1200,${y-a} 1440,${y} S1920,${y+a} 2160,${y} S2640,${y-a} 2880,${y}`;
+         return <path key={i} className={`wvp wvp-${i}`} d={d} fill="none" stroke="url(#lswg)" strokeWidth={i<2?2:1.4}/>;
+       })}
+     </svg>
+   </div>
    <div className="ls1-inner">
      <div className="ls1-text">
        <div className="ls1-eyebrow anim">PERSONALIZED · MORNING · BRIEF</div>
@@ -1504,7 +1548,7 @@ export default function NewsHall() {
    </div>
  </div>
  {/* LIVE HEADLINES WALL */}
- <div className="ls-wall">
+ <div id="live" className="ls-wall">
    <div className="ls-wall-head">
      <div className="ls-wall-live anim"><span className="ls-wall-live-dot"/>Live right now</div>
      <h2 className="ls-wall-hl anim anim-d1">The world's newsrooms,<br/><em>distilled.</em></h2>
@@ -1565,7 +1609,7 @@ export default function NewsHall() {
    </div>
  </div>
  {/* SLIDE 2: WHY */}
- <div className="ls ls-2">
+ <div id="why" className="ls ls-2">
    <div className="ls2-inner">
      <div className="ls2-eyebrow anim">WHY NEWSHALL</div>
      <h2 className="ls2-hl anim anim-d1">News that informs,<br/>not <em>inflames.</em></h2>
@@ -1586,7 +1630,7 @@ export default function NewsHall() {
    </div>
  </div>
  {/* SLIDE 3: HOW + CTA */}
- <div className="ls ls-3">
+ <div id="how" className="ls ls-3">
    <div className="ls3-inner">
      <div className="ls3-eyebrow anim">HOW IT WORKS</div>
      <h2 className="ls3-hl anim anim-d1">Ready in 60 seconds.</h2>
