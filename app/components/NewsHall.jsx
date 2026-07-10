@@ -1528,25 +1528,6 @@ export default function NewsHall() {
    </div>
    <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
  </div>
- {/* STATS BAND */}
- <div className="ls-stats">
-   <div className="ls-stats-inner">
-     <div className="ls-stats-eyebrow anim">The numbers</div>
-     <div className="ls-stats-grid">
-       {[
-         {n:<>500<em>+</em></>,l:"Trusted sources scanned every morning"},
-         {n:<>10</>,l:"Topics — you pick exactly what matters to you"},
-         {n:<>60<em>s</em></>,l:"To read and walk away fully informed"},
-         {n:<>0</>,l:"Opinions, hot takes, or spin. Just the facts."},
-       ].map((s,i)=>(
-         <div className={`stat-big anim anim-d${i+1}`} key={i}>
-           <div className="stat-num">{s.n}</div>
-           <div className="stat-lbl">{s.l}</div>
-         </div>
-       ))}
-     </div>
-   </div>
- </div>
  {/* LIVE HEADLINES WALL */}
  <div id="live" className="ls-wall">
    <div className="ls-wall-head">

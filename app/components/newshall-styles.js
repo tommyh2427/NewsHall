@@ -930,15 +930,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 @media(max-width:899px){.hero-phone{margin-top:8px;}.ls1-scroll{display:none;}}
 
 /* ── STATS BAND (Sunday-style big numbers) ── */
-.ls-stats{min-height:auto;background:var(--ink);padding:88px 32px;border-top:1px solid rgba(255,255,255,0.06);}
-.ls-stats-inner{width:100%;max-width:1040px;margin:0 auto;}
-.ls-stats-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:48px;text-align:center;}
-.ls-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
-.stat-big{text-align:left;padding:0 8px;}
-.stat-num{font-family:'Inter',sans-serif;font-size:clamp(2.6rem,5vw,4rem);font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1;margin-bottom:12px;}
-.stat-num em{color:var(--accent);font-style:normal;}
-.stat-lbl{font-size:0.84rem;color:rgba(255,255,255,0.5);line-height:1.45;font-weight:400;}
-@media(max-width:760px){.ls-stats-grid{grid-template-columns:1fr 1fr;gap:40px 24px;}.ls-stats{padding:64px 24px;}}
 
 /* ── LIVE HEADLINES WALL ── */
 .ls-wall{position:relative;overflow:hidden;background:var(--ink);padding:90px 32px;border-top:1px solid rgba(255,255,255,0.06);}
