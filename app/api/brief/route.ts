@@ -9,18 +9,49 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 const MAX_TOPICS = 10;
+const MAX_TOPIC_LEN = 80;
+
+// Harden the client-supplied topics array: enforce string type, strip control
+// chars, collapse whitespace, cap each topic's length, drop empties, de-dupe, and
+// cap the count. No whitelist — arbitrary custom topics are the product — but no
+// unbounded/abusive input reaches the DB or the LLM either.
+function sanitizeTopics(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const t of raw) {
+    if (typeof t !== "string") continue;
+    const clean = t.replace(/[\u0000-\u001F\u007F]/g, " ").replace(/[\s]+/g, " ").trim().slice(0, MAX_TOPIC_LEN);
+    if (!clean) continue;
+    const k = clean.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(clean);
+    if (out.length >= MAX_TOPICS) break;
+  }
+  return out;
+}
+
+// `today` also flows into the prompt, so constrain it to date-ish characters.
+function sanitizeToday(raw: unknown): string {
+  if (typeof raw === "string") {
+    const clean = raw.replace(/[^\w ,:-]/g, "").trim().slice(0, 40);
+    if (clean) return clean;
+  }
+  return new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+}
 
 // ── Live brief generation ────────────────────────────────────────────────────
 // Cache-aside: serve cached topics instantly, generate only the misses, cache
 // them for everyone else, and always fall back to an RSS-only brief if the AI
 // is unavailable so a brief never fully fails.
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  if (!body?.topics?.length) return NextResponse.json({ error: "No topics" }, { status: 400 });
+  let body: any;
+  try { body = await req.json(); } catch { return NextResponse.json({ error: "Bad request" }, { status: 400 }); }
 
-  // Hard server-side cap so one request can't generate an unbounded number of topics
-  const topics = (body.topics as string[]).slice(0, MAX_TOPICS);
-  const today = body.today;
+  const topics = sanitizeTopics(body?.topics);
+  if (!topics.length) return NextResponse.json({ error: "No topics" }, { status: 400 });
+  const today = sanitizeToday(body?.today);
 
   // IP-based rate limit — blocks abuse loops, ignores real usage (best-effort)
   const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim()
