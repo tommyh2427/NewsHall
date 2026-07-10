@@ -41,6 +41,11 @@ export function previousWindowKey(topic: string): string {
   return topicKeyForWindow(topic, cacheWindow() - 1);
 }
 
+// The ET calendar day, stored in the brief_date column. WRITE-ONLY: it's never a
+// read filter (reads match on topic_key over a 2-day brief_date range), so its
+// timezone is intentionally decoupled from cacheWindow's UTC 6h buckets — the
+// window id alone partitions cache content. Do NOT "align" them: renumbering the
+// window would invalidate the entire cache for zero functional gain.
 export function briefDateKey(): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
@@ -60,21 +65,6 @@ function logWarn(scope: string, e?: unknown): void {
   console.warn(`[newshall] ${scope}${e ? ": " + (e instanceof Error ? e.message : String(e)) : ""}`);
 }
 
-export async function readTopicCache(keys: string[], dateKey: string): Promise<Record<string, any>> {
-  const sb = supa();
-  if (!sb || !keys.length) return {};
-  try {
-    const { data, error } = await sb
-      .from("topic_briefs")
-      .select("topic_key, content")
-      .eq("brief_date", dateKey)
-      .in("topic_key", keys);
-    if (error || !data) { if (error) logWarn("cache read failed → treating as miss", error.message); return {}; }
-    const map: Record<string, any> = {};
-    for (const row of data) map[row.topic_key] = row.content;
-    return map;
-  } catch (e) { logWarn("cache read failed → treating as miss", e); return {}; }
-}
 
 // Read arbitrary cache keys (which already embed their window) across the last
 // couple of days — used for stale-while-revalidate, where we look up both the
