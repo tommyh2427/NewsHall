@@ -1231,15 +1231,22 @@ export default function NewsHall() {
        </div>
      )}
      {phase==="done"&&brief&&!brief.error&&(
-       <div className="brief-tab-hd">
-         <div>
-           <div className="brief-tab-edition">Morning Brief</div>
-           <div className="brief-tab-title">{brief.headline||"Your Morning Brief"}</div>
-           <div className="brief-tab-sub">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}):today}{getReadingTime(brief)?" · "+getReadingTime(brief):""}</div>
-         </div>
-         <div style={{display:"flex",gap:8,flexShrink:0,marginTop:4}}>
-           <button className="brief-share-btn" onClick={shareBrief}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"/></svg>Share</button>
-           <button className="brief-refresh-btn" onClick={generate} disabled={isStreaming||cooldown>0}>{cooldown>0?`${cooldown}s`:"Refresh"}</button>
+       <div className="bmast-wrap">
+         <div className="bmast">
+           <div className="bmast-glow" aria-hidden="true"/>
+           <div className="bmast-grid" aria-hidden="true"/>
+           <div className="bmast-top">
+             <span className="bmast-pub">NewsHall</span>
+             <span className="bmast-date-sm">{savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}):today}</span>
+           </div>
+           <div className="bkicker">Your Morning Brief</div>
+           <div className="bhl">{brief.headline||"Your Morning Brief"}</div>
+           <div className="bmeta">{topics.length} topic{topics.length!==1?"s":""} · {savedBriefMeta?new Date(savedBriefMeta.generated_at).toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}):today}{getReadingTime(brief)?" · "+getReadingTime(brief):""}</div>
+           <div className="bmast-btns">
+             <button className="btweak" onClick={()=>setTab("topics")}>Edit topics</button>
+             <button className="brefresh" onClick={generate} disabled={isStreaming||cooldown>0}>{cooldown>0?`Wait ${cooldown}s`:"Refresh brief"}</button>
+             <button className="bshare" onClick={shareBrief}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"/></svg>Share</button>
+           </div>
          </div>
        </div>
      )}

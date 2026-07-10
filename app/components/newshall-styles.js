@@ -233,6 +233,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .radar-topic{font-size:0.5rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 10px;white-space:nowrap;margin-top:2px;flex-shrink:0;}
 @keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 /* Masthead */
+/* Logged-in masthead sits outside .brief-wrap, so give it matching width */
+.bmast-wrap{max-width:860px;margin:0 auto;padding:0 48px;}
+@media(max-width:600px){.bmast-wrap{padding:0 20px;}}
 /* Brief masthead — dark cinematic card matching the landing hero */
 .bmast{position:relative;overflow:hidden;background:#0b0b10;border-radius:20px;padding:40px 44px 32px;margin:28px 0 56px;box-shadow:0 24px 60px rgba(10,10,20,0.35);}
 .bmast::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b62f6,#b44bf0,#e0233e);z-index:2;}
