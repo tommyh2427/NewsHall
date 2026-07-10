@@ -154,35 +154,37 @@ export default function NewsHall() {
    if(prefs?.topics?.length) setTopics(prefs.topics);
    if(prefs?.settings) setSettings(s=>({...s,...prefs.settings}));
 
-   if(savedBrief?.content) {
+   // Use whichever brief is NEWEST: the DB row or a locally-saved one. A local
+   // brief newer than the DB means a client write didn't reach the DB (offline,
+   // failed write, or generated just before signing in) — show it AND re-persist
+   // so the next login is never stale. Prevents "refresh works but re-login shows
+   // an old brief".
+   let pending = null;
+   try {
+     const p = localStorage.getItem("nh_pending_brief");
+     if(p){ const j=JSON.parse(p); if(j?.brief && Date.now()-j.ts < 86400000) pending = j; }
+   } catch(_) {}
+   const dbTs = savedBrief?.content ? new Date(savedBrief.generated_at).getTime() : 0;
+
+   if(pending && pending.ts > dbTs) {
+     const nowIso = new Date(pending.ts).toISOString();
+     setBrief(pending.brief); setPhase("done"); setSavedBriefMeta({generated_at:nowIso}); loadOgImages(pending.brief); setBriefIsStale(false);
+     if(pending.topics?.length) setTopics(pending.topics);
+     supabase.from("briefs").upsert({user_id:u.id,content:pending.brief,generated_at:nowIso},{onConflict:"user_id"})
+       .then(({error})=>{ if(error) console.warn("[newshall] brief re-persist failed:",error.message); });
+     if(pending.topics?.length) supabase.from("user_settings").upsert({user_id:u.id,topics:pending.topics,updated_at:nowIso},{onConflict:"user_id"}).then(()=>{},()=>{});
+     localStorage.removeItem("nh_pending_brief");
+   } else if(savedBrief?.content) {
      setBrief(savedBrief.content);
      setPhase("done");
      setSavedBriefMeta({generated_at: savedBrief.generated_at});
      loadOgImages(savedBrief.content);
-     // Check freshness — is it from today?
-     const genDate = new Date(savedBrief.generated_at);
-     const todayDate = new Date();
+     const genDate = new Date(savedBrief.generated_at), todayDate = new Date();
      const isToday = genDate.getFullYear()===todayDate.getFullYear() &&
        genDate.getMonth()===todayDate.getMonth() &&
        genDate.getDate()===todayDate.getDate();
      setBriefIsStale(!isToday);
-   } else {
-     // No saved brief — check if user generated one before signing in
-     try {
-       const pending = localStorage.getItem("nh_pending_brief");
-       if(pending) {
-         const {brief:pb,topics:pt,ts} = JSON.parse(pending);
-         // Only restore if generated within last 24h
-         if(pb && Date.now()-ts < 86400000) {
-           const now = new Date().toISOString();
-           await supabase.from("briefs").upsert({user_id:u.id,content:pb,generated_at:now},{onConflict:"user_id"});
-           if(pt?.length) await supabase.from("user_settings").upsert({user_id:u.id,topics:pt,updated_at:now},{onConflict:"user_id"});
-           setBrief(pb); setPhase("done"); setSavedBriefMeta({generated_at:now}); loadOgImages(pb);
-           if(pt?.length) setTopics(pt);
-         }
-         localStorage.removeItem("nh_pending_brief");
-       }
-     } catch(_) {}
+     localStorage.removeItem("nh_pending_brief"); // DB is authoritative here
    }
 
    // Apply delivery time + topics from user_settings (fetched in parallel above)
@@ -205,7 +207,8 @@ export default function NewsHall() {
  const saveUserData = async (b, t) => {
    if(!user) return;
    const now = new Date().toISOString();
-   await supabase.from("briefs").upsert({user_id:user.id, content:b, generated_at:now},{onConflict:"user_id"});
+   const {error:briefErr} = await supabase.from("briefs").upsert({user_id:user.id, content:b, generated_at:now},{onConflict:"user_id"});
+   if(briefErr) console.warn("[newshall] saving brief failed:",briefErr.message); // localStorage fallback still restores it on next login
    // Compute delivery_hour_utc so new users are picked up by the cron
    const utcOffset = new Date().getTimezoneOffset(); // minutes behind UTC
    const [h, m] = (deliveryTime||"07:00").split(":").map(Number);

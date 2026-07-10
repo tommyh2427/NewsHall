@@ -30,8 +30,8 @@ create table if not exists briefs (
   generated_at timestamptz default now()
 );
 alter table briefs enable row level security;
-create policy "Users read own briefs" on briefs
-  for select using (auth.uid() = user_id);
--- Service role can write briefs (cron job uses service role)
-create policy "Service role writes briefs" on briefs
-  for all using (true) with check (true);
+-- A user may read AND write ONLY their own brief. (The old "for all using(true)
+-- with check(true)" policy let ANY anon request overwrite ANY user's brief.)
+create policy "Users manage own briefs" on briefs
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+-- The cron uses the service role, which bypasses RLS entirely — no policy needed.
