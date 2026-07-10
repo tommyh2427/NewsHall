@@ -63,8 +63,14 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (payload: object) =>
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
+      // Guarded: if the client disconnects mid-stream, enqueue throws on the
+      // closed controller. Swallow it — there's no one to send to — so it never
+      // becomes an unhandled rejection. (The client already skips any malformed
+      // line and buffers partial ones, so this is purely server-side hygiene.)
+      const send = (payload: object) => {
+        try { controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`)); }
+        catch { /* client gone / controller closed — nothing to do */ }
+      };
 
       try {
         const dateKey = briefDateKey();
@@ -150,7 +156,7 @@ export async function POST(req: NextRequest) {
       } catch (err: any) {
         send({ type: "error", message: err?.message || "Failed" });
       } finally {
-        controller.close();
+        try { controller.close(); } catch { /* already closed/errored */ }
       }
     },
   });
