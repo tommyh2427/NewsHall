@@ -2,7 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import webpush from "web-push";
 import {
-  normalizeTopicKey, briefDateKey, readTopicCache, writeTopicCache,
+  normalizeTopicKey, briefDateKey, readTopicCacheKeys, writeTopicCache,
   generateTopics, promoteLeadWithPhoto,
 } from "@/app/lib/news-pipeline";
 
@@ -39,20 +39,30 @@ function setupPush() {
 // Pre-warm the shared cache: generate each unique topic exactly once. This is the
 // only AI work; identical to the live route so cache entries never drift. Chunked
 // so results are written incrementally (resilient if the invocation is cut short).
-async function prewarmTopics(allKeys: string[], today: string, dateKey: string): Promise<void> {
-  const unique = [...new Set(allKeys)];
-  if (!unique.length) return;
-  const cached = await readTopicCache(unique, dateKey);
-  const misses = unique.filter(k => !cached[k]);
-  if (!misses.length) return;
+// Takes RAW topic names ("Stock Market"), never normalized keys — the keys embed
+// the cache window ("stock market#82578") and feeding those into generateTopics
+// turns them into garbage news searches that return nothing. Keys are used only
+// for cache lookups/writes.
+async function prewarmTopics(rawTopics: string[], today: string, dateKey: string): Promise<void> {
+  // Dedupe by normalized (window-aware) key; remember one raw name per key.
+  const byKey = new Map<string, string>();
+  for (const t of rawTopics) { const k = normalizeTopicKey(t); if (!byKey.has(k)) byKey.set(k, t); }
+  if (!byKey.size) return;
+
+  // Range-based read (matches the live route): the current window can span ET
+  // midnight — a brief_date-equality read would miss rows cached before midnight
+  // and regenerate them needlessly.
+  const cached = await readTopicCacheKeys([...byKey.keys()]);
+  const missKeys = [...byKey.keys()].filter(k => !cached[k]);
+  if (!missKeys.length) return;
 
   const CHUNK = 15;
-  for (let i = 0; i < misses.length; i += CHUNK) {
-    const slice = misses.slice(i, i + CHUNK);
-    const generated = await generateTopics(slice, today).catch(() => ({}));
+  for (let i = 0; i < missKeys.length; i += CHUNK) {
+    const sliceTopics = missKeys.slice(i, i + CHUNK).map(k => byKey.get(k)!);
+    const generated = await generateTopics(sliceTopics, today).catch(() => ({}));
     const entries = Object.entries(generated)
       .filter(([, content]: any) => content?.stories?.length)
-      .map(([key, content]) => ({ key, content }));
+      .map(([topic, content]) => ({ key: normalizeTopicKey(topic), content }));
     if (entries.length) await writeTopicCache(entries, dateKey);
   }
 }
@@ -60,10 +70,12 @@ async function prewarmTopics(allKeys: string[], today: string, dateKey: string):
 // Note: generateTopics/prewarmTopics key the cache via normalizeTopicKey, which
 // already normalizes the topic — so we pass RAW topics here, not pre-normalized
 // keys, and let the pipeline do the (slot-aware) normalization consistently.
-async function assembleFromCache(topics: string[], dateKey: string): Promise<any[]> {
+async function assembleFromCache(topics: string[]): Promise<any[]> {
   const keyByTopic: Record<string, string> = {};
   for (const t of topics) keyByTopic[t] = normalizeTopicKey(t);
-  const cached = await readTopicCache([...new Set(Object.values(keyByTopic))], dateKey);
+  // Range-based read: an equality read on today's brief_date would drop topics
+  // cached just before ET midnight from assembled briefs (window spans midnight).
+  const cached = await readTopicCacheKeys([...new Set(Object.values(keyByTopic))]);
   return topics
     .map(t => { const c = cached[keyByTopic[t]]; return c?.stories?.length ? promoteLeadWithPhoto({ ...c, topic: t }) : null; })
     .filter(Boolean);
@@ -79,13 +91,13 @@ async function processUsers(users: UserRow[], today: string, dateKey: string): P
   // globally pre-warmed popular set). Popular topics are already cache hits here.
   const topicPool: string[] = [];
   for (const u of users) for (const t of (u.topics || [])) topicPool.push(t);
-  await prewarmTopics(topicPool.map(normalizeTopicKey), today, dateKey);
+  await prewarmTopics(topicPool, today, dateKey);
 
   let generated = 0;
   for (let i = 0; i < users.length; i += ASSEMBLE_CONCURRENCY) {
     const chunk = users.slice(i, i + ASSEMBLE_CONCURRENCY);
     await Promise.allSettled(chunk.map(async (u) => {
-      const briefTopics = await assembleFromCache(u.topics, dateKey);
+      const briefTopics = await assembleFromCache(u.topics);
       if (!briefTopics.length) return;
 
       const extraCount = briefTopics.length - 1;
@@ -148,14 +160,17 @@ export async function GET(req: NextRequest) {
   // Phase 1 — warm the hottest shared topics ONCE, before fan-out. Because workers
   // run in parallel, without this the most popular topics would race and get
   // generated redundantly across workers; warming them first makes them cache hits.
-  const popularity = new Map<string, number>();
+  // Rank by normalized key, but keep a RAW topic name per key — prewarmTopics
+  // needs real names for news searches, not window-suffixed cache keys.
+  const popularity = new Map<string, { count: number; raw: string }>();
   for (const u of due) for (const t of u.topics) {
     const k = normalizeTopicKey(t);
-    popularity.set(k, (popularity.get(k) || 0) + 1);
+    const e = popularity.get(k);
+    if (e) e.count++; else popularity.set(k, { count: 1, raw: t });
   }
-  const popularKeys = [...popularity.entries()]
-    .sort((a, b) => b[1] - a[1]).slice(0, POPULAR_PREWARM).map(([k]) => k);
-  await prewarmTopics(popularKeys, today, dateKey);
+  const popularTopics = [...popularity.values()]
+    .sort((a, b) => b.count - a.count).slice(0, POPULAR_PREWARM).map(e => e.raw);
+  await prewarmTopics(popularTopics, today, dateKey);
 
   // Phase 2 — fan out users into worker invocations. Small runs (single batch) or
   // fan-out disabled → just process inline; no point paying a self-call round-trip.
