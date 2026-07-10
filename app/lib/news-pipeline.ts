@@ -123,17 +123,20 @@ export async function isRateLimited(ip: string, limit = 15, windowSec = 60): Pro
   const sb = supa();
   if (!sb || !ip || ip === "unknown") return false;
   try {
+    // Record THIS request first, then count — so the count includes in-flight
+    // concurrent requests. (Count-then-insert lets a simultaneous burst all read
+    // count≈0 and pass; awaiting the insert wouldn't help, since the read already
+    // happened.) Insert-then-count bounds a burst to ~the truly-concurrent count.
+    const ins = await sb.from("brief_rate").insert({ ip });
+    if (ins.error) return false; // table missing / write failed → don't block real users
     const since = new Date(Date.now() - windowSec * 1000).toISOString();
     const { count } = await sb
       .from("brief_rate")
       .select("*", { count: "exact", head: true })
       .eq("ip", ip)
       .gte("ts", since);
-    if ((count ?? 0) >= limit) return true;
-    // Record this request without blocking the response on the write
-    void sb.from("brief_rate").insert({ ip }).then(() => {}, () => {});
-    return false;
-  } catch { return false; } // table missing / error → don't block real users
+    return (count ?? 0) > limit; // our own row is counted, so use strictly-greater
+  } catch { return false; } // error → fail open, never block real users
 }
 
 // ── Feeds ────────────────────────────────────────────────────────────────────
