@@ -873,8 +873,10 @@ function validateStories(stories: any[], articles: Article[]): any[] {
         best = a; bestShared = shared;
       }
     }
-    if (best) out.push({ ...rest, url: best.link, source: best.source, image: best.image });
-    // else: unverifiable — drop it rather than ship a hallucinated link
+    if (best) { out.push({ ...rest, url: best.link, source: best.source, image: best.image }); continue; }
+    // Unverifiable (no valid id, no URL match, no headline match) — drop rather
+    // than ship a hallucinated link, but log it so a misbehaving model is visible.
+    logWarn(`story dropped as unverifiable (id=${id ?? source_id ?? "none"}): ${String(rest.headline).slice(0, 60)}`);
   }
   return out;
 }
