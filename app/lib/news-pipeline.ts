@@ -706,17 +706,18 @@ SUMMARY RULES (this is where quality lives — follow exactly):
 - NO attribution, NO dateline. Never write "as reported by X", "according to Y", the outlet's name, or "on July 9, 2026". The source and date are shown separately. Open with the news itself.
 - NO filler sentence. Never end on an obvious or empty statement. BANNED closers (and anything like them): "improved their record", "expecting large crowds", "a major venue in the area", "sheds light on", "brings new challenges and rewards", "marks a significant development", "the process is open to residents", "will take place throughout the summer".
 - BANNED phrases: "this event matters", "this could impact", "raising questions", "the overall market", "steps can be taken", "advisors recommend", "experts say".
+- NO DASHES. Never use an em dash or en dash (— or –) anywhere in headlines, summaries, or watch_for items. Write plain sentences with commas and periods instead. Hyphens inside compound words (e.g. "third-quarter") are fine.
 - Facts only, no opinion. Never invent facts that aren't in the Details.
 
-EXAMPLE (specific beats generic — every fact below comes from the article's Details):
+EXAMPLE (specific beats generic; every fact below comes from the article's Details):
 Details: "New Orleans carries $74.7M in dead cap for 2026, most in the NFL, ahead of Tampa Bay ($58.9M) and Carolina ($54.3M). Dead cap is money owed to players no longer on the roster."
 GENERIC (bad): "The Saints have a lot of dead cap money this season, which affects their roster flexibility."
-SPECIFIC (good): "The Saints top the NFL with $74.7 million in dead cap for 2026 — money still owed to players no longer on the roster — ahead of Tampa Bay's $58.9 million and Carolina's $54.3 million."
+SPECIFIC (good): "The Saints top the NFL with $74.7 million in dead cap for 2026, money still owed to players no longer on the roster. Tampa Bay is next at $58.9 million, then Carolina at $54.3 million."
 - SOURCING: Do NOT write URLs. For each story set "id" to the [N] number shown before the article you summarized. Only summarize articles from the list — never invent a story. Facts only, no opinion.
 - Headlines: write ONE clean headline per story. Never repeat the headline text, never append the publisher/outlet name, never copy dash-separated suffixes from the source title.
 - "watch_for": For EACH topic, add 1-2 forward-looking items written so a casual reader instantly gets it. 15-28 words. Every item MUST include: (1) the SPECIFIC named event — never a vague placeholder, (2) WHEN it happens — the exact date or day, or the narrowest window you can state, (3) a few words of plain-English context on what it is and why it matters. Always spell out acronyms and names.
   BANNED (too vague — never write these): "the next major tournament", "an upcoming election", "the next meeting", "later this month", "a key report soon". If you can't name the actual event and its date, DO NOT include the item.
-  GOOD: "The Open Championship, golf's oldest major, runs July 17-20 at Royal Portrush in Northern Ireland — the year's final men's major.", "Fed interest-rate decision Wednesday, July 30 — a cut would lower borrowing costs on mortgages and credit cards.", "PGA FedEx Cup playoffs begin August 7, a three-tournament series deciding the season champion and a $25M prize."
+  GOOD: "The Open Championship, golf's oldest major and the year's final men's major, runs July 17-20 at Royal Portrush in Northern Ireland.", "Fed interest-rate decision Wednesday, July 30, where a cut would lower borrowing costs on mortgages and credit cards.", "PGA FedEx Cup playoffs begin August 7, a three-tournament series deciding the season champion and a $25M prize."
   If nothing concrete and dated is upcoming for a topic, use an empty array rather than a vague guess.
 - Respond ONLY with valid JSON:
 {"topics":[{"topic":"Topic Name","stories":[{"headline":"string","summary":"string","source":"string","id":number}],"watch_for":["short upcoming item"]}]}`;
@@ -788,6 +789,18 @@ function normUrl(u: string): string {
   } catch { return (u || "").toLowerCase().replace(/[?#].*$/, "").replace(/\/+$/, ""); }
 }
 
+// Strip AI-tell em/en dashes from model-written text: " — " asides become ", ",
+// leftover bare dashes become commas. Compound-word hyphens are untouched.
+// Prompt already bans them; this catches anything that slips through (and old
+// cached content is scrubbed client-side with the same rule).
+export function deDash(raw: string): string {
+  return (raw || "")
+    .replace(/\s*[—–]\s*/g, ", ")
+    .replace(/,\s*,/g, ", ")
+    .replace(/\s+([.,])/g, "$1")
+    .trim();
+}
+
 // Clean a headline: collapse "Headline — Headline Publisher" duplication (a
 // Google News artifact the AI sometimes copies) and strip trailing source names.
 export function sanitizeHeadline(raw: string, source?: string): string {
@@ -833,7 +846,8 @@ function validateStories(stories: any[], articles: Article[]): any[] {
     if (!s?.headline) continue;
     // Strip the model's routing fields so they never leak into the brief.
     const { id, source_id, url, ...rest } = s;
-    rest.headline = sanitizeHeadline(rest.headline, rest.source);
+    rest.headline = deDash(sanitizeHeadline(rest.headline, rest.source));
+    if (rest.summary) rest.summary = deDash(rest.summary);
 
     // 1. Preferred: resolve the [N] id to its exact source article.
     const idx = Number(id ?? source_id);
@@ -975,7 +989,11 @@ Return JSON with all ${topics.length} topics.`;
       if (key && !usedKeys.has(key)) {
         // Validate every story URL against the articles we actually showed Groq
         const stories = validateStories(tg.stories, shownByTopic[key] || []);
-        if (stories.length) { out[key] = { ...tg, stories }; usedKeys.add(key); }
+        if (stories.length) {
+          const watch = Array.isArray(tg.watch_for) ? tg.watch_for.map((w: any) => typeof w === "string" ? deDash(w) : w) : tg.watch_for;
+          out[key] = { ...tg, stories, watch_for: watch };
+          usedKeys.add(key);
+        }
       }
     });
   } catch { /* parse failed — return what we have (caller falls back) */ }

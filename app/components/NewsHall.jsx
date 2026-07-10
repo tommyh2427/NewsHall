@@ -965,6 +965,8 @@ export default function NewsHall() {
      }
      if(!changed)break;
    }
+   // Strip AI-tell em/en dashes (server scrubs new briefs; this covers cached ones)
+   s=s.replace(/\s*[—–]\s*/g,", ").replace(/,\s*,/g,", ").replace(/\s+([.,])/g,"$1").trim();
    return s;
  };
 
@@ -987,7 +989,7 @@ export default function NewsHall() {
    const items = [];
    for(const tg of briefData.topics){
      for(const w of (tg.watch_for||[])){
-       if(w && items.length < 5) items.push({text:w, topic:tg.topic});
+       if(w && items.length < 5) items.push({text:clean(w), topic:tg.topic});
      }
    }
    return items;
