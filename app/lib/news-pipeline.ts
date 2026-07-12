@@ -27,8 +27,13 @@ export function cacheWindow(): number {
   return Math.floor(Date.now() / WINDOW_MS);
 }
 
+// Plain topic slug — for lookups that must NOT vary by cache window (TOPIC_FEEDS).
+export function topicSlug(topic: string): string {
+  return topic.toLowerCase().trim().replace(/\s+/g, " ");
+}
+
 function topicKeyForWindow(topic: string, window: number): string {
-  return `${topic.toLowerCase().trim().replace(/\s+/g, " ")}#${window}`;
+  return `${topicSlug(topic)}#${window}`;
 }
 
 export function normalizeTopicKey(topic: string): string {
@@ -562,7 +567,7 @@ export async function fetchOgImage(rawUrl: string): Promise<string | null> {
 // never a fabricated photo of real people or events, so it stays honest), hosts
 // it in Supabase Storage, and reuses it forever (generate once per topic).
 function topicImagePath(topic: string): string {
-  return (normalizeTopicKey(topic).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "general") + ".png";
+  return (topicSlug(topic).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "general") + ".png";
 }
 
 async function geminiGenerateImage(topic: string): Promise<Buffer | null> {
@@ -618,7 +623,10 @@ export async function fetchArticlesForTopics(topics: string[]): Promise<Record<s
   const feedUrls = new Set<string>();
   const topicFeedMap: Record<string, string[]> = {};
   for (const topic of topics) {
-    const key = normalizeTopicKey(topic);
+    // topicSlug, NOT normalizeTopicKey: the cache key embeds the 6h window
+    // ("nfl#82653"), which silently missed every TOPIC_FEEDS entry and left
+    // topics fed by Google News search alone. The slug matches the map keys.
+    const key = topicSlug(topic);
     const feeds = [...(TOPIC_FEEDS[key] ?? []), googleNewsUrl(topic)];
     topicFeedMap[topic] = feeds;
     feeds.forEach(f => feedUrls.add(f));

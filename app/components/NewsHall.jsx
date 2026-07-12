@@ -112,6 +112,11 @@ export default function NewsHall() {
    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,session)=>{
      setUser(session?.user??null);
      if(session?.user) loadUserData(session.user);
+     // If OAuth landed on / with ?code= (redirect fallback), the browser client
+     // exchanges it automatically — clean the leftover param off the URL.
+     if(session?.user && window.location.search.includes("code=")){
+       try{ window.history.replaceState({}, "", window.location.pathname); }catch(_){}
+     }
    });
    return ()=>subscription.unsubscribe();
  },[]);
@@ -162,7 +167,9 @@ export default function NewsHall() {
    let pending = null;
    try {
      const p = localStorage.getItem("nh_pending_brief");
-     if(p){ const j=JSON.parse(p); if(j?.brief && Date.now()-j.ts < 86400000) pending = j; }
+     // 6h gate (matches the cache window): a locally-saved brief older than that
+     // should never beat the DB — kills any stale-local-brief-on-login case.
+     if(p){ const j=JSON.parse(p); if(j?.brief && Date.now()-j.ts < 6*60*60*1000) pending = j; }
    } catch(_) {}
    const dbTs = savedBrief?.content ? new Date(savedBrief.generated_at).getTime() : 0;
 
