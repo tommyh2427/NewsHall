@@ -843,8 +843,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .nuo-search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:0.35;pointer-events:none;font-size:1rem;}
 .nuo-sugg-lbl{font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:10px;}
 .nuo-sugg-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
-.nuo-sugg{padding:8px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:100px;font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;user-select:none;}
-.nuo-sugg:hover{background:rgba(255,255,255,0.12);}
+.nuo-sugg{padding:8px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:100px;font-family:inherit;font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;user-select:none;-webkit-appearance:none;appearance:none;}
+.nuo-sugg:hover:not(:disabled){background:rgba(255,255,255,0.12);}
+.nuo-sugg:disabled{opacity:0.3;cursor:not-allowed;}
+.nuo-sugg:focus-visible,.nuo-btn:focus-visible{outline:2px solid #7c9bff;outline-offset:2px;}
 .nuo-sugg.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
 .nuo-chips{display:flex;flex-wrap:wrap;gap:7px;min-height:28px;margin-bottom:12px;}
 .nuo-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:100px;padding:6px 12px;font-size:0.78rem;color:#fff;font-weight:500;}

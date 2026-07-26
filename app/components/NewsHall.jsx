@@ -203,24 +203,49 @@ export default function NewsHall() {
      setPushStatus(Notification.permission === "granted" ? "granted" : "idle");
    }
 
-   // New user onboarding — no brief AND no saved topics
-   if(!savedBrief?.content && !prefs?.topics?.length) {
+   // ── First-run routing ──────────────────────────────────────────────────
+   // Topics can come from three places, so check ALL of them: user_preferences,
+   // user_settings (what saveUserData actually writes), and the local picks a
+   // visitor made before signing up. Checking only prefs re-onboarded people who
+   // were already set up.
+   let localTopics = [];
+   try { const l = localStorage.getItem("nh_topics"); if(l) localTopics = JSON.parse(l) || []; } catch(_) {}
+   const knownTopics = (prefs?.topics?.length && prefs.topics)
+     || (userSettings?.topics?.length && userSettings.topics)
+     || (localTopics.length && localTopics) || [];
+   const haveBrief = !!(savedBrief?.content || pending?.brief);
+
+   if(!haveBrief && !knownTopics.length) {
+     // Brand-new user: go straight to topic picking (which generates on submit).
      setTimeout(()=>setShowNewUserOnboard(true), 400);
-   } else if(!savedBrief?.content && Notification.permission !== "granted") {
-     setTimeout(()=>setShowOnboarding(true), 800);
+   } else if(!haveBrief && knownTopics.length) {
+     // They have topics but no brief (e.g. picked topics before signing up, or a
+     // prior generation never saved). Build it now instead of showing an empty
+     // dashboard — pass topics explicitly since setTopics hasn't flushed yet.
+     setTopics(knownTopics);
+     setTimeout(()=>generate(knownTopics), 300);
+   } else if(Notification.permission !== "granted") {
+     setTimeout(()=>setShowOnboarding(true), 1200);
    }
  };
 
  const saveUserData = async (b, t) => {
-   if(!user) return;
+   // Resolve the user at call time. The auth-listener closure captures `user` from
+   // the mount render (null), so the first-run auto-generate would otherwise skip
+   // saving entirely and the brief would be regenerated on every login.
+   let uid = user?.id;
+   if(!uid){
+     try { uid = (await supabase.auth.getUser()).data?.user?.id; } catch(_) {}
+   }
+   if(!uid) return;
    const now = new Date().toISOString();
-   const {error:briefErr} = await supabase.from("briefs").upsert({user_id:user.id, content:b, generated_at:now},{onConflict:"user_id"});
+   const {error:briefErr} = await supabase.from("briefs").upsert({user_id:uid, content:b, generated_at:now},{onConflict:"user_id"});
    if(briefErr) console.warn("[newshall] saving brief failed:",briefErr.message); // localStorage fallback still restores it on next login
    // Compute delivery_hour_utc so new users are picked up by the cron
    const utcOffset = new Date().getTimezoneOffset(); // minutes behind UTC
    const [h, m] = (deliveryTime||"07:00").split(":").map(Number);
    const deliveryHourUtc = ((h * 60 + (m||0) + utcOffset) / 60 + 24) % 24 | 0;
-   await supabase.from("user_settings").upsert({user_id:user.id, topics:t, delivery_time:deliveryTime, delivery_hour_utc:deliveryHourUtc, updated_at:now},{onConflict:"user_id"});
+   await supabase.from("user_settings").upsert({user_id:uid, topics:t, delivery_time:deliveryTime, delivery_hour_utc:deliveryHourUtc, updated_at:now},{onConflict:"user_id"});
    setSavedBriefMeta({generated_at: now});
    setBriefIsStale(false);
  };
@@ -1005,8 +1030,12 @@ export default function NewsHall() {
    return items;
  };
 
- const generate = async () => {
-   if(!topics.length){showToast("Add at least one topic first");return;}
+ // topicsOverride lets callers generate immediately after setting topics, without
+ // waiting for the React state update (used by the first-run auto-generate).
+ // Guarded with Array.isArray so `onClick={generate}` (which passes an event) is safe.
+ const generate = async (topicsOverride) => {
+   const genTopics = Array.isArray(topicsOverride) && topicsOverride.length ? topicsOverride : topics;
+   if(!genTopics.length){showToast("Add at least one topic first");return;}
    if(user) setTab("brief");
 
    // Stale-while-revalidate: if we already have a brief, keep showing it while we refresh in background
@@ -1021,7 +1050,7 @@ export default function NewsHall() {
      setPhase("loading");
      setBrief(null);
      setOgImages({});
-     const stepMessages=["Searching live sources...","Scanning "+topics.length+" topic"+(topics.length>1?"s":"")+"...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
+     const stepMessages=["Searching live sources...","Scanning "+genTopics.length+" topic"+(genTopics.length>1?"s":"")+"...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
      stepMessages.forEach((s,i)=>setTimeout(()=>setSteps(p=>[...p,s]),i*1800));
    }
    // For refresh: keep existing brief visible — user can keep reading while we fetch
@@ -1030,7 +1059,7 @@ export default function NewsHall() {
    const abortCtrl = new AbortController();
    const timeoutId = setTimeout(()=>abortCtrl.abort(),90000);
    try{
-     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics,today}),signal:abortCtrl.signal});
+     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics:genTopics,today}),signal:abortCtrl.signal});
      if(!res.ok||!res.body)throw new Error(`Server error ${res.status} — try again`);
      const reader=res.body.getReader();
      const decoder=new TextDecoder();
@@ -1061,9 +1090,9 @@ export default function NewsHall() {
            setBrief({...incomingBrief});
            setPhase("done");
            setIsStreaming(false);
-           saveUserData(incomingBrief,topics);
+           saveUserData(incomingBrief,genTopics);
            loadOgImages(incomingBrief);
-           try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:incomingBrief,topics,ts:Date.now()}));}catch(_){}
+           try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:incomingBrief,topics:genTopics,ts:Date.now()}));}catch(_){}
            setCooldown(15);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);
            if(isRefresh) showToast("Brief updated");
            break outer;
@@ -1946,22 +1975,25 @@ export default function NewsHall() {
        )}
        <div className="nuo-sugg-lbl">Popular topics</div>
        <div className="nuo-sugg-wrap">
-         {SUGGESTIONS.map(s=>(
-           <div
+         {SUGGESTIONS.map(s=>{const sel=topics.includes(s.name);const atMax=topics.length>=MAX_TOPICS&&!sel;return(
+           <button
              key={s.name}
-             className={`nuo-sugg${topics.includes(s.name)?" on":""}${topics.length>=MAX_TOPICS&&!topics.includes(s.name)?" disabled":""}`}
-             onClick={()=>topics.length<MAX_TOPICS||topics.includes(s.name)?togSugg(s.name):null}
-             style={{opacity:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?0.3:1,cursor:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?"not-allowed":"pointer"}}
+             type="button"
+             className={`nuo-sugg${sel?" on":""}`}
+             aria-pressed={sel}
+             disabled={atMax}
+             onClick={()=>togSugg(s.name)}
            >
              {s.name}
-           </div>
-         ))}
+           </button>
+         );})}
        </div>
      </div>
      <div className="nuo-footer">
        <button
          className={`nuo-btn${topics.length>0?" ready":""}`}
-         onClick={()=>{setShowNewUserOnboard(false);generate();}}
+         disabled={topics.length===0}
+         onClick={()=>{const picked=[...topics];setShowNewUserOnboard(false);generate(picked);}}
        >
          {topics.length===0?"Pick at least one topic →":`Build my brief — ${topics.length} topic${topics.length>1?"s":""} →`}
        </button>
