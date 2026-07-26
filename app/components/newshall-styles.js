@@ -589,8 +589,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
  .brief-story-grid{grid-template-columns:1fr;gap:22px;}
  .brief-feat-img{aspect-ratio:3/2;}
  .brief-feat-body{padding:18px 20px 16px;}
- .bmast{padding:28px 20px 22px;border-radius:16px;}
+ .bmast{padding:28px 20px 22px;border-radius:16px;margin:20px 0 32px;}
  .bhl{font-size:clamp(1.4rem,6vw,3.2rem);}
+ /* Three pills don't fit one phone row: primary full-width, others split below */
+ .bmast-btns{gap:8px;margin-top:18px;padding-top:16px;}
+ .brefresh{order:-1;width:100%;}
+ .btweak,.bshare{flex:1;display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;}
+ .brief-topic-section{margin-bottom:44px;}
  .dashboard-title{font-size:clamp(1.2rem,5vw,2.8rem);}
  .stats-inner{grid-template-columns:1fr 1fr;}
  .stat-block{border-bottom:1px solid var(--rule);padding:28px 22px;}
@@ -1042,6 +1047,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 
 /* ══ LANDING CHROME (newsbang-style): glass nav · progress bar · waves ══ */
 html{scroll-behavior:smooth;}
+/* Fixed navbar would otherwise clip the top of any section we scroll to */
+#live,#why,#how,#builder{scroll-margin-top:68px;}
 
 /* Landing topbar: transparent over the dark hero, glass on scroll */
 .topbar.lp{position:fixed;left:0;right:0;top:0;background:transparent;border-bottom:1px solid transparent;backdrop-filter:none;-webkit-backdrop-filter:none;transition:background 0.35s ease,border-color 0.35s ease,backdrop-filter 0.35s ease;}
@@ -1094,5 +1101,39 @@ html{scroll-behavior:smooth;}
 @media(prefers-reduced-motion:reduce){
   .wvp,.ls1-orb,.ls1-marquee-track{animation:none!important;}
   html{scroll-behavior:auto;}
+}
+
+/* ══ MOBILE LANDING (≤760px) ══════════════════════════════════════════════
+   The hero was min-height:100dvh + justify-content:center, but on a phone its
+   content is taller than the screen — so centering overflowed UPWARD and pushed
+   the headline behind the fixed navbar. Stack from the top instead, clear the
+   nav, and scale type/mockup down to phone proportions. */
+@media(max-width:760px){
+  .ls{min-height:auto;justify-content:flex-start;padding:96px 20px 64px;}
+  .ls-1{min-height:auto;padding-bottom:96px;}
+  .ls1-eyebrow{font-size:0.55rem;letter-spacing:0.18em;margin-bottom:16px;}
+  .ls1-hl{font-size:clamp(2.6rem,12.5vw,3.7rem);line-height:0.96;margin-bottom:18px;letter-spacing:-0.04em;}
+  .ls1-sub{font-size:0.98rem;line-height:1.55;margin-bottom:28px;max-width:340px;}
+  .ls1-btns{gap:10px;margin-bottom:26px;width:100%;flex-direction:column;align-items:stretch;}
+  .ls1-btn-p,.ls1-btn-g{width:100%;padding:15px 24px;font-size:0.95rem;}
+  .ls1-sources{gap:6px;}
+  .ls1-src-label{width:100%;text-align:center;margin-bottom:2px;}
+  .hero-phone{margin-top:40px;width:250px;padding:8px;border-radius:38px;}
+  .hp-screen{height:440px;border-radius:31px;}
+  /* Decorative extras that only crowd a phone */
+  .ls1-scroll{display:none;}
+  .ls1-orb-3{display:none;}
+  .ls1-wave{height:38%;bottom:6%;}
+  /* Section headlines: keep them from swallowing the screen */
+  .ls-wall-hl,.ls2-hl,.ls3-hl{font-size:clamp(1.75rem,7.5vw,2.4rem);line-height:1.08;margin-bottom:32px;}
+  .ls-statement-hl{font-size:clamp(2.2rem,10vw,3.2rem);}
+  .ls-wall-sub,.ls-statement-sub{font-size:0.95rem;line-height:1.6;}
+  .ls2-hl,.ls3-hl{margin-bottom:36px;}
+  .builder{padding:56px 20px;}
+  .step-h2{font-size:clamp(1.5rem,6.5vw,2rem);}
+  /* Tighter cards so the page scrolls less on a phone */
+  .ls2-card,.ls3-step{padding:22px 20px;}
+  .ls2-card-num{margin-bottom:8px;}
+  .ls3-num{font-size:1.8rem;margin-bottom:10px;}
 }
 `;

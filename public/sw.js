@@ -1,7 +1,12 @@
-const CACHE = 'newshall-v5';
-const PRECACHE = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
+// v6: HTML is no longer cached or served from cache. The previous version cached
+// the app shell but deliberately skipped /_next/ chunks, so a cached shell could
+// never boot — it only ever produced a page whose (content-hashed) chunks 404'd
+// after a deploy, so React never hydrated and the app was COMPLETELY DEAD until
+// the user cleared their cache. Bumping the version purges those poisoned caches.
+const CACHE = 'newshall-v6';
+const PRECACHE = ['/manifest.json', '/icon-192.png', '/icon-512.png'];
 
-// ── Install: pre-cache app shell ──────────────────────────────────────────
+// ── Install: pre-cache static, version-independent assets only ────────────
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
@@ -34,26 +39,22 @@ self.addEventListener('fetch', e => {
   // Intercepting them here caused stale JS to persist across deploys.
   if (url.pathname.startsWith('/_next/')) return;
 
-  // Navigation (HTML pages) — network-first, fall back to cached shell
-  if (request.mode === 'navigate') {
-    e.respondWith(
-      fetch(request)
-        .then(res => {
-          caches.open(CACHE).then(c => c.put(request, res.clone()));
-          return res;
-        })
-        .catch(() => caches.match('/'))
-    );
-    return;
-  }
+  // Navigation (HTML) — ALWAYS straight to the network, never cached.
+  // A cached HTML shell can't work here (its hashed /_next/ chunks aren't cached),
+  // and serving a stale one breaks hydration and kills the whole app. Letting the
+  // browser handle navigation means a network failure shows the browser's own
+  // offline page instead of a silently broken app.
+  if (request.mode === 'navigate') return;
 
-  // Everything else (images, fonts, icons) — cache-first
+  // Everything else (images, fonts, icons) — cache-first.
+  // Never cache an HTML response here either: same stale-shell hazard as above.
   e.respondWith(
     caches.open(CACHE).then(cache =>
       cache.match(request).then(hit => {
         if (hit) return hit;
         return fetch(request).then(res => {
-          if (res.ok) cache.put(request, res.clone());
+          const isHtml = (res.headers.get('content-type') || '').includes('text/html');
+          if (res.ok && !isHtml) cache.put(request, res.clone());
           return res;
         }).catch(() => new Response('', { status: 503 }));
       })
