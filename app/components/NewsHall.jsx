@@ -1397,13 +1397,15 @@ export default function NewsHall() {
        </div>
        <div className="sugg-lbl">Popular topics — click to add</div>
        <div className="sugg-wrap">
-         {SUGGESTIONS.map(s=><div key={s.name} className={`sugg${topics.includes(s.name)?" on":""}${topics.length>=MAX_TOPICS&&!topics.includes(s.name)?" disabled":""}`} onClick={()=>togSugg(s.name)} style={{opacity:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?0.35:1,cursor:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?"not-allowed":"pointer"}}>{s.name}</div>)}
+         {SUGGESTIONS.map(s=>{const sel=topics.includes(s.name);const atMax=topics.length>=MAX_TOPICS&&!sel;return(
+          <button key={s.name} type="button" className={`sugg${sel?" on":""}`} aria-pressed={sel} disabled={atMax} title={atMax?`Remove a topic to add more (max ${MAX_TOPICS})`:undefined} onClick={()=>togSugg(s.name)}>{s.name}</button>
+        );})}
        </div>
        <div className="chips">
          <span className="chips-lbl">Your topics:</span>
          {topics.length===0
            ? <span style={{fontSize:"0.72rem",color:"#b0b8c4"}}>Nothing yet — add topics above</span>
-           : topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)
+           : topics.map(t=><span key={t} className="chip">{t} <button type="button" className="chip-x" aria-label={`Remove ${t}`} onClick={()=>rmTopic(t)}>×</button></span>)
          }
          {topics.length>0&&(
            <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=8?"warn":"ok"}`}>{topics.length}/10</span>
@@ -1665,13 +1667,15 @@ export default function NewsHall() {
    </div>
    <div className="sugg-lbl">Popular topics — click to add</div>
    <div className="sugg-wrap">
-     {SUGGESTIONS.map(s=><div key={s.name} className={`sugg${topics.includes(s.name)?" on":""}${topics.length>=MAX_TOPICS&&!topics.includes(s.name)?" disabled":""}`} onClick={()=>togSugg(s.name)} style={{opacity:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?0.35:1,cursor:topics.length>=MAX_TOPICS&&!topics.includes(s.name)?"not-allowed":"pointer"}}>{s.name}</div>)}
+     {SUGGESTIONS.map(s=>{const sel=topics.includes(s.name);const atMax=topics.length>=MAX_TOPICS&&!sel;return(
+          <button key={s.name} type="button" className={`sugg${sel?" on":""}`} aria-pressed={sel} disabled={atMax} title={atMax?`Remove a topic to add more (max ${MAX_TOPICS})`:undefined} onClick={()=>togSugg(s.name)}>{s.name}</button>
+        );})}
    </div>
    <div className="chips">
      <span className="chips-lbl">Your topics:</span>
      {topics.length===0
        ? <span style={{fontSize:"0.72rem",color:"#b0b8c4"}}>Nothing yet — add topics above</span>
-       : topics.map(t=><span key={t} className="chip">{t} <span className="chip-x" onClick={()=>rmTopic(t)}>×</span></span>)
+       : topics.map(t=><span key={t} className="chip">{t} <button type="button" className="chip-x" aria-label={`Remove ${t}`} onClick={()=>rmTopic(t)}>×</button></span>)
      }
      {topics.length>0&&(
        <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=8?"warn":"ok"}`}>{topics.length}/10</span>
@@ -1935,7 +1939,7 @@ export default function NewsHall() {
            {topics.map(t=>(
              <span key={t} className="nuo-chip">
                {t}
-               <span className="nuo-chip-x" onClick={()=>rmTopic(t)}>×</span>
+               <button type="button" className="nuo-chip-x" aria-label={`Remove ${t}`} onClick={()=>rmTopic(t)}>×</button>
              </span>
            ))}
          </div>

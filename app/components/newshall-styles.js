@@ -136,10 +136,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .add-btn:hover{background:#e01535;}
 .sugg-lbl{font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:14px;}
 .sugg-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
-.sugg{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:7px 16px;font-size:0.76rem;font-weight:500;cursor:pointer;transition:all 0.18s cubic-bezier(0.22,1,0.36,1);color:rgba(255,255,255,0.6);}
-.sugg:hover{border-color:rgba(255,255,255,0.28);color:#fff;background:rgba(255,255,255,0.1);transform:translateY(-1px);}
+/* Real <button> elements (keyboard + screen-reader accessible), so they need the
+   font/appearance reset browsers don't inherit. */
+.sugg{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:7px 16px;font-family:inherit;font-size:0.76rem;font-weight:500;cursor:pointer;transition:all 0.18s cubic-bezier(0.22,1,0.36,1);color:rgba(255,255,255,0.6);-webkit-appearance:none;appearance:none;}
+.sugg:hover:not(:disabled){border-color:rgba(255,255,255,0.28);color:#fff;background:rgba(255,255,255,0.1);transform:translateY(-1px);}
 .sugg.on{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.02);}
-.sugg:active{transform:scale(0.97);}
+.sugg:active:not(:disabled){transform:scale(0.97);}
+.sugg:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+/* Visible keyboard focus (mouse users don't see it thanks to :focus-visible) */
+.sugg:focus-visible,.chip-x:focus-visible,.nuo-chip-x:focus-visible{outline:2px solid #7c9bff;outline-offset:2px;}
 .chips{min-height:52px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px;}
 .topic-counter{font-size:0.56rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-left:auto;padding:3px 10px;border-radius:100px;flex-shrink:0;}
 .topic-counter.ok{color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.07);}
@@ -147,7 +152,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .topic-counter.full{color:var(--accent);background:rgba(200,16,46,0.15);font-weight:700;}
 .chips-lbl{font-size:0.56rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28);flex-shrink:0;}
 .chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 12px;font-size:0.74rem;font-weight:600;color:#fff;}
-.chip-x{cursor:pointer;color:rgba(255,255,255,0.4);font-size:0.82rem;transition:color 0.1s;}
+.chip-x{cursor:pointer;color:rgba(255,255,255,0.4);font-size:0.82rem;transition:color 0.1s;background:none;border:none;padding:0 0 0 2px;font-family:inherit;line-height:1;-webkit-appearance:none;appearance:none;}
 .chip-x:hover{color:#ff6b6b;}
 .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .sblock{background:#fff;border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;}
@@ -843,7 +848,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
 .nuo-sugg.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
 .nuo-chips{display:flex;flex-wrap:wrap;gap:7px;min-height:28px;margin-bottom:12px;}
 .nuo-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:100px;padding:6px 12px;font-size:0.78rem;color:#fff;font-weight:500;}
-.nuo-chip-x{cursor:pointer;opacity:0.55;font-size:1rem;line-height:1;}
+.nuo-chip-x{cursor:pointer;opacity:0.55;font-size:1rem;line-height:1;background:none;border:none;padding:0 0 0 2px;color:inherit;font-family:inherit;-webkit-appearance:none;appearance:none;}
 .nuo-chip-x:hover{opacity:1;}
 .nuo-footer{padding:16px 24px env(safe-area-inset-bottom,20px);background:linear-gradient(to top,var(--ink) 70%,transparent);}
 .nuo-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:14px;padding:18px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;opacity:0.35;pointer-events:none;}
