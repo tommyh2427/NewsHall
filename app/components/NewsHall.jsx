@@ -1097,7 +1097,7 @@ export default function NewsHall() {
    const abortCtrl = new AbortController();
    const timeoutId = setTimeout(()=>abortCtrl.abort(),90000);
    try{
-     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics:genTopics,today}),signal:abortCtrl.signal});
+     const res=await fetch("/api/brief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topics:genTopics}),signal:abortCtrl.signal});
      if(!res.ok||!res.body)throw new Error(`Server error ${res.status} — try again`);
      const reader=res.body.getReader();
      const decoder=new TextDecoder();

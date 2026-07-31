@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import {
-  normalizeTopicKey, previousWindowKey, briefDateKey, readTopicCacheKeys, writeTopicCache,
+  normalizeTopicKey, previousWindowKey, briefDateKey, briefDateLabel, readTopicCacheKeys, writeTopicCache,
   fetchArticlesForTopics, generateTopics, fallbackBrief, promoteLeadWithPhoto,
   isRateLimited,
 } from "@/app/lib/news-pipeline";
@@ -32,14 +32,6 @@ function sanitizeTopics(raw: unknown): string[] {
   return out;
 }
 
-// `today` also flows into the prompt, so constrain it to date-ish characters.
-function sanitizeToday(raw: unknown): string {
-  if (typeof raw === "string") {
-    const clean = raw.replace(/[^\w ,:-]/g, "").trim().slice(0, 40);
-    if (clean) return clean;
-  }
-  return new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-}
 
 // ── Live brief generation ────────────────────────────────────────────────────
 // Cache-aside: serve cached topics instantly, generate only the misses, cache
@@ -51,7 +43,11 @@ export async function POST(req: NextRequest) {
 
   const topics = sanitizeTopics(body?.topics);
   if (!topics.length) return NextResponse.json({ error: "No topics" }, { status: 400 });
-  const today = sanitizeToday(body?.today);
+  // Derived server-side, never from the request: this date is baked into briefs
+  // written to the SHARED cache, so accepting a client value would let any caller
+  // stamp a bogus date (and bogus watch_for dates) onto every user's brief for
+  // that window. The client sends no date the server can't determine itself.
+  const today = briefDateLabel();
 
   // IP-based rate limit — blocks abuse loops, ignores real usage (best-effort)
   const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim()

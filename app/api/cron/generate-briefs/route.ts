@@ -2,7 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import webpush from "web-push";
 import {
-  normalizeTopicKey, briefDateKey, readTopicCacheKeys, writeTopicCache,
+  normalizeTopicKey, briefDateKey, briefDateLabel, readTopicCacheKeys, writeTopicCache,
   generateTopics, promoteLeadWithPhoto,
 } from "@/app/lib/news-pipeline";
 
@@ -136,7 +136,9 @@ export async function GET(req: NextRequest) {
   const supabase = supaAdmin();
 
   const now = new Date();
-  const today = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  // Same canonical server-side date the live route uses, so cron-generated and
+  // on-demand briefs can't disagree (this ran in the server's own timezone).
+  const today = briefDateLabel();
   const dateKey = briefDateKey();
   const currentHour = now.getUTCHours();
   const DEFAULT_HOUR = 12; // ~7-8am US Eastern for users who never set a delivery time

@@ -57,6 +57,20 @@ export function briefDateKey(): string {
   }).format(new Date());
 }
 
+// The human-readable date given to the model ("Sunday, July 12, 2026"), which it
+// uses to judge recency and to date watch_for items. Derived SERVER-side in the
+// app's canonical timezone, never taken from the client: this value is baked into
+// briefs written to the SHARED topic cache, so a client-supplied date would let
+// one caller stamp a wrong date onto every user's brief for that window (and even
+// without an attacker, the first caller's local date would leak to everyone).
+// Both the live route and the cron use this, so the two paths can't disagree.
+export function briefDateLabel(): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+  }).format(new Date());
+}
+
 function supa() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
