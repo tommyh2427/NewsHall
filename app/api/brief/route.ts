@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import {
-  normalizeTopicKey, previousWindowKey, briefDateKey, briefDateLabel, readTopicCacheKeys, writeTopicCache,
+  normalizeTopicKey, previousWindowKey, cacheWindow, briefDateKey, briefDateLabel, readTopicCacheKeys, writeTopicCache,
   fetchArticlesForTopics, generateTopics, fallbackBrief, promoteLeadWithPhoto,
   isRateLimited,
 } from "@/app/lib/news-pipeline";
@@ -72,7 +72,11 @@ export async function POST(req: NextRequest) {
         const dateKey = briefDateKey();
         const curKey: Record<string, string> = {};
         const prevKey: Record<string, string> = {};
-        for (const t of topics) { curKey[t] = normalizeTopicKey(t); prevKey[t] = previousWindowKey(t); }
+        // One window for this whole request: the keys we look up, the keys we
+        // write, and the background revalidate below must all agree even if the
+        // request spans a 6h rollover.
+        const win = cacheWindow();
+        for (const t of topics) { curKey[t] = normalizeTopicKey(t, win); prevKey[t] = previousWindowKey(t, win); }
 
         // 1. Shared cache — look up BOTH the current and previous window in one query.
         const lookup = [...new Set([...Object.values(curKey), ...Object.values(prevKey)])];
@@ -91,7 +95,7 @@ export async function POST(req: NextRequest) {
 
         if (missTopics.length) {
           // 2. Generate true misses with the shared pipeline (identical to cron)
-          const fresh = await generateTopics(missTopics, today);
+          const fresh = await generateTopics(missTopics, today, win);
           const writes: { key: string; content: any }[] = [];
           for (const t of missTopics) {
             const content = fresh[t];
@@ -131,7 +135,7 @@ export async function POST(req: NextRequest) {
         if (staleTopics.length) {
           after(async () => {
             try {
-              const fresh = await generateTopics(staleTopics, today);
+              const fresh = await generateTopics(staleTopics, today, win);
               const writes = Object.entries(fresh)
                 .filter(([, c]: any) => c?.stories?.length)
                 .map(([t, content]) => ({ key: curKey[t], content }));

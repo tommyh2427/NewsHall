@@ -2,7 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import webpush from "web-push";
 import {
-  normalizeTopicKey, briefDateKey, briefDateLabel, readTopicCacheKeys, writeTopicCache,
+  normalizeTopicKey, cacheWindow, briefDateKey, briefDateLabel, readTopicCacheKeys, writeTopicCache,
   generateTopics, promoteLeadWithPhoto,
 } from "@/app/lib/news-pipeline";
 
@@ -44,9 +44,14 @@ function setupPush() {
 // turns them into garbage news searches that return nothing. Keys are used only
 // for cache lookups/writes.
 async function prewarmTopics(rawTopics: string[], today: string, dateKey: string): Promise<void> {
+  // ONE window for miss-detection and the write keys. Generation here runs in
+  // chunks over minutes, so recomputing the window afterwards could write results
+  // under a different window than the one we checked — stranding the content and
+  // forcing an immediate regeneration.
+  const win = cacheWindow();
   // Dedupe by normalized (window-aware) key; remember one raw name per key.
   const byKey = new Map<string, string>();
-  for (const t of rawTopics) { const k = normalizeTopicKey(t); if (!byKey.has(k)) byKey.set(k, t); }
+  for (const t of rawTopics) { const k = normalizeTopicKey(t, win); if (!byKey.has(k)) byKey.set(k, t); }
   if (!byKey.size) return;
 
   // Range-based read (matches the live route): the current window can span ET
@@ -59,10 +64,10 @@ async function prewarmTopics(rawTopics: string[], today: string, dateKey: string
   const CHUNK = 15;
   for (let i = 0; i < missKeys.length; i += CHUNK) {
     const sliceTopics = missKeys.slice(i, i + CHUNK).map(k => byKey.get(k)!);
-    const generated = await generateTopics(sliceTopics, today).catch(() => ({}));
+    const generated = await generateTopics(sliceTopics, today, win).catch(() => ({}));
     const entries = Object.entries(generated)
       .filter(([, content]: any) => content?.stories?.length)
-      .map(([topic, content]) => ({ key: normalizeTopicKey(topic), content }));
+      .map(([topic, content]) => ({ key: normalizeTopicKey(topic, win), content }));
     if (entries.length) await writeTopicCache(entries, dateKey);
   }
 }

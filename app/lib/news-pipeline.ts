@@ -36,14 +36,20 @@ function topicKeyForWindow(topic: string, window: number): string {
   return `${topicSlug(topic)}#${window}`;
 }
 
-export function normalizeTopicKey(topic: string): string {
-  return topicKeyForWindow(topic, cacheWindow());
+// `win` makes a single logical operation snapshot-consistent. Each call would
+// otherwise read the clock independently, so an operation spanning a 6h rollover
+// could check for a miss under window N and write the result under N+1 (or vice
+// versa), leaving content stranded and forcing an immediate regeneration.
+// Callers that do a read→generate→write cycle should capture cacheWindow() once
+// at entry and pass it to every key they derive.
+export function normalizeTopicKey(topic: string, win?: number): string {
+  return topicKeyForWindow(topic, win ?? cacheWindow());
 }
 
 // The same topic's key for the PREVIOUS 6h window — served instantly (≤6h old)
 // while the current window regenerates in the background.
-export function previousWindowKey(topic: string): string {
-  return topicKeyForWindow(topic, cacheWindow() - 1);
+export function previousWindowKey(topic: string, win?: number): string {
+  return topicKeyForWindow(topic, (win ?? cacheWindow()) - 1);
 }
 
 // The ET calendar day, stored in the brief_date column. WRITE-ONLY: it's never a
@@ -761,14 +767,18 @@ SPECIFIC (good): "The Saints top the NFL with $74.7 million in dead cap for 2026
 // Best-effort within a warm instance — the cron path is separately stampede-safe.
 const inflightTopics = new Map<string, Promise<Record<string, any>>>();
 
-export async function generateTopics(topics: string[], today: string): Promise<Record<string, any>> {
+export async function generateTopics(topics: string[], today: string, win?: number): Promise<Record<string, any>> {
   if (!topics.length) return {};
+  // One window for this whole call, so the lookup and the registration below can't
+  // land on different sides of a rollover (which would miss the coalesce and
+  // duplicate the generation).
+  const w = win ?? cacheWindow();
   const out: Record<string, any> = {};
   const fresh: string[] = [];
   const joined: Promise<void>[] = [];
 
   for (const t of topics) {
-    const existing = inflightTopics.get(normalizeTopicKey(t));
+    const existing = inflightTopics.get(normalizeTopicKey(t, w));
     if (existing) joined.push(existing.then(m => { if (m[t] !== undefined) out[t] = m[t]; }).catch(() => {}));
     else fresh.push(t);
   }
@@ -778,7 +788,7 @@ export async function generateTopics(topics: string[], today: string): Promise<R
     // Register a per-topic slice so concurrent callers can coalesce onto this work,
     // then self-clean once settled so the map never grows unbounded or goes stale.
     for (const t of fresh) {
-      const k = normalizeTopicKey(t);
+      const k = normalizeTopicKey(t, w);
       const slice = genPromise.then(m => ({ [t]: m[t] }));
       inflightTopics.set(k, slice);
       void slice.finally(() => { if (inflightTopics.get(k) === slice) inflightTopics.delete(k); });
@@ -1004,12 +1014,17 @@ Return JSON with all ${topics.length} topics.`;
     // Match each returned topic back to the REQUESTED topic by name — never by
     // array index, because Groq can drop or reorder topics, which would shift
     // every subsequent topic onto the wrong content.
-    const requestedByKey = new Map<string, string>(topics.map(t => [normalizeTopicKey(t), t]));
+    // Matched with topicSlug, NOT normalizeTopicKey: this is pure name matching,
+    // where the cache window is irrelevant. Using a window-aware key here meant a
+    // 6h rollover between building this map and the lookup below produced keys
+    // with different window suffixes, so the lookup missed and the topic was
+    // dropped (or mis-assigned via the positional fallback).
+    const requestedByKey = new Map<string, string>(topics.map(t => [topicSlug(t), t]));
     const sameCount = arr.length === topics.length;
     const usedKeys = new Set<string>();
     arr.forEach((tg: any, i: number) => {
       if (!tg?.stories?.length) return;
-      let key = tg.topic ? requestedByKey.get(normalizeTopicKey(tg.topic)) : undefined;
+      let key = tg.topic ? requestedByKey.get(topicSlug(tg.topic)) : undefined;
       // Positional fallback only when the AI returned exactly as many topics as
       // requested (so index alignment is actually safe) and the slot is unused.
       if (!key && sameCount && !usedKeys.has(topics[i])) key = topics[i];
