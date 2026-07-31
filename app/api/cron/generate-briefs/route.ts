@@ -105,10 +105,18 @@ async function processUsers(users: UserRow[], today: string, dateKey: string): P
         ? `${briefTopics[0]?.topic} & ${extraCount} more`
         : briefTopics[0]?.topic || "Morning Brief";
 
-      await supabase.from("briefs").upsert(
+      // supabase-js resolves with { error } rather than throwing, so this must be
+      // inspected. Bailing here matters: otherwise a failed write still sends a
+      // "your brief is ready" push (pointing at a stale or missing brief) and
+      // still counts toward `generated`, making the run look healthy.
+      const { error: saveErr } = await supabase.from("briefs").upsert(
         { user_id: u.user_id, content: { headline, topics: briefTopics }, generated_at: nowISO },
         { onConflict: "user_id" }
       );
+      if (saveErr) {
+        console.warn(`[newshall] cron: brief save failed for ${u.user_id}: ${saveErr.message}`);
+        return; // no push, not counted — the next run retries
+      }
 
       const { data: sub } = await supabase.from("push_subscriptions")
         .select("endpoint, p256dh, auth").eq("user_id", u.user_id).maybeSingle();

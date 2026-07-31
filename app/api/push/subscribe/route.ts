@@ -15,8 +15,11 @@ export async function POST(req: NextRequest) {
 
   const { subscription, delivery_time, delivery_hour_utc, timezone, topics } = await req.json();
 
-  // Save push subscription
-  await supabase.from("push_subscriptions").upsert({
+  // supabase-js resolves with { error } instead of throwing, so these must be
+  // inspected. Reporting ok:true on a failed write is the worst case here: the
+  // user is told notifications are on while the settings row the cron uses to
+  // FIND them was never written, so they'd silently never receive a brief.
+  const { error: subErr } = await supabase.from("push_subscriptions").upsert({
     user_id: user.id,
     endpoint: subscription.endpoint,
     p256dh: subscription.keys.p256dh,
@@ -25,7 +28,7 @@ export async function POST(req: NextRequest) {
   }, { onConflict: "user_id" });
 
   // Save user settings including delivery_hour_utc so the cron can find this user
-  await supabase.from("user_settings").upsert({
+  const { error: setErr } = await supabase.from("user_settings").upsert({
     user_id: user.id,
     topics,
     delivery_time,
@@ -33,6 +36,11 @@ export async function POST(req: NextRequest) {
     timezone,
     updated_at: new Date().toISOString(),
   }, { onConflict: "user_id" });
+
+  if (subErr || setErr) {
+    console.warn(`[newshall] push subscribe failed for ${user.id}: ${subErr?.message || ""} ${setErr?.message || ""}`.trim());
+    return NextResponse.json({ error: "Could not save notification settings — please try again." }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

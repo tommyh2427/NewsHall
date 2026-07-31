@@ -112,7 +112,12 @@ export async function writeTopicCache(entries: { key: string; content: any }[], 
   const sb = supa();
   if (!sb || !entries.length) return;
   try {
-    await sb.from("topic_briefs").upsert(
+    // supabase-js RESOLVES with { error } on a DB failure instead of throwing, so
+    // the catch below only sees network-level errors. Without inspecting `error`,
+    // an RLS denial / schema-cache miss / constraint violation is invisible and
+    // every request re-generates the topic at full LLM cost — exactly the failure
+    // that once left topic_briefs empty for days with no signal.
+    const { error } = await sb.from("topic_briefs").upsert(
       entries.map(e => ({
         topic_key: e.key,
         brief_date: dateKey,
@@ -121,6 +126,7 @@ export async function writeTopicCache(entries: { key: string; content: any }[], 
       })),
       { onConflict: "topic_key,brief_date" }
     );
+    if (error) logWarn(`cache write failed (${entries.length} topics) — served but not cached, will regenerate`, error.message);
   } catch (e) { logWarn("cache write failed — brief still served, just not cached", e); }
 }
 
