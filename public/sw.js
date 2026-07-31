@@ -3,7 +3,10 @@
 // never boot — it only ever produced a page whose (content-hashed) chunks 404'd
 // after a deploy, so React never hydrated and the app was COMPLETELY DEAD until
 // the user cleared their cache. Bumping the version purges those poisoned caches.
-const CACHE = 'newshall-v6';
+// v7: purges caches holding the pre-rebrand icons/manifest, and switches the
+// non-hashed static assets off pure cache-first (see the fetch handler) so future
+// icon/manifest changes reach existing installs without another version bump.
+const CACHE = 'newshall-v7';
 const PRECACHE = ['/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 // ── Install: pre-cache static, version-independent assets only ────────────
@@ -46,17 +49,34 @@ self.addEventListener('fetch', e => {
   // offline page instead of a silently broken app.
   if (request.mode === 'navigate') return;
 
-  // Everything else (images, fonts, icons) — cache-first.
-  // Never cache an HTML response here either: same stale-shell hazard as above.
+  // The manifest drives install metadata (name, icons, theme), so it must not go
+  // stale: network-first, falling back to cache offline.
+  if (url.pathname === '/manifest.json') {
+    e.respondWith(
+      fetch(request)
+        .then(res => {
+          if (res.ok) caches.open(CACHE).then(c => c.put(request, res.clone()));
+          return res;
+        })
+        .catch(() => caches.match(request).then(hit => hit || new Response('{}', { status: 503 })))
+    );
+    return;
+  }
+
+  // Everything else (images, fonts, icons) — stale-while-revalidate.
+  // These filenames aren't content-hashed, so pure cache-first pinned them
+  // forever: updated icons never reached anyone who'd already installed. Serving
+  // the cached copy instantly while refreshing in the background keeps it fast
+  // AND self-updating. Never cache an HTML response here (stale-shell hazard).
   e.respondWith(
     caches.open(CACHE).then(cache =>
       cache.match(request).then(hit => {
-        if (hit) return hit;
-        return fetch(request).then(res => {
+        const network = fetch(request).then(res => {
           const isHtml = (res.headers.get('content-type') || '').includes('text/html');
           if (res.ok && !isHtml) cache.put(request, res.clone());
           return res;
-        }).catch(() => new Response('', { status: 503 }));
+        }).catch(() => hit || new Response('', { status: 503 }));
+        return hit || network;
       })
     )
   );

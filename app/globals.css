@@ -1,3 +1,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: #faf7f2; color: #1a1f2e; }
+/* Base only — NewsHall's injected stylesheet sets the real body font and colors.
+   This referenced 'Plus Jakarta Sans', which is no longer loaded, and a cream
+   background that flashed before the app's dark styles applied. */
+body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0b0b10; color: #1a1f2e; }

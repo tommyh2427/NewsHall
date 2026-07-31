@@ -1,14 +1,19 @@
 {
-  "name": "NewsHall",
+  "name": "NewsHall — Your Morning Brief",
   "short_name": "NewsHall",
-  "description": "Your personalized morning news brief",
+  "description": "Your topics. Real sources. One sharp brief, every morning.",
   "start_url": "/",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
-  "background_color": "#0f1729",
-  "theme_color": "#0f1729",
+  "background_color": "#0b0b10",
+  "theme_color": "#0b0b10",
   "orientation": "portrait",
+  "categories": ["news", "magazines"],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

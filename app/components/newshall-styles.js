@@ -2,7 +2,11 @@
 // Extracted from NewsHall.jsx so the component file stays focused on logic;
 // this is a static module-level string (no per-render cost).
 export const CSS=`
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts are loaded via a stylesheet link in app/layout.tsx. An @import here
+   would only start downloading after React renders this stylesheet element,
+   delaying first paint. NOTE: never write a literal style/link tag inside this
+   template string — React escapes it differently on server vs client, which
+   breaks hydration. */
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
 :root{--ink:#0a0f1e;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;--rule:#e5e7eb;--rule-2:#f3f4f6;--accent:#c8102e;--accent-2:#1a3a6b;--bg:#ffffff;--bg-2:#f9fafb;}
@@ -1143,4 +1147,39 @@ html{scroll-behavior:smooth;}
   .ls2-card-num{margin-bottom:8px;}
   .ls3-num{font-size:1.8rem;margin-bottom:10px;}
 }
+
+/* ══ INSTALL TO HOME SCREEN ══════════════════════════════════════════════ */
+/* Bottom banner (sits above the mobile tab bar, respects the home indicator) */
+.inst-bar{position:fixed;left:12px;right:12px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(16,16,24,0.92);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,0.12);box-shadow:0 18px 44px rgba(0,0,0,0.45);animation:instUp 0.45s cubic-bezier(0.22,1,0.36,1);max-width:520px;margin:0 auto;}
+@keyframes instUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.inst-bar-ico{flex-shrink:0;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#3b62f6,#8b3df0);}
+.inst-bar-txt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.inst-bar-txt strong{font-size:0.8rem;font-weight:700;color:#fff;line-height:1.2;}
+.inst-bar-txt span{font-size:0.68rem;color:rgba(255,255,255,0.55);line-height:1.25;}
+.inst-bar-cta{flex-shrink:0;background:#fff;color:#0b0b10;border:none;border-radius:100px;padding:8px 16px;font-family:inherit;font-size:0.74rem;font-weight:700;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;}
+.inst-bar-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(139,61,240,0.4);}
+.inst-bar-x{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,0.4);font-size:0.9rem;cursor:pointer;padding:4px;line-height:1;font-family:inherit;}
+.inst-bar-x:hover{color:#fff;}
+@media(max-width:420px){.inst-bar-txt span{display:none;}}
+
+/* iOS instructions sheet */
+.inst-over{position:fixed;inset:0;z-index:90;background:rgba(6,6,10,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fadeIn 0.25s ease;}
+@media(min-width:600px){.inst-over{align-items:center;padding:24px;}}
+.inst-sheet{position:relative;width:100%;max-width:460px;background:#111119;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;padding:30px 26px calc(26px + env(safe-area-inset-bottom));animation:instUp 0.4s cubic-bezier(0.22,1,0.36,1);}
+@media(min-width:600px){.inst-sheet{border-radius:22px;}}
+.inst-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.8rem;font-family:inherit;}
+.inst-close:hover{background:rgba(255,255,255,0.16);color:#fff;}
+.inst-icon{margin-bottom:16px;}
+.inst-icon img{border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+.inst-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-0.03em;margin-bottom:8px;}
+.inst-sub{font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:22px;}
+.inst-steps{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.inst-steps li{display:flex;align-items:flex-start;gap:12px;font-size:0.85rem;color:rgba(255,255,255,0.8);line-height:1.45;}
+.inst-steps strong{color:#fff;font-weight:700;}
+.inst-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:0.72rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#3b62f6,#8b3df0);}
+.inst-inline-ico{display:inline-block;vertical-align:-3px;margin:0 2px;color:#7c9bff;}
+.inst-done{width:100%;background:#fff;color:#0b0b10;border:none;border-radius:100px;padding:14px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;}
+.inst-done:hover{background:rgba(255,255,255,0.88);}
+.inst-bar-cta:focus-visible,.inst-bar-x:focus-visible,.inst-close:focus-visible,.inst-done:focus-visible{outline:2px solid #7c9bff;outline-offset:2px;}
+
 `;

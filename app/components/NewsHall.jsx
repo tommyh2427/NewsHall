@@ -403,6 +403,44 @@ export default function NewsHall() {
  const [modal, setModal] = useState(false);
  const [toast, setToast] = useState("");
  const [showEditor, setShowEditor] = useState(false);
+
+ // ── Install to home screen ────────────────────────────────────────────────
+ // Chrome/Edge/Android fire beforeinstallprompt, which we stash and replay from
+ // our own button. iOS Safari has no such API, so there we show the manual
+ // "Share → Add to Home Screen" steps instead. Hidden once already installed.
+ const [installPrompt, setInstallPrompt] = useState(null);
+ const [showInstall, setShowInstall] = useState(false);
+ const [isIOS, setIsIOS] = useState(false);
+ const [isStandalone, setIsStandalone] = useState(false);
+ const [installDismissed, setInstallDismissed] = useState(false);
+ useEffect(()=>{
+   const standalone = window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
+   setIsStandalone(standalone);
+   try { if(localStorage.getItem("nh_install_dismissed")==="1") setInstallDismissed(true); } catch(_) {}
+   const ua = window.navigator.userAgent || "";
+   // iPadOS 13+ reports as Mac, so also check for touch support
+   const ios = /iphone|ipad|ipod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+   setIsIOS(ios);
+   const onPrompt = e => { e.preventDefault(); setInstallPrompt(e); };
+   window.addEventListener("beforeinstallprompt", onPrompt);
+   const onInstalled = () => { setIsStandalone(true); setShowInstall(false); setInstallPrompt(null); };
+   window.addEventListener("appinstalled", onInstalled);
+   return ()=>{ window.removeEventListener("beforeinstallprompt", onPrompt); window.removeEventListener("appinstalled", onInstalled); };
+ },[]);
+
+ const canInstall = !isStandalone && (!!installPrompt || isIOS);
+ const dismissInstall = () => { try { localStorage.setItem("nh_install_dismissed","1"); } catch(_) {} setInstallDismissed(true); };
+ const doInstall = async () => {
+   if(installPrompt){
+     installPrompt.prompt();
+     const { outcome } = await installPrompt.userChoice.catch(()=>({outcome:"dismissed"}));
+     if(outcome==="accepted") showToast("Installing NewsHall…");
+     setInstallPrompt(null);
+     setShowInstall(false);
+   } else {
+     setShowInstall(true); // iOS: show the manual steps
+   }
+ };
  const [settings, setSettings] = useState({time:"06:30",email:"",fmt:"standard",days:"Every day"});
  const [detectedTz, setDetectedTz] = useState("");
  const briefRef = useRef(null);
@@ -1488,6 +1526,16 @@ export default function NewsHall() {
              : <button className="profile-push-btn" onClick={saveSettings}>Enable</button>
            }
          </div>
+         <div className="profile-row">
+           <div className="profile-row-l">
+             <div className="profile-row-lbl">Install app</div>
+             <div className="profile-row-sub">{isStandalone?"Installed — you're using the app":"Add NewsHall to your home screen"}</div>
+           </div>
+           {isStandalone
+             ? <span className="profile-push-btn ok">Installed</span>
+             : <button className="profile-push-btn" onClick={doInstall}>{isIOS?"How":"Install"}</button>
+           }
+         </div>
        </div>
        <button className="profile-save-btn" onClick={saveDeliveryTime}>Save settings</button>
        <button className="profile-signout" onClick={signOut}>Sign out</button>
@@ -1941,6 +1989,45 @@ export default function NewsHall() {
  )}
 
  {/* ── NEW USER ONBOARDING ── */}
+ {/* Install banner — shown once the user has a brief worth coming back to.
+     Dismissible and remembered, so it never nags. */}
+ {canInstall&&user&&phase==="done"&&brief&&!brief.error&&!showInstall&&!installDismissed&&(
+   <div className="inst-bar">
+     <div className="inst-bar-ico" aria-hidden="true">
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+     </div>
+     <div className="inst-bar-txt">
+       <strong>Add NewsHall to your home screen</strong>
+       <span>Open your brief in one tap, like a real app</span>
+     </div>
+     <button className="inst-bar-cta" onClick={doInstall}>{isIOS?"How":"Install"}</button>
+     <button className="inst-bar-x" aria-label="Dismiss" onClick={dismissInstall}>✕</button>
+   </div>
+ )}
+
+ {/* iOS can't trigger an install programmatically — show the real steps. */}
+ {showInstall&&(
+   <div className="inst-over" onClick={e=>e.target===e.currentTarget&&setShowInstall(false)}>
+     <div className="inst-sheet" role="dialog" aria-modal="true" aria-label="Install NewsHall">
+       <button className="inst-close" aria-label="Close" onClick={()=>setShowInstall(false)}>✕</button>
+       <div className="inst-icon"><img src="/icon-192.png" alt="" width="56" height="56"/></div>
+       <div className="inst-title">Add to Home Screen</div>
+       <div className="inst-sub">NewsHall opens full screen, like an app — and can notify you when your brief is ready.</div>
+       <ol className="inst-steps">
+         <li>
+           <span className="inst-num">1</span>
+           <span>Tap the <strong>Share</strong> button
+             <svg className="inst-inline-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 16V4"/><path d="m8 8 4-4 4 4"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg>
+             in Safari&apos;s toolbar</span>
+         </li>
+         <li><span className="inst-num">2</span><span>Scroll down and choose <strong>Add to Home Screen</strong></span></li>
+         <li><span className="inst-num">3</span><span>Tap <strong>Add</strong> — you&apos;re done</span></li>
+       </ol>
+       <button className="inst-done" onClick={()=>setShowInstall(false)}>Got it</button>
+     </div>
+   </div>
+ )}
+
  {showNewUserOnboard&&user&&(
    <div className="nuo">
      <div className="nuo-top">
