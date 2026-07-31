@@ -108,11 +108,14 @@ export async function POST(req: NextRequest) {
           const uncovered = missTopics.filter((t: string) => !ready[t]);
           if (uncovered.length) {
             const articles = await fetchArticlesForTopics(uncovered);
-            const fb = fallbackBrief(uncovered, articles);
-            fb.forEach((tg: any, i: number) => {
-              const requested = uncovered[i];
-              if (requested) ready[requested] = { ...tg, _fallback: true };
-            });
+            // Key by tg.topic, NEVER by array index: fallbackBrief drops topics
+            // with no articles, so its indices don't line up with `uncovered` and
+            // index-matching would file one topic's stories under another's name
+            // (e.g. NFL empty + quantum computing found => quantum stories shown
+            // under an NFL heading).
+            for (const tg of fallbackBrief(uncovered, articles)) {
+              if (tg?.topic && uncovered.includes(tg.topic)) ready[tg.topic] = { ...tg, _fallback: true };
+            }
           }
         }
 
