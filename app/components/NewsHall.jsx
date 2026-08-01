@@ -1574,8 +1574,7 @@ export default function NewsHall() {
          <button className="ls1-btn-g" onClick={()=>{setAuthModal('login');setAuthError('');}}>Sign in</button>
        </div>
        <div className="ls1-sources anim anim-d4">
-         <span className="ls1-src-label">Sources include</span>
-         {["AP","Reuters","BBC","NPR","WSJ","Bloomberg"].map(s=><span key={s} className="ls1-src-pill">{s}</span>)}
+         <span className="ls1-src-label">Built from trusted reporting · every story linked</span>
        </div>
      </div>
      <div className="hero-phone anim anim-d2">
@@ -1593,11 +1592,11 @@ export default function NewsHall() {
              </div>
              <div className="hp-feat-body">
                <div className="hp-feat-hl">Global leaders reach landmark trade and climate deal</div>
-               <div className="hp-feat-src">Reuters</div>
+               <div className="hp-feat-src">Verified reporting</div>
              </div>
            </div>
-           <div className="hp-story"><div className="hp-story-hl">Fed holds rates steady, signals two cuts before year-end</div><div className="hp-story-src">AP · Markets</div></div>
-           <div className="hp-story"><div className="hp-story-hl">Thunder beat Celtics to take 3–1 series lead</div><div className="hp-story-src">ESPN · NBA</div></div>
+           <div className="hp-story"><div className="hp-story-hl">Fed holds rates steady, signals two cuts before year-end</div><div className="hp-story-src">Markets</div></div>
+           <div className="hp-story"><div className="hp-story-hl">Thunder beat Celtics to take 3–1 series lead</div><div className="hp-story-src">Sports</div></div>
          </div>
        </div>
      </div>
@@ -1625,28 +1624,28 @@ export default function NewsHall() {
      <p className="ls-wall-sub anim anim-d2">We scan trusted reporting across your topics, collapse duplicate coverage, and keep only the developments worth knowing.</p>
    </div>
    {(()=>{
-     const C={AP:"#e0383a",Reuters:"#ff8000",BBC:"#bb1919",Bloomberg:"#1f6fd6",NPR:"#2e6bb8","The Verge":"#6c3ce0",ESPN:"#cc0000"};
+     const C={"Wire":"#e0383a","World":"#ff8000","Markets":"#1f6fd6","Public Media":"#2e6bb8","Science":"#6c3ce0","Sports":"#cc0000"};
      const cols=[
        {dir:"up",items:[
-         {s:"Reuters",t:"2m",h:"Fed holds rates steady, signals two cuts before year-end"},
-         {s:"AP",t:"7m",h:"Global leaders reach landmark trade and climate deal"},
-         {s:"Bloomberg",t:"12m",h:"Markets steady as tech earnings beat estimates"},
-         {s:"BBC",t:"18m",h:"Scientists map deepest section of the ocean floor"},
-         {s:"NPR",t:"25m",h:"Renewables overtake coal in the US power mix"},
+         {s:"Wire",t:"2m",h:"Fed holds rates steady, signals two cuts before year-end"},
+         {s:"World",t:"7m",h:"Global leaders reach landmark trade and climate deal"},
+         {s:"Markets",t:"12m",h:"Markets steady as tech earnings beat estimates"},
+         {s:"Science",t:"18m",h:"Scientists map deepest section of the ocean floor"},
+         {s:"Public Media",t:"25m",h:"Renewables overtake coal in the US power mix"},
        ]},
        {dir:"down",items:[
-         {s:"AP",t:"4m",h:"Housing starts rise for a third straight month"},
-         {s:"Reuters",t:"9m",h:"EU finalizes new AI safety framework"},
-         {s:"The Verge",t:"15m",h:"SpaceX completes record 18th booster reflight"},
-         {s:"BBC",t:"21m",h:"WHO reports sharp decline in global measles cases"},
-         {s:"Bloomberg",t:"30m",h:"Quarterly GDP revised up to 3.1%"},
+         {s:"Markets",t:"4m",h:"Housing starts rise for a third straight month"},
+         {s:"Wire",t:"9m",h:"EU finalizes new AI safety framework"},
+         {s:"Science",t:"15m",h:"SpaceX completes record 18th booster reflight"},
+         {s:"Public Media",t:"21m",h:"WHO reports sharp decline in global measles cases"},
+         {s:"Markets",t:"30m",h:"Quarterly GDP revised up to 3.1%"},
        ]},
        {dir:"up2",items:[
-         {s:"Bloomberg",t:"3m",h:"Nvidia clinches AI chip deals with Korean giants"},
-         {s:"ESPN",t:"8m",h:"Orioles climb back into the AL playoff race"},
-         {s:"NPR",t:"14m",h:"New study links sleep quality to heart health"},
-         {s:"AP",t:"19m",h:"Wildfire containment reaches 60% in California"},
-         {s:"Reuters",t:"28m",h:"Dollar firms ahead of key inflation data"},
+         {s:"Markets",t:"3m",h:"Nvidia clinches AI chip deals with Korean giants"},
+         {s:"Sports",t:"8m",h:"Orioles climb back into the AL playoff race"},
+         {s:"Public Media",t:"14m",h:"New study links sleep quality to heart health"},
+         {s:"Wire",t:"19m",h:"Wildfire containment reaches 60% in California"},
+         {s:"Markets",t:"28m",h:"Dollar firms ahead of key inflation data"},
        ]},
      ];
      return(
@@ -1685,7 +1684,7 @@ export default function NewsHall() {
      <h2 className="ls2-hl anim anim-d1">News that informs,<br/>not <em>inflames.</em></h2>
      <div className="ls2-grid">
        {[
-         {n:"01",title:"Straight-news sources only",text:"We pull from AP, Reuters, BBC, NPR, WSJ, Bloomberg and more. No opinion sites, no outrage farms."},
+         {n:"01",title:"Straight-news reporting only",text:"We prioritize factual reporting, exclude opinion-driven sources, and keep every story connected to its original source."},
          {n:"02",title:"Every story linked & cited",text:"Every headline links straight to the original article. No paywalls, no dead ends, no summaries without receipts."},
          {n:"03",title:"Built fresh every morning",text:"Your brief is scanned and written for your exact topics. Nobody else gets yours. It's ready before you wake up."},
          {n:"04",title:"Your topics, not an algorithm's",text:"You pick what you wake up to. World news, NBA, personal finance, Formula 1 — as specific as you want."},
