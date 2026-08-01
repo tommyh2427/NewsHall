@@ -1206,6 +1206,35 @@ html{scroll-behavior:smooth;}
 .ls3-cta,.ls1-btn-p{position:relative;transition:transform 0.25s cubic-bezier(0.22,1,0.36,1),box-shadow 0.25s ease;}
 .ls3-cta:hover,.ls1-btn-p:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(200,16,46,0.35),0 0 24px rgba(139,61,240,0.3);}
 
+/* A continuous story after the hero: the landing page reads as one guided
+   journey instead of a stack of unrelated full-screen treatments. */
+.landing-journey{position:relative;background:#0a0f1e;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);}
+.landing-journey::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(59,98,246,.11),transparent 32%,transparent 68%,rgba(224,35,62,.09));}
+.landing-journey-inner{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:25px 32px;display:grid;grid-template-columns:1.15fr repeat(3,1fr);gap:22px;align-items:center;}
+.journey-intro{display:flex;flex-direction:column;gap:7px;padding-right:26px;border-right:1px solid rgba(255,255,255,.1);}
+.journey-intro span,.journey-step>span{font-size:.57rem;font-weight:800;letter-spacing:.15em;color:rgba(255,255,255,.35);}
+.journey-intro strong{font-family:'Playfair Display',serif;font-size:1rem;letter-spacing:-.02em;color:#fff;}
+.journey-step{display:flex;gap:11px;align-items:flex-start;}
+.journey-step>span{color:#f15b71;padding-top:2px;}
+.journey-step div{display:flex;flex-direction:column;gap:4px;}
+.journey-step b{font-size:.73rem;color:rgba(255,255,255,.88);}
+.journey-step small{font-size:.66rem;line-height:1.45;color:rgba(255,255,255,.4);}
+.ls-wall,.ls-statement,.ls-2,.ls-3{min-height:auto;}
+.ls-wall{padding:104px 32px 88px;background:#0a0f1e;}
+.ls-wall::before{background:radial-gradient(680px 380px at 50% 0%,rgba(81,83,219,.13),transparent 64%),radial-gradient(520px 320px at 96% 100%,rgba(224,35,62,.08),transparent 64%);}
+.ls-statement{min-height:auto;padding:112px 32px;background:#0a0f1e;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);}
+.ls-statement::after{background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 30%,rgba(8,10,16,.44) 100%);}
+.ls-statement-hl{font-size:clamp(2.8rem,6.5vw,5rem);}
+.ls-statement-sub{color:rgba(255,255,255,.56);}
+.ls-2,.ls-3{padding:112px 32px;background:#0a0f1e;}
+.ls-3{border-top:1px solid rgba(255,255,255,.08);}
+.ls2-inner,.ls3-inner{position:relative;z-index:1;}
+.ls2-hl,.ls3-hl{margin-bottom:40px;}
+.ls2-grid,.ls3-steps{gap:14px;}
+.ls2-card,.ls3-step{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.11);border-radius:14px;}
+.ls3-step{border-top:2px solid rgba(139,61,240,.58);}
+@media(max-width:860px){.landing-journey-inner{grid-template-columns:1fr;gap:17px;padding:24px 22px;}.journey-intro{padding:0 0 16px;border-right:0;border-bottom:1px solid rgba(255,255,255,.1);}.journey-step{padding-left:2px;}.ls-wall,.ls-statement,.ls-2,.ls-3{padding-left:22px;padding-right:22px;}}
+
 /* Respect reduced-motion: freeze the decorative drift */
 @media(prefers-reduced-motion:reduce){
   .wvp,.ls1-orb,.ls1-marquee-track{animation:none!important;}

@@ -1209,7 +1209,7 @@ export default function NewsHall() {
    </div>
    {!user&&(
      <nav className="lp-nav">
-       {[["#live","Live"],["#why","Why"],["#how","How it works"]].map(([href,label])=>(
+       {[["#live","The brief"],["#why","Why NewsHall"],["#how","Get started"]].map(([href,label])=>(
          <a key={href} href={href} onClick={e=>{e.preventDefault();document.querySelector(href)?.scrollIntoView({behavior:"smooth"});}}>{label}</a>
        ))}
      </nav>
@@ -1611,12 +1611,18 @@ export default function NewsHall() {
    </div>
    <div className="ls1-scroll"><div className="ls1-scroll-line"/><span className="ls1-scroll-label">scroll</span></div>
  </div>
+ <div className="landing-journey" aria-label="How NewsHall works">
+   <div className="landing-journey-inner">
+     <div className="journey-intro"><span>ONE CALM MORNING FLOW</span><strong>From your interests to your edition.</strong></div>
+     {[['01','Choose what matters','Your teams, markets, people, and interests.'],['02','We do the reading','Trusted reporting is scanned and repeated coverage is filtered.'],['03','Read one sharp brief','The facts, the context, and every original source.']].map(([n,title,text])=><div className="journey-step" key={n}><span>{n}</span><div><b>{title}</b><small>{text}</small></div></div>)}
+   </div>
+ </div>
  {/* LIVE HEADLINES WALL */}
  <div id="live" className="ls-wall">
    <div className="ls-wall-head">
-     <div className="ls-wall-live anim"><span className="ls-wall-live-dot"/>Live right now</div>
-     <h2 className="ls-wall-hl anim anim-d1">The world's newsrooms,<br/><em>distilled.</em></h2>
-     <p className="ls-wall-sub anim anim-d2">Thousands of stories cross the wire every hour. We read them so you don't have to — and hand you only what matters.</p>
+     <div className="ls-wall-live anim"><span className="ls-wall-live-dot"/>Step 02 · Working for you</div>
+     <h2 className="ls-wall-hl anim anim-d1">The world moves.<br/><em>We sort it out.</em></h2>
+     <p className="ls-wall-sub anim anim-d2">We scan trusted reporting across your topics, collapse duplicate coverage, and keep only the developments worth knowing.</p>
    </div>
    {(()=>{
      const C={AP:"#e0383a",Reuters:"#ff8000",BBC:"#bb1919",Bloomberg:"#1f6fd6",NPR:"#2e6bb8","The Verge":"#6c3ce0",ESPN:"#cc0000"};
@@ -1667,15 +1673,15 @@ export default function NewsHall() {
  {/* FULL-BLEED PHOTO STATEMENT */}
  <div className="ls-statement">
    <div className="ls-statement-inner">
-     <div className="ls-statement-badge anim"><span className="ls-statement-badge-dot"/>Why we built it</div>
-     <h2 className="ls-statement-hl anim anim-d1">Mornings used to mean<br/><em>doomscrolling.</em></h2>
-     <p className="ls-statement-sub anim anim-d2">Twelve open tabs, three paywalls, and a dozen hot takes before your coffee's even cool. NewsHall replaces all of it with one clean brief — just what happened, built for your topics, ready before you wake up.</p>
+     <div className="ls-statement-badge anim"><span className="ls-statement-badge-dot"/>Step 03 · Your edition</div>
+     <h2 className="ls-statement-hl anim anim-d1">A calmer way to<br/><em>stay informed.</em></h2>
+     <p className="ls-statement-sub anim anim-d2">No tabs to manage and no hot takes to sift through. Just one clean brief built for your topics, ready before you wake up.</p>
    </div>
  </div>
  {/* SLIDE 2: WHY */}
  <div id="why" className="ls ls-2">
    <div className="ls2-inner">
-     <div className="ls2-eyebrow anim">WHY NEWSHALL</div>
+     <div className="ls2-eyebrow anim">WHY YOU CAN TRUST IT</div>
      <h2 className="ls2-hl anim anim-d1">News that informs,<br/>not <em>inflames.</em></h2>
      <div className="ls2-grid">
        {[
@@ -1696,7 +1702,7 @@ export default function NewsHall() {
  {/* SLIDE 3: HOW + CTA */}
  <div id="how" className="ls ls-3">
    <div className="ls3-inner">
-     <div className="ls3-eyebrow anim">HOW IT WORKS</div>
+     <div className="ls3-eyebrow anim">YOUR FIRST EDITION</div>
      <h2 className="ls3-hl anim anim-d1">Ready in 60 seconds.</h2>
      <div className="ls3-steps">
        {[
