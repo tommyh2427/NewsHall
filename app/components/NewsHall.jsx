@@ -1202,7 +1202,7 @@ export default function NewsHall() {
  return (<>
  <style>{CSS}</style>
 
- <div className={`topbar${!user?" lp":""}${!user&&lpScrolled?" scrolled":""}`}>
+ <div className={`topbar${!user?" lp":""}${user?" member":""}${!user&&lpScrolled?" scrolled":""}`}>
    <div className="tb-wordmark">
      <div className="tb-title">NewsHall</div>
      <div className="tb-edition">Morning Intelligence</div>
@@ -1236,7 +1236,7 @@ export default function NewsHall() {
  {/* ── MAIN CONTENT ── */}
  {user ? (
  <>
- <div className="tab-body" onTouchStart={ptrStart} onTouchMove={ptrMove} onTouchEnd={ptrEnd}>
+ <div className="tab-body member-shell" onTouchStart={ptrStart} onTouchMove={ptrMove} onTouchEnd={ptrEnd}>
 
    {/* ── BRIEF TAB ── */}
    {tab==="brief"&&(<>

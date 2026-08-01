@@ -1071,6 +1071,32 @@ html{scroll-behavior:smooth;}
 .topbar.lp .auth-btn-getstarted:hover{background:var(--accent);color:#fff;}
 .topbar.lp.scrolled{background:rgba(11,11,16,0.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom-color:rgba(255,255,255,0.08);}
 
+/* ── AUTHENTICATED READING ENVIRONMENT ──────────────────────────────────── */
+/* The landing page already has a cinematic dark system. Carry that atmosphere
+   into the signed-in brief so the masthead is part of an intentional reading
+   surface, not a dark card floating on a blank white application shell. */
+.topbar.member{background:rgba(8,10,16,0.9);border-bottom-color:rgba(255,255,255,0.09);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);}
+.topbar.member .tb-title{color:#fff;}
+.topbar.member .tb-edition{color:rgba(255,255,255,0.42);border-left-color:rgba(255,255,255,0.16);}
+.topbar.member .auth-user{color:rgba(255,255,255,0.62);}
+.topbar.member .auth-btn-out{color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.18);}
+.topbar.member .auth-btn-out:hover{color:#fff;border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);}
+.member-shell{min-height:calc(100vh - 56px);background:radial-gradient(900px 560px at 50% -180px,rgba(72,78,220,0.25),transparent 68%),radial-gradient(720px 520px at 100% 24%,rgba(200,16,46,0.09),transparent 70%),#080a10;padding-top:22px;}
+.member-shell .bmast-wrap{padding-top:18px;}
+.member-shell .brief-wrap{padding-top:14px;}
+.member-shell .brief-topic-header{border-color:rgba(255,255,255,0.2);}
+.member-shell .brief-topic-name{color:#fff;}
+.member-shell .brief-topic-count{color:rgba(255,255,255,0.42);}
+.member-shell .brief-story-card{border-color:rgba(255,255,255,0.12);}
+.member-shell .brief-story-hl{color:rgba(255,255,255,0.93);}
+.member-shell .brief-story-sum{color:rgba(255,255,255,0.56);}
+.member-shell .brief-story-card:hover .brief-story-hl{color:#f15b71;}
+.member-shell .radar{border-color:rgba(255,255,255,0.14);background:rgba(255,255,255,0.035);}
+.member-shell .radar-title,.member-shell .radar-text{color:rgba(255,255,255,0.88);}
+.member-shell .radar-topic,.member-shell .srcfooter{color:rgba(255,255,255,0.42);}
+.member-shell .srcfooter{border-top-color:rgba(255,255,255,0.14);}
+@media(max-width:600px){.member-shell{padding-top:8px;}.topbar.member{padding:0 18px;}.topbar.member .auth-user{display:none;}}
+
 /* Center nav links with grow-underline hover */
 .lp-nav{display:none;align-items:center;gap:30px;position:absolute;left:50%;transform:translateX(-50%);}
 @media(min-width:760px){.lp-nav{display:flex;}}
