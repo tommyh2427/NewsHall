@@ -35,7 +35,10 @@ export async function GET(req: NextRequest) {
   const tickersParam = req.nextUrl.searchParams.get("tickers");
   if (!tickersParam) return NextResponse.json({ error: "Missing tickers" }, { status: 400 });
 
-  const tickers = tickersParam.split(",").map(t => t.trim()).filter(Boolean);
+  // This is a public proxy. Only expose the fixed dashboard instruments rather
+  // than letting a crafted query fan out into unbounded Yahoo Finance requests.
+  const tickers = [...new Set(tickersParam.split(",").map(t => t.trim()).filter(t => t in TICKER_META))];
+  if (!tickers.length) return NextResponse.json({ error: "No supported tickers" }, { status: 400 });
   const results: Record<string, any> = {};
 
   await Promise.all(tickers.map(async (sym) => {

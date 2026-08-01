@@ -21,7 +21,7 @@ const WORKER_WAVE = 25;           // worker invocations dispatched per parallel 
 const POPULAR_PREWARM = 40;       // hottest shared topics warmed once before fan-out
 const ASSEMBLE_CONCURRENCY = 15;  // per-user assembly/push parallelism inside a worker
 
-type UserRow = { user_id: string; topics: string[]; delivery_hour_utc?: number };
+type UserRow = { user_id: string; topics: string[] };
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
 function supaAdmin(): SupabaseClient {
@@ -154,23 +154,18 @@ export async function GET(req: NextRequest) {
   const today = briefDateLabel();
   const dateKey = briefDateKey();
   const currentHour = now.getUTCHours();
-  const DEFAULT_HOUR = 12; // ~7-8am US Eastern for users who never set a delivery time
-
-  // HOURLY_MODE honors each user's chosen delivery time — requires an hourly cron
-  // ("0 * * * *", Vercel Pro). On the daily Hobby cron we process everyone at once.
-  const HOURLY_MODE = false;
-
+  const currentMinute = now.getUTCMinutes();
+  // Only load the users due in this exact UTC minute. The matching partial index
+  // keeps this bounded by the delivery cohort, never by total registered users.
   const { data: settings, error } = await supabase
     .from("user_settings")
-    .select("user_id, topics, delivery_hour_utc");
-  if (error || !settings?.length) return NextResponse.json({ ok: true, generated: 0, hour: currentHour });
+    .select("user_id, topics")
+    .eq("delivery_hour_utc", currentHour)
+    .eq("delivery_minute_utc", currentMinute)
+    .gt("topics", "{}");
+  if (error || !settings?.length) return NextResponse.json({ ok: true, generated: 0, hour: currentHour, minute: currentMinute });
 
-  const due: UserRow[] = (settings as UserRow[]).filter((s) => {
-    if (!s.topics?.length) return false;
-    if (!HOURLY_MODE) return true;
-    return (s.delivery_hour_utc ?? DEFAULT_HOUR) === currentHour;
-  });
-  if (!due.length) return NextResponse.json({ ok: true, generated: 0, hour: currentHour, due: 0 });
+  const due = settings as UserRow[];
 
   // Phase 1 — warm the hottest shared topics ONCE, before fan-out. Because workers
   // run in parallel, without this the most popular topics would race and get
@@ -195,7 +190,7 @@ export async function GET(req: NextRequest) {
   const fanoutEnabled = process.env.CRON_FANOUT !== "false";
   if (!fanoutEnabled || batches.length <= 1) {
     const generated = await processUsers(due, today, dateKey);
-    return NextResponse.json({ ok: true, generated, users: due.length, workers: 0, hour: currentHour });
+    return NextResponse.json({ ok: true, generated, users: due.length, workers: 0, hour: currentHour, minute: currentMinute });
   }
 
   // Each worker acks instantly and processes in after(), so these fetches resolve
@@ -217,7 +212,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     ok: true, dispatchedWorkers: dispatched, totalWorkers: batches.length,
-    users: due.length, hour: currentHour,
+    users: due.length, hour: currentHour, minute: currentMinute,
   });
 }
 

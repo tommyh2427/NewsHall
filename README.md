@@ -1,79 +1,47 @@
 # NewsHall
 
-Your personalized morning intelligence app — news briefs, live scores, markets, weather, and daily wellness.
-
----
-
-## Deploy to Vercel in 5 minutes
-
-### Step 1 — Get your Anthropic API key
-1. Go to https://console.anthropic.com
-2. Click "API Keys" → "Create Key"
-3. Copy it — you'll need it in Step 4
-
-### Step 2 — Put this project on GitHub
-1. Go to https://github.com/new and create a new repo called `newshall`
-2. Open your terminal and run:
-```bash
-cd newshall
-git init
-git add .
-git commit -m "Initial NewsHall"
-git remote add origin https://github.com/YOUR_USERNAME/newshall.git
-git push -u origin main
-```
-
-### Step 3 — Connect to Vercel
-1. Go to https://vercel.com and sign up with your GitHub account
-2. Click "Add New Project"
-3. Import your `newshall` repo
-4. Vercel auto-detects Next.js — no config needed
-5. Click "Deploy"
-
-### Step 4 — Add your API key
-1. In Vercel, go to your project → Settings → Environment Variables
-2. Add:
-   - Name: `ANTHROPIC_API_KEY`
-   - Value: your key from Step 1
-3. Click Save
-4. Go to Deployments → click the 3 dots on your latest deploy → "Redeploy"
-
-### Done!
-Your app is live at `https://newshall.vercel.app` (or similar URL Vercel assigns).
-
----
-
-## What works out of the box
-- **Morning Brief** — generates live news via Claude + web search
-- **Weather** — real weather via Open-Meteo (no key needed)
-- **Scores** — live scores via ESPN's free API (no key needed)
-- **Markets** — stock/crypto prices via Yahoo Finance (no key needed)
-- **Daily Boost** — health tips from Harvard Health, Mayo Clinic etc.
-- **Location** — browser geolocation for timezone detection
+NewsHall is a personalized morning-news PWA. Users choose topics, then receive
+a concise linked brief assembled from RSS feeds and GNews. Topic briefs are
+shared by topic and six-hour cache window, so generation cost tracks unique
+topics rather than user count.
 
 ## Local development
+
 ```bash
-npm install
+npm ci
 cp .env.example .env.local
-# Edit .env.local and add your ANTHROPIC_API_KEY
 npm run dev
 ```
-Open http://localhost:3000
 
----
+Fill every required value in `.env.local`; never commit that file. A production
+build also needs the two `NEXT_PUBLIC_SUPABASE_*` values present at build time.
 
-## Project structure
+## Required setup
+
+1. Create a Supabase project and add the schema in `supabase-schema.sql`,
+   `supabase-topic-cache.sql`, `supabase-rate-limit.sql`, and
+   `supabase-fix-briefs-rls.sql`, and `supabase-delivery-schedule.sql`.
+2. Add the environment variables in `.env.example` to Vercel for Production,
+   Preview, and Development as appropriate.
+3. Configure VAPID keys and enable web-push permissions in a supported browser.
+4. Deploy to Vercel. `vercel.json` schedules the daily brief route.
+
+## Operational notes
+
+- Gemini 2.5 Flash is the primary summarizer; Groq is the fallback. If both
+  fail, the brief route serves RSS-only stories when available.
+- Vercel Pro is required for the once-per-minute cron schedule that honors a
+  saved delivery time. The delivery-slot index migration must be applied before
+  deploying that configuration.
+- `topic_briefs`, `briefs`, and push subscriptions are server-managed; do not
+  relax their RLS policies to troubleshoot a client issue.
+
+## Validate before deploying
+
+```bash
+npm run build
 ```
-app/
-  page.tsx              — main page
-  layout.tsx            — HTML shell, fonts
-  globals.css           — base styles
-  components/
-    NewsHall.jsx        — the full app component
-  api/
-    brief/route.ts      — news brief generation (Claude)
-    scores/route.ts     — ESPN scoreboard proxy
-    markets/route.ts    — Yahoo Finance proxy
-    weather/route.ts    — Open-Meteo proxy
-    boost/route.ts      — daily wellness content (Claude)
-```
+
+Set the required public Supabase variables locally before building. For a real
+deployment, also smoke-test sign-in, one generated brief, a cron run, and a
+push subscription in the Vercel and Supabase dashboards.

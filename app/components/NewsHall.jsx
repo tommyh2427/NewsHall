@@ -131,20 +131,6 @@ export default function NewsHall() {
    return () => obs.disconnect();
  },[user]);
 
- const loadOgImages = (briefData) => {
-   // Lead photo is now baked server-side (tg.leadImage). Only client-scrape for
-   // older cached briefs that predate that — skip any topic that already has one.
-   const items = [];
-   for (const tg of (briefData?.topics||[])) {
-     if (tg.leadImage) continue;
-     const lead = tg.stories?.[0];
-     if (lead?.url && String(lead.url).startsWith("http")) items.push({url:lead.url, topic:tg.topic||""});
-   }
-   if (!items.length) return;
-   fetch("/api/og-images",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({urls:items})})
-     .then(r=>r.json()).then(({images})=>setOgImages(images||{})).catch(()=>{});
- };
-
  const loadUserData = async (u) => {
    // Fetch all three independent reads in parallel (was 3 serial round-trips)
    const [prefs, briefRes, settingsRes] = await Promise.all([
@@ -175,7 +161,7 @@ export default function NewsHall() {
 
    if(pending && pending.ts > dbTs) {
      const nowIso = new Date(pending.ts).toISOString();
-     setBrief(pending.brief); setPhase("done"); setSavedBriefMeta({generated_at:nowIso}); loadOgImages(pending.brief); setBriefIsStale(false);
+     setBrief(pending.brief); setPhase("done"); setSavedBriefMeta({generated_at:nowIso}); setBriefIsStale(false);
      if(pending.topics?.length) setTopics(pending.topics);
      supabase.from("briefs").upsert({user_id:u.id,content:pending.brief,generated_at:nowIso},{onConflict:"user_id"})
        .then(({error})=>{ if(error) console.warn("[newshall] brief re-persist failed:",error.message); });
@@ -185,7 +171,6 @@ export default function NewsHall() {
      setBrief(savedBrief.content);
      setPhase("done");
      setSavedBriefMeta({generated_at: savedBrief.generated_at});
-     loadOgImages(savedBrief.content);
      const genDate = new Date(savedBrief.generated_at), todayDate = new Date();
      const isToday = genDate.getFullYear()===todayDate.getFullYear() &&
        genDate.getMonth()===todayDate.getMonth() &&
@@ -242,10 +227,9 @@ export default function NewsHall() {
    const {error:briefErr} = await supabase.from("briefs").upsert({user_id:uid, content:b, generated_at:now},{onConflict:"user_id"});
    if(briefErr) console.warn("[newshall] saving brief failed:",briefErr.message); // localStorage fallback still restores it on next login
    // Compute delivery_hour_utc so new users are picked up by the cron
-   const utcOffset = new Date().getTimezoneOffset(); // minutes behind UTC
-   const [h, m] = (deliveryTime||"07:00").split(":").map(Number);
-   const deliveryHourUtc = ((h * 60 + (m||0) + utcOffset) / 60 + 24) % 24 | 0;
-   await supabase.from("user_settings").upsert({user_id:uid, topics:t, delivery_time:deliveryTime, delivery_hour_utc:deliveryHourUtc, updated_at:now},{onConflict:"user_id"});
+   const slot = utcDeliveryParts(deliveryTime);
+   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+   await supabase.from("user_settings").upsert({user_id:uid, topics:t, delivery_time:deliveryTime, delivery_hour_utc:slot.hour, delivery_minute_utc:slot.minute, timezone, updated_at:now},{onConflict:"user_id"});
    setSavedBriefMeta({generated_at: now});
    setBriefIsStale(false);
  };
@@ -293,6 +277,11 @@ export default function NewsHall() {
  const [_mounted, setMounted] = useState(false);
  const [pushStatus, setPushStatus] = useState("idle"); // idle | asking | granted | denied
  const [deliveryTime, setDeliveryTime] = useState("07:00");
+ const utcDeliveryParts = (time) => {
+   const [h, m] = (time||"07:00").split(":").map(Number);
+   const total = ((h * 60 + (m||0) + new Date().getTimezoneOffset()) % 1440 + 1440) % 1440;
+   return { hour: Math.floor(total / 60), minute: total % 60 };
+ };
  const [showOnboarding, setShowOnboarding] = useState(false);
  const [showNewUserOnboard, setShowNewUserOnboard] = useState(false);
 
@@ -326,12 +315,10 @@ export default function NewsHall() {
  const saveDeliveryTime = async () => {
    if(!user) return;
    try {
-     const [h, m] = deliveryTime.split(":").map(Number);
-     const utcOffset = new Date().getTimezoneOffset();
-     const deliveryHourUtc = ((h * 60 + (m||0) + utcOffset) / 60 + 24) % 24 | 0;
+     const slot = utcDeliveryParts(deliveryTime);
      const now = new Date().toISOString();
      await supabase.from("user_settings").upsert(
-       { user_id: user.id, delivery_time: deliveryTime, delivery_hour_utc: deliveryHourUtc, topics, updated_at: now },
+       { user_id: user.id, delivery_time: deliveryTime, delivery_hour_utc: slot.hour, delivery_minute_utc: slot.minute, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, topics, updated_at: now },
        { onConflict: "user_id" }
      );
      showToast("Saved — your brief will generate at " + deliveryTime + " each morning.");
@@ -348,16 +335,15 @@ export default function NewsHall() {
      if(permission !== "granted"){ setPushStatus("denied"); return; }
      const sub = await registerPush();
      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-     const [h, m] = deliveryTime.split(":").map(Number);
-     const utcOffset = new Date().getTimezoneOffset();
-     const deliveryHourUtc = ((h * 60 + (m||0) + utcOffset) / 60 + 24) % 24 | 0;
+     const slot = utcDeliveryParts(deliveryTime);
      await fetch("/api/push/subscribe", {
        method: "POST",
        headers: {"Content-Type":"application/json"},
        body: JSON.stringify({
          subscription: sub?.toJSON(),
          delivery_time: deliveryTime,
-         delivery_hour_utc: deliveryHourUtc,
+         delivery_hour_utc: slot.hour,
+         delivery_minute_utc: slot.minute,
          timezone: tz,
          topics,
        }),
@@ -398,7 +384,6 @@ export default function NewsHall() {
  const [phase, setPhase] = useState("idle");
  const [cooldown, setCooldown] = useState(0);
  const [brief, setBrief] = useState(null);
- const [ogImages, setOgImages] = useState({});
  const [steps, setSteps] = useState([]);
  const [modal, setModal] = useState(false);
  const [toast, setToast] = useState("");
@@ -871,12 +856,10 @@ export default function NewsHall() {
 
  // Lead story image: real article photo if we have one, else curated/gradient by topic
  const resolveLeadImage = (url, topic) => {
-   if (url && ogImages[url]) return { type:"img", src: ogImages[url] };
    return getTopicImage(topic);
  };
  // Secondary thumbnail: real article photo if available, else a clean topic gradient
  const resolveThumb = (url, topic) => {
-   if (url && ogImages[url]) return { type:"img", src: ogImages[url] };
    return { type:"gradient", css: getTopicGradient(topic) };
  };
 
@@ -1087,7 +1070,6 @@ export default function NewsHall() {
      // First generation — show full loading screen
      setPhase("loading");
      setBrief(null);
-     setOgImages({});
      const stepMessages=["Searching live sources...","Scanning "+genTopics.length+" topic"+(genTopics.length>1?"s":"")+"...","Filtering for relevance...","Verifying source neutrality...","Writing your brief...","Almost ready..."];
      stepMessages.forEach((s,i)=>setTimeout(()=>setSteps(p=>[...p,s]),i*1800));
    }
@@ -1129,7 +1111,6 @@ export default function NewsHall() {
            setPhase("done");
            setIsStreaming(false);
            saveUserData(incomingBrief,genTopics);
-           loadOgImages(incomingBrief);
            try{localStorage.setItem("nh_pending_brief",JSON.stringify({brief:incomingBrief,topics:genTopics,ts:Date.now()}));}catch(_){}
            setCooldown(15);const cd=setInterval(()=>setCooldown(p=>{if(p<=1){clearInterval(cd);return 0;}return p-1;}),1000);
            if(isRefresh) showToast("Brief updated");
@@ -1365,7 +1346,7 @@ export default function NewsHall() {
                        <span className="brief-topic-name">{tg.topic}</span>
                        <span className="brief-topic-count">{stories.length} {stories.length===1?"story":"stories"}</span>
                      </div>
-                     {featured&&(()=>{const leadImg=tg.leadImage||(featured.url&&ogImages[featured.url])||null;return(
+                     {featured&&(()=>{const leadImg=tg.leadImage||null;return(
                        <a className={`brief-featured${leadImg?"":" no-photo"}`} href={fUrl} target="_blank" rel="noopener noreferrer">
                          {leadImg&&(
                          <div className="brief-feat-img" style={{background:getTopicGradient(tg.topic)}}>
@@ -1870,7 +1851,7 @@ export default function NewsHall() {
                    <span className="brief-topic-name">{tg.topic}</span>
                    <span className="brief-topic-count">{stories.length} {stories.length===1?"story":"stories"}</span>
                  </div>
-                 {featured&&(()=>{const leadImg=tg.leadImage||(featured.url&&ogImages[featured.url])||null;return(
+                 {featured&&(()=>{const leadImg=tg.leadImage||null;return(
                    <a className={`brief-featured${leadImg?"":" no-photo"}`} href={fUrl} target="_blank" rel="noopener noreferrer">
                      {leadImg&&(
                      <div className="brief-feat-img" style={{background:getTopicGradient(tg.topic)}}>

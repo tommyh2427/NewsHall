@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { subscription, delivery_time, delivery_hour_utc, timezone, topics } = await req.json();
+  const { subscription, delivery_time, delivery_hour_utc, delivery_minute_utc, timezone, topics } = await req.json();
 
   // supabase-js resolves with { error } instead of throwing, so these must be
   // inspected. Reporting ok:true on a failed write is the worst case here: the
@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     topics,
     delivery_time,
     delivery_hour_utc,
+    delivery_minute_utc,
     timezone,
     updated_at: new Date().toISOString(),
   }, { onConflict: "user_id" });
