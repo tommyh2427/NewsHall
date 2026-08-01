@@ -1433,46 +1433,45 @@ export default function NewsHall() {
 
    {/* ── TOPICS TAB ── */}
    {tab==="topics"&&(
-     <div className="topics-page">
-       <div className="topics-page-hd">
-         <div className="topics-page-title">Your Topics</div>
-         <div className="topics-page-sub">Choose what you want to wake up to every morning.</div>
-       </div>
-       <div className="search-wrap">
-         <span className="search-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-3.8-3.8"/></svg></span>
-         <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTopic()} placeholder="Search topic"/>
-         <button className="add-btn" onClick={()=>addTopic()} disabled={topics.length>=MAX_TOPICS} style={{opacity:topics.length>=MAX_TOPICS?0.4:1,cursor:topics.length>=MAX_TOPICS?"not-allowed":"pointer"}}>Add</button>
-       </div>
-       <div className="sugg-lbl">Popular topics — click to add</div>
+     <div className="topics-page member-page">
+       <header className="member-page-head">
+         <div className="member-page-kicker"><span className="member-kicker-dot"/>01 · YOUR SIGNALS</div>
+         <div className="member-page-stat">{topics.length}/{MAX_TOPICS} TRACKING</div>
+         <h1 className="member-page-title">Shape your<br/><em>morning.</em></h1>
+         <p className="member-page-sub">Pick exactly what deserves your attention. We turn those signals into one focused edition.</p>
+       </header>
+       <section className="topic-composer">
+         <div className="topic-composer-head"><span>Add a signal</span><small>Any person, team, company, place, or interest</small></div>
+         <div className="search-wrap">
+           <span className="search-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-3.8-3.8"/></svg></span>
+           <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTopic()} placeholder="Try “Green Bay Packers” or “quantum computing”"/>
+           <button className="add-btn" onClick={()=>addTopic()} disabled={topics.length>=MAX_TOPICS}>Track topic</button>
+         </div>
+       </section>
+       <div className="topic-section-head"><span>Popular starting points</span><small>Tap to add</small></div>
        <div className="sugg-wrap">
          {SUGGESTIONS.map(s=>{const sel=topics.includes(s.name);const atMax=topics.length>=MAX_TOPICS&&!sel;return(
-          <button key={s.name} type="button" className={`sugg${sel?" on":""}`} aria-pressed={sel} disabled={atMax} title={atMax?`Remove a topic to add more (max ${MAX_TOPICS})`:undefined} onClick={()=>togSugg(s.name)}>{s.name}</button>
+          <button key={s.name} type="button" className={`sugg${sel?" on":""}`} aria-pressed={sel} disabled={atMax} title={atMax?`Remove a topic to add more (max ${MAX_TOPICS})`:undefined} onClick={()=>togSugg(s.name)}>{sel?"✓ ":"+ "}{s.name}</button>
         );})}
        </div>
-       <div className="chips">
-         <span className="chips-lbl">Your topics:</span>
-         {topics.length===0
-           ? <span style={{fontSize:"0.72rem",color:"#b0b8c4"}}>Nothing yet — add topics above</span>
-           : topics.map(t=><span key={t} className="chip">{t} <button type="button" className="chip-x" aria-label={`Remove ${t}`} onClick={()=>rmTopic(t)}>×</button></span>)
-         }
-         {topics.length>0&&(
-           <span className={`topic-counter ${topics.length>=MAX_TOPICS?"full":topics.length>=8?"warn":"ok"}`}>{topics.length}/10</span>
-         )}
-       </div>
-       {topics.length>=MAX_TOPICS&&(
-         <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fff2f2",border:"1px solid #fca5a5",borderRadius:6,marginTop:6}}>
-           <span style={{fontSize:"0.78rem",color:"#dc2626"}}>You've reached the 10 topic limit.</span>
-           <span style={{fontSize:"0.78rem",color:"#6b7280"}}>Remove one to add another.</span>
+       <section className="tracked-signals">
+         <div className="topic-section-head"><span>Your tracked signals</span><small>{topics.length===0?"Nothing selected yet":`${topics.length} active`}</small></div>
+         <div className="chips">
+           {topics.length===0
+             ? <span className="member-empty-topics">Add a few topics above. Your next brief will be built around them.</span>
+             : topics.map(t=><span key={t} className="chip">{t} <button type="button" className="chip-x" aria-label={`Remove ${t}`} onClick={()=>rmTopic(t)}>×</button></span>)
+           }
          </div>
-       )}
-       <div className="gen-wrap" style={{padding:"24px 0 0"}}>
+       </section>
+       {topics.length>=MAX_TOPICS&&<div className="member-limit">You’re tracking the maximum of {MAX_TOPICS} topics. Remove one to add another.</div>}
+       <div className="gen-wrap member-generate">
          <div className="gen-panel">
            <div>
-             <div className="gen-title">Generate your brief</div>
-             <div className="gen-sub">{topics.length===0?"Add topics above first":`${topics.length} topic${topics.length>1?"s":""} selected`}</div>
+             <div className="gen-title">{brief?"Refresh today’s edition":"Build your first edition"}</div>
+             <div className="gen-sub">{topics.length===0?"Add topics above to begin":`${topics.length} signal${topics.length>1?"s":""} selected · facts, sources, no noise`}</div>
            </div>
            <div className="gen-btns">
-             <button className={`btn-gen${topics.length>0&&!isStreaming&&phase!=="loading"&&!cooldown?" ready":""}`} onClick={generate} disabled={phase==="loading"||isStreaming||cooldown>0}>{phase==="loading"||isStreaming?"Generating...":cooldown>0?`Wait ${cooldown}s...`:"Generate brief"}</button>
+             <button className={`btn-gen${topics.length>0&&!isStreaming&&phase!=="loading"&&!cooldown?" ready":""}`} onClick={generate} disabled={phase==="loading"||isStreaming||cooldown>0}>{phase==="loading"||isStreaming?"Building...":cooldown>0?`Wait ${cooldown}s...`:brief?"Refresh brief →":"Build brief →"}</button>
            </div>
          </div>
        </div>
@@ -1481,12 +1480,17 @@ export default function NewsHall() {
 
    {/* ── PROFILE TAB ── */}
    {tab==="profile"&&(
-     <div className="profile-page">
+     <div className="profile-page member-page">
+       <header className="member-page-head profile-member-head">
+         <div className="member-page-kicker"><span className="member-kicker-dot"/>02 · DELIVERY</div>
+         <h1 className="member-page-title">Good morning,<br/><em>{user.user_metadata?.username||user.email?.split('@')[0]}.</em></h1>
+         <p className="member-page-sub">Your personal newsroom is scheduled for <strong>{deliveryTime}</strong> every morning.</p>
+       </header>
        <div className="profile-avatar-row">
          <div className="profile-avatar">{(user.user_metadata?.username||user.email||"?")[0].toUpperCase()}</div>
-         <div className="profile-name">{user.user_metadata?.username||user.email?.split('@')[0]}</div>
-         <div className="profile-email-txt">{user.email}</div>
+         <div><div className="profile-name">{user.user_metadata?.username||user.email?.split('@')[0]}</div><div className="profile-email-txt">{user.email}</div></div>
        </div>
+       <div className="profile-section-title">Morning delivery</div>
        <div className="profile-section">
          <div className="profile-row">
            <div className="profile-row-l">
@@ -1518,7 +1522,7 @@ export default function NewsHall() {
            }
          </div>
        </div>
-       <button className="profile-save-btn" onClick={saveDeliveryTime}>Save settings</button>
+       <button className="profile-save-btn" onClick={saveDeliveryTime}>Save my morning schedule →</button>
        <button className="profile-signout" onClick={signOut}>Sign out</button>
      </div>
    )}
