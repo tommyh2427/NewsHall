@@ -1235,6 +1235,48 @@ html{scroll-behavior:smooth;}
 .ls3-step{border-top:2px solid rgba(139,61,240,.58);}
 @media(max-width:860px){.landing-journey-inner{grid-template-columns:1fr;gap:17px;padding:24px 22px;}.journey-intro{padding:0 0 16px;border-right:0;border-bottom:1px solid rgba(255,255,255,.1);}.journey-step{padding-left:2px;}.ls-wall,.ls-statement,.ls-2,.ls-3{padding-left:22px;padding-right:22px;}}
 
+/* Product-tour layout: a deliberate left-to-right reading path, inspired by
+   the clarity of modern product sites rather than a sequence of disconnected
+   poster pages. */
+@media(min-width:861px){
+  .ls-wall{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr);align-items:center;gap:68px;padding:104px max(48px,calc((100vw - 1140px)/2));}
+  .ls-wall-head{text-align:left;margin:0;}
+  .ls-wall-sub{margin:0;}
+  .ls-wall-cols{width:100%;height:500px;margin:0;}
+  .ls-statement{padding:124px max(48px,calc((100vw - 1140px)/2));text-align:left;justify-content:flex-start;}
+  .ls-statement-inner{max-width:670px;margin:0;}
+  .ls-statement-sub{margin:0;}
+  .ls-2,.ls-3{padding:118px max(48px,calc((100vw - 1140px)/2));}
+}
+.ls-wall::after{content:'NEWSHALL / SIGNAL DESK';position:absolute;right:32px;bottom:28px;color:rgba(255,255,255,.18);font-size:.53rem;font-weight:800;letter-spacing:.18em;z-index:2;}
+.ls-wall-cols{border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:15px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.02));box-shadow:0 24px 70px rgba(0,0,0,.28);}
+.ls-wall-cols::before{content:'SCANNING TRUSTED REPORTING · FILTERING REPEATS · BUILDING YOUR EDITION';position:absolute;z-index:3;left:22px;right:22px;top:13px;font-size:.52rem;font-weight:800;letter-spacing:.13em;color:rgba(255,255,255,.38);}
+.wall-col{padding-top:24px;}
+.wall-card{border-radius:12px;background:rgba(9,12,25,.8);border-color:rgba(255,255,255,.11);}
+.ls-statement{background:linear-gradient(115deg,#0a0f1e 12%,#151127 57%,#0a0f1e 100%);}
+.ls-statement::before{opacity:.62;}
+.ls-statement-inner::after{content:'ONE EDITION / EVERY MORNING';display:block;margin-top:38px;color:rgba(255,255,255,.3);font-size:.58rem;font-weight:800;letter-spacing:.18em;}
+.ls-2{background:linear-gradient(180deg,#0a0f1e 0%,#0d1020 100%);}
+.ls-3{background:linear-gradient(180deg,#0d1020 0%,#0a0f1e 100%);}
+.ls2-grid{position:relative;}
+.ls2-grid::before{content:'';position:absolute;left:50%;top:-22px;bottom:-22px;width:1px;background:linear-gradient(transparent,rgba(255,255,255,.12),transparent);}
+.ls2-card{min-height:188px;padding:30px;}
+.ls3-steps{position:relative;}
+.ls3-step{min-height:218px;padding:30px;}
+.ls3-num{color:#b584ff;}
+@media(max-width:860px){
+  .ls-wall{display:block;}
+  .ls-wall-head{text-align:center;margin:0 auto 38px;}
+  .ls-wall-sub{margin:0 auto;}
+  .ls-wall::after{right:20px;bottom:18px;}
+  .ls-wall-cols{padding:11px;border-radius:16px;}
+  .ls-wall-cols::before{left:16px;right:16px;top:10px;font-size:.46rem;}
+  .wall-col{padding-top:21px;}
+  .ls-statement{text-align:center;}
+  .ls-statement-inner,.ls-statement-sub{margin-left:auto;margin-right:auto;}
+  .ls2-grid::before{display:none;}
+}
+
 /* Respect reduced-motion: freeze the decorative drift */
 @media(prefers-reduced-motion:reduce){
   .wvp,.ls1-orb,.ls1-marquee-track{animation:none!important;}
