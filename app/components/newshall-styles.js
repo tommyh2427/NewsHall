@@ -1095,6 +1095,21 @@ html{scroll-behavior:smooth;}
 .member-shell .radar-title,.member-shell .radar-text{color:rgba(255,255,255,0.88);}
 .member-shell .radar-topic,.member-shell .srcfooter{color:rgba(255,255,255,0.42);}
 .member-shell .srcfooter{border-top-color:rgba(255,255,255,0.14);}
+.member-shell{position:relative;isolation:isolate;}
+.member-shell::before{content:'';position:absolute;inset:0;z-index:-1;opacity:0.34;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,#000,transparent 72%);}
+.member-shell .bmast{animation:memberMastIn 0.8s cubic-bezier(0.16,1,0.3,1) both;}
+.member-shell .bmast-glow{animation:memberGlowDrift 12s ease-in-out infinite alternate;}
+.member-shell .brief-featured{box-shadow:0 12px 30px rgba(0,0,0,0.18);}
+.member-shell .brief-featured:hover{transform:translateY(-5px) scale(1.006);box-shadow:0 24px 54px rgba(0,0,0,0.36);}
+.member-shell .brief-story-card{transition:transform 0.22s cubic-bezier(0.22,1,0.36,1),border-color 0.22s ease;}
+.member-shell .brief-story-card:hover{transform:translateX(5px);border-color:rgba(255,255,255,0.38);}
+.mob-nav.member{background:rgba(8,10,16,0.92);border-top-color:rgba(255,255,255,0.1);}
+.mob-nav.member .mob-tab-lbl{color:rgba(255,255,255,0.38);}
+.mob-nav.member .mob-tab.active .mob-tab-lbl{color:#fff;}
+.mob-nav.member .mob-tab-bar{background:linear-gradient(90deg,#7c9bff,#ff637c);}
+@keyframes memberMastIn{from{opacity:0;transform:translateY(24px) scale(0.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes memberGlowDrift{from{transform:translate3d(-1.5%,0,0) scale(1)}to{transform:translate3d(1.5%,-1%,0) scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.member-shell .bmast,.member-shell .bmast-glow,.member-shell .brief-topic-section{animation:none!important;}.member-shell .brief-featured,.member-shell .brief-story-card{transition:none;}}
 @media(max-width:600px){.member-shell{padding-top:8px;}.topbar.member{padding:0 18px;}.topbar.member .auth-user{display:none;}}
 
 /* Center nav links with grow-underline hover */

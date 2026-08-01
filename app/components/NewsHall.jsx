@@ -1526,7 +1526,7 @@ export default function NewsHall() {
  </div>
 
  {/* BOTTOM NAV */}
- <div className="mob-nav">
+ <div className="mob-nav member">
    <div className="mob-nav-inner">
      {[{id:"brief",label:"Brief"},{id:"topics",label:"Topics"},{id:"profile",label:"Profile"}].map(t=>(
        <button key={t.id} className={`mob-tab${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
